@@ -52,13 +52,21 @@ class Teacher(models.Model):
     def __str__(self):
         return self.name
     
+class Dorm(models.Model):
+    dorm = models.CharField(max_length=20)
+    area = models.CharField(max_length=20)
+    heads = models.ManyToManyField(Teacher, related_name="+")
+    
+    def __str__(self):
+        return self.dorm
+
 class Enrollment(models.Model):
     #Keystone table: ksEnrollment
     
     student = models.ForeignKey(Student)
     academic_year = models.ForeignKey(AcademicYear)
     boarder = models.BooleanField()
-    dorm = models.CharField(max_length=20, blank=True)
+    dorm = models.ForeignKey(Dorm, blank=True, null=True)
     grade = models.CharField(max_length=2)
     division = models.CharField(max_length=2)
     section = models.CharField(max_length=1, blank=True)
@@ -71,7 +79,7 @@ class Enrollment(models.Model):
     
     def __str__(self):
         return "{name:} ({year:})".format(name=self.student.name, year=self.academic_year.year)
-    
+
 class Course(models.Model):
     #Keystone table: ksCOURSES
     
@@ -93,4 +101,4 @@ class Section(models.Model):
     teacher = models.ForeignKey(Teacher, blank=True, null=True)
     
     def __str__(self):
-        return "{csn:} {year:}".format(csn=self.csn, year=self.academic_year.year)
+        return "{csn:} ({year:})".format(csn=self.csn, year=self.academic_year.year)

@@ -69,6 +69,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'academics',
     'courseevaluations',
+    'polymorphic',
+    'adminsortable',
 )
 
 MIDDLEWARE_CLASSES = (
