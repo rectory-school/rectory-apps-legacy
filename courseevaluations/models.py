@@ -21,7 +21,9 @@ class FreeFormQuestion(SortableMixin):
     
     class Meta:
         ordering = ['question_order']
-    
+        verbose_name = "Freeform question"
+        verbose_name_plural = "Freeform questions"
+
     def __str__(self):
         return self.question
     
