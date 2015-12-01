@@ -11,9 +11,23 @@ class QuestionSet(models.Model):
     
     def __str__(self):
         return self.name
+
+class FreeFormQuestion(SortableMixin):
+    question = models.CharField(max_length=255)
+    question_set = SortableForeignKey(QuestionSet)
+    
+    question_order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+    order_field_name = 'question_order'
+    
+    class Meta:
+        ordering = ['question_order']
+    
+    def __str__(self):
+        return self.question
     
 class MultipleChoiceQuestion(SortableMixin):
     question = models.CharField(max_length=255)
+    question_set = SortableForeignKey(QuestionSet)
     
     question_order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
     order_field_name = 'question_order'
@@ -33,10 +47,16 @@ class MultipleChoiceQuestionOption(SortableMixin):
     
     class Meta:
         ordering = ['option_order']
+    
+    def __str__(self):
+        return self.option
 
 class EvaluationSet(models.Model):
     name = models.CharField(max_length=255)
     available_until = models.DateField()
+    
+    def __str__(self):
+        return self.name
     
 class Evaluable(PolymorphicModel):
     evaluation_set = models.ForeignKey(EvaluationSet)
