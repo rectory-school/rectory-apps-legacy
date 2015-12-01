@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CourseEvaluation',
             fields=[
-                ('id', models.AutoField(serialize=False, auto_created=True, primary_key=True, verbose_name='ID')),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
             ],
             options={
                 'abstract': False,
@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='DormParentEvaluation',
             fields=[
-                ('id', models.AutoField(serialize=False, auto_created=True, primary_key=True, verbose_name='ID')),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
                 ('dorm', models.ForeignKey(to='academics.Dorm')),
             ],
             options={
@@ -35,17 +35,28 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='EvaluationSet',
             fields=[
-                ('id', models.AutoField(serialize=False, auto_created=True, primary_key=True, verbose_name='ID')),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
                 ('name', models.CharField(max_length=255)),
                 ('available_until', models.DateField()),
             ],
         ),
         migrations.CreateModel(
+            name='FreeformQuestion',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('question', models.CharField(max_length=255)),
+                ('question_order', models.PositiveIntegerField(db_index=True, default=0, editable=False)),
+            ],
+            options={
+                'ordering': ['question_order'],
+            },
+        ),
+        migrations.CreateModel(
             name='IIPEvaluation',
             fields=[
-                ('id', models.AutoField(serialize=False, auto_created=True, primary_key=True, verbose_name='ID')),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
                 ('evaluation_set', models.ForeignKey(to='courseevaluations.EvaluationSet')),
-                ('polymorphic_ctype', models.ForeignKey(related_name='polymorphic_courseevaluations.iipevaluation_set+', editable=False, null=True, to='contenttypes.ContentType')),
+                ('polymorphic_ctype', models.ForeignKey(editable=False, related_name='polymorphic_courseevaluations.iipevaluation_set+', null=True, to='contenttypes.ContentType')),
             ],
             options={
                 'abstract': False,
@@ -54,9 +65,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MultipleChoiceQuestion',
             fields=[
-                ('id', models.AutoField(serialize=False, auto_created=True, primary_key=True, verbose_name='ID')),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
                 ('question', models.CharField(max_length=255)),
-                ('question_order', models.PositiveIntegerField(default=0, editable=False, db_index=True)),
+                ('question_order', models.PositiveIntegerField(db_index=True, default=0, editable=False)),
             ],
             options={
                 'ordering': ['question_order'],
@@ -65,9 +76,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MultipleChoiceQuestionOption',
             fields=[
-                ('id', models.AutoField(serialize=False, auto_created=True, primary_key=True, verbose_name='ID')),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
                 ('option', models.CharField(max_length=255)),
-                ('option_order', models.PositiveIntegerField(default=0, editable=False, db_index=True)),
+                ('option_order', models.PositiveIntegerField(db_index=True, default=0, editable=False)),
                 ('question', adminsortable.fields.SortableForeignKey(to='courseevaluations.MultipleChoiceQuestion')),
             ],
             options={
@@ -77,9 +88,14 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='QuestionSet',
             fields=[
-                ('id', models.AutoField(serialize=False, auto_created=True, primary_key=True, verbose_name='ID')),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
                 ('name', models.CharField(max_length=255)),
             ],
+        ),
+        migrations.AddField(
+            model_name='multiplechoicequestion',
+            name='question_set',
+            field=adminsortable.fields.SortableForeignKey(to='courseevaluations.QuestionSet'),
         ),
         migrations.AddField(
             model_name='iipevaluation',
@@ -97,6 +113,11 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(to='academics.Teacher'),
         ),
         migrations.AddField(
+            model_name='freeformquestion',
+            name='question_set',
+            field=adminsortable.fields.SortableForeignKey(to='courseevaluations.QuestionSet'),
+        ),
+        migrations.AddField(
             model_name='dormparentevaluation',
             name='evaluation_set',
             field=models.ForeignKey(to='courseevaluations.EvaluationSet'),
@@ -109,7 +130,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dormparentevaluation',
             name='polymorphic_ctype',
-            field=models.ForeignKey(related_name='polymorphic_courseevaluations.dormparentevaluation_set+', editable=False, null=True, to='contenttypes.ContentType'),
+            field=models.ForeignKey(editable=False, related_name='polymorphic_courseevaluations.dormparentevaluation_set+', null=True, to='contenttypes.ContentType'),
         ),
         migrations.AddField(
             model_name='dormparentevaluation',
@@ -129,7 +150,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='courseevaluation',
             name='polymorphic_ctype',
-            field=models.ForeignKey(related_name='polymorphic_courseevaluations.courseevaluation_set+', editable=False, null=True, to='contenttypes.ContentType'),
+            field=models.ForeignKey(editable=False, related_name='polymorphic_courseevaluations.courseevaluation_set+', null=True, to='contenttypes.ContentType'),
         ),
         migrations.AddField(
             model_name='courseevaluation',

@@ -12,7 +12,7 @@ class QuestionSet(models.Model):
     def __str__(self):
         return self.name
 
-class FreeFormQuestion(SortableMixin):
+class FreeformQuestion(SortableMixin):
     question = models.CharField(max_length=255)
     question_set = SortableForeignKey(QuestionSet)
     
@@ -21,8 +21,6 @@ class FreeFormQuestion(SortableMixin):
     
     class Meta:
         ordering = ['question_order']
-        verbose_name = "Freeform question"
-        verbose_name_plural = "Freeform questions"
 
     def __str__(self):
         return self.question

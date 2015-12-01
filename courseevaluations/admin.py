@@ -3,7 +3,7 @@ from django.core import urlresolvers
 
 from adminsortable.admin import SortableAdmin, NonSortableParentAdmin, SortableStackedInline
 
-from courseevaluations.models import QuestionSet, FreeFormQuestion, MultipleChoiceQuestion, MultipleChoiceQuestionOption, EvaluationSet, DormParentEvaluation, CourseEvaluation, IIPEvaluation
+from courseevaluations.models import QuestionSet, FreeformQuestion, MultipleChoiceQuestion, MultipleChoiceQuestionOption, EvaluationSet, DormParentEvaluation, CourseEvaluation, IIPEvaluation
 
 class MultipleChoiceQuestionOptionInline(SortableStackedInline):
     model = MultipleChoiceQuestionOption
@@ -46,9 +46,6 @@ class QuestionSetAdmin(NonSortableParentAdmin):
     
 # Register your models here.
 admin.site.register(QuestionSet, QuestionSetAdmin)
-admin.site.register(FreeFormQuestion, SortableAdmin)
+admin.site.register(FreeformQuestion, SortableAdmin)
 admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin)
 admin.site.register(EvaluationSet)
-admin.site.register(DormParentEvaluation)
-admin.site.register(CourseEvaluation)
-admin.site.register(IIPEvaluation)
