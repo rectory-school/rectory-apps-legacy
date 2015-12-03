@@ -125,7 +125,7 @@ class Enrollment(models.Model):
 class Course(models.Model):
     #Keystone table: ksCOURSES
     
-    number = models.IntegerField(unique=True)
+    number = models.CharField(max_length=20, unique=True)
     course_name = models.CharField(max_length=255)
     course_name_short = models.CharField(max_length=255)
     course_name_transcript = models.CharField(max_length=255)
