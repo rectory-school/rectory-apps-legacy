@@ -29,6 +29,9 @@ class Student(models.Model):
     email = models.EmailField(max_length=255, blank=True)
     current = models.BooleanField(default=False)
     
+    class Meta:
+        ordering = ('last_name', 'first_name')
+    
     @property
     def name(self):
         if self.nickname:
@@ -118,6 +121,7 @@ class Enrollment(models.Model):
     
     class Meta:
         unique_together = (('student', 'academic_year'), )
+        ordering = ['student__last_name', 'student__first_name', 'academic_year__year']
     
     def __str__(self):
         return "{name:} ({year:})".format(name=self.student.name, year=self.academic_year.year)
@@ -133,6 +137,9 @@ class Course(models.Model):
     grade_level = models.CharField(max_length=2, blank=True)
     department = models.CharField(max_length=255)
     course_type = models.CharField(max_length=255)
+    
+    def __str__(self):
+        return "{number:}: {name:}".format(number=self.number, name=self.course_name)
 
 class Section(models.Model):
     #Keystone table: ksSECTIONS
