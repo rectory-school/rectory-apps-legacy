@@ -1,7 +1,7 @@
 appnope==0.1.0
 decorator==4.0.4
 dj-database-url==0.3.0
-Django==1.8.5
+Django==1.8.7
 django-admin-sortable==2.0.3
 django-polymorphic==0.7.2
 gnureadline==6.3.3
