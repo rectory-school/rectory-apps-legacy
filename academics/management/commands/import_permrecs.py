@@ -26,6 +26,8 @@ class Command(BaseCommand):
 
         results = data['results']    
         
+        seen_ids = set()
+        
         with transaction.atomic():
             for row in results:
                 fields = row['parsed_fields']
@@ -38,6 +40,8 @@ class Command(BaseCommand):
                 
                 if not studentID:
                     continue
+                
+                seen_ids.add(studentID)
                 
                 if email:
                     validEmail = validate_email(email)
@@ -73,3 +77,8 @@ class Command(BaseCommand):
                     
                 if forceSave:
                     student.save()
+                    
+            extra_students = Student.objects.exclude(student_id__in=seen_ids)
+            for extra_student in extra_students:
+                logger.warn("Deleting extra student {}".format(extra_student.id))
+                extra_student.delete()

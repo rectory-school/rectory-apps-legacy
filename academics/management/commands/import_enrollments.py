@@ -109,3 +109,5 @@ class Command(BaseCommand):
                     
                 if forceSave:
                     enrollment.save()
+
+            #TODO: Delete the extra records

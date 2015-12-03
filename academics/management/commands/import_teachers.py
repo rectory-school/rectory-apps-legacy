@@ -24,9 +24,11 @@ class Command(BaseCommand):
         
         data = fmpxmlparser.parse_from_file(kwargs['filename'])
 
-        results = data['results']    
+        results = data['results'] 
+           
+        seen_ids = set()
         
-        with transaction.atomic():        
+        with transaction.atomic():
             for row in results:
                 fields = row['parsed_fields']
                 
@@ -40,6 +42,8 @@ class Command(BaseCommand):
                 
                 if not teacherID:
                     continue
+                
+                seen_ids.add(teacherID)
                 
                 if activeEmployee in ("1", 1):
                     activeEmployee = True
@@ -82,3 +86,8 @@ class Command(BaseCommand):
                     
                 if forceSave:
                     teacher.save()
+            
+            extra_teachers = Teacher.objects.exclude(teacher_id__in=seen_ids)
+            for extra_teacher in extra_teachers:
+                logger.warn("Deleting extra teacher {}".format(extra_teacher.id))
+                extra_teacher.delete()
