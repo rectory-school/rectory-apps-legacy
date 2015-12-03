@@ -59,12 +59,31 @@ class Teacher(models.Model):
         return self.name
     
 class Dorm(models.Model):
-    dorm = models.CharField(max_length=20)
-    area = models.CharField(max_length=20)
-    heads = models.ManyToManyField(Teacher, related_name="+")
+    dorm_name = models.CharField(max_length=20, unique=True)
+    
+    building = models.CharField(max_length=20)
+    wing = models.CharField(max_length=20, blank=True)
+    level = models.CharField(max_length=20, blank=True)
+    
+    heads = models.ManyToManyField(Teacher, related_name="+", limit_choices_to={'active': True}, blank=True, verbose_name="dorm parents")
+    
+    class Meta:
+        ordering = ['building', 'wing', 'level']
     
     def __str__(self):
-        return self.dorm
+        attrs = {'building': self.building, 'wing': self.wing, 'level': self.level}
+        if self.wing and self.level:
+            return "{building:} {level:} {wing:}".format(**attrs)
+        
+        elif self.wing:
+            return "{building:} {wing:}".format(**attrs)
+        
+        elif self.level:
+            return "{level:} {building:}".format(**attrs)
+        
+        else:
+            return self.building
+            
 
 class Enrollment(models.Model):
     #Keystone table: ksEnrollment
