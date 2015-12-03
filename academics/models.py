@@ -38,12 +38,18 @@ class Student(models.Model):
 
 class Teacher(models.Model):
     #Keystone table: ksTEACHERS
-    teacher_id = models.CharField(max_length=4)
+    teacher_id = models.CharField(max_length=5, unique=True)
+    unique_name = models.CharField(max_length=255)
     
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+    prefix = models.CharField(max_length=255, blank=True)
+    
     email = models.EmailField(max_length=255, blank=True)
     active = models.BooleanField(default=False)
+    
+    class Meta:
+        ordering = ['last_name', 'first_name']
     
     @property
     def name(self):
