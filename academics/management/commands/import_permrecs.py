@@ -14,7 +14,7 @@ from academics.utils import fmpxmlparser
 logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
-    help = "Import Students"
+    help = "Import Permrecs"
     
     def add_arguments(self, parser):
         parser.add_argument('filename', metavar='FILENAME', help='The filename to process the students from')
