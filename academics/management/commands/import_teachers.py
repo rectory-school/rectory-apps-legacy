@@ -29,7 +29,6 @@ class Command(BaseCommand):
         with transaction.atomic():        
             for row in reader:
                 nameFirst, nameLast, namePrefix, email, activeEmployee, uniqueName, teacherID = map(str.strip, row)
-                print(teacherID)
                 
                 if not teacherID:
                     continue
