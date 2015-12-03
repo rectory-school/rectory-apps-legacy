@@ -13,6 +13,9 @@ class AcademicYear(models.Model):
     
     objects = academics.managers.AcademicYearManager()
     
+    class Meta:
+        ordering = ['year']
+    
     def __str__(self):
         return self.year
         
