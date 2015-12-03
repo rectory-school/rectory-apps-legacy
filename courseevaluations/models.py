@@ -72,11 +72,8 @@ class DormEvaluation(Evaluable):
     class Meta:
         abstract = True
 
-class DormParentEvaluation(DormEvaluation):
-    def _getAvailableParents(self):
-        return self.dorm.heads.all()
-    
-    parent = models.ForeignKey(Teacher, limit_choices_to=_getAvailableParents)
+class DormParentEvaluation(DormEvaluation):    
+    parent = models.ForeignKey(Teacher)
 
 class CourseEvaluation(Evaluable):
     section = models.ForeignKey(Section)
