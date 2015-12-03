@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import csv
 import logging
 from datetime import date
 
@@ -10,6 +9,7 @@ from django.db import transaction
 from validate_email import validate_email
 
 from academics.models import Teacher
+from academics.utils import fmpxmlparser
 
 logger = logging.getLogger(__name__)
 
@@ -22,13 +22,21 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         logger.info("Beginning teacher import routine")
         
-        f = open(kwargs['filename'])
-        
-        reader = csv.reader(f)
+        data = fmpxmlparser.parse_from_file(kwargs['filename'])
+
+        results = data['results']    
         
         with transaction.atomic():        
-            for row in reader:
-                nameFirst, nameLast, namePrefix, email, activeEmployee, uniqueName, teacherID = map(str.strip, row)
+            for row in results:
+                fields = row['parsed_fields']
+                
+                nameFirst = fields['NameFirst'] or ""
+                nameLast = fields['NameLast'] or ""
+                namePrefix = fields['NamePrefix'] or ""
+                email = fields['EmailSchool'] or ""
+                activeEmployee = fields['Active Employee'] or ""
+                uniqueName = fields['NameUnique'] or ""
+                teacherID = fields['IDTEACHER']
                 
                 if not teacherID:
                     continue
@@ -74,5 +82,3 @@ class Command(BaseCommand):
                     
                 if forceSave:
                     teacher.save()
-            
-        f.close()
