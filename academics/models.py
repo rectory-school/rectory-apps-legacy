@@ -149,5 +149,8 @@ class Section(models.Model):
     academic_year = models.ForeignKey(AcademicYear)
     teacher = models.ForeignKey(Teacher, blank=True, null=True)
     
+    class Meta:
+        unique_together = (('csn', 'academic_year'), )
+    
     def __str__(self):
         return "{csn:} ({year:})".format(csn=self.csn, year=self.academic_year.year)
