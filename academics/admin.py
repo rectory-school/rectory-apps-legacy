@@ -37,6 +37,7 @@ class CourseAdmin(ReadOnlyAdmin):
 
 class SectionAdmin(ReadOnlyAdmin):
     list_display = ['csn', 'course', 'academic_year', 'teacher']
+    list_filter = ['academic_year']
     
 # Register your models here.
 admin.site.register(Dorm, DormAdmin)
