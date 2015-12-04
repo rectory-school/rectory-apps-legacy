@@ -116,6 +116,8 @@ class Enrollment(models.Model):
     division = models.CharField(max_length=2)
     section = models.CharField(max_length=1, blank=True)
     advisor = models.ForeignKey(Teacher, blank=True, null=True)
+    status_enrollment = models.CharField(max_length=20, blank=True)
+    status_attending = models.CharField(max_length=20, blank=True)
     
     objects = academics.managers.EnrollmentManager()
     

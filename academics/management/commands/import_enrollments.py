@@ -38,7 +38,10 @@ class Command(BaseCommand):
                 division = fields['Division'] or ""
                 section = fields["Section Letter"] or ""
                 advisorID = fields["IDAdvisor"]
-                                
+                statusEnrollment = fields["StatusEnrollment"] or ""
+                statusAttending = fields["StatusAttending"] or ""
+                
+                
                 if not studentID or not academicYear:
                     continue
                 
@@ -96,7 +99,9 @@ class Command(BaseCommand):
                     'grade': grade,
                     'division': division,
                     'section': section,
-                    'advisor': advisor
+                    'advisor': advisor,
+                    'status_enrollment': statusEnrollment,
+                    'status_attending': statusAttending
                 }
                 
                 for attr in attrMap:
