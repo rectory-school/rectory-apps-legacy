@@ -59,10 +59,21 @@ class MultipleChoiceQuestionAdmin(SortableAdmin):
 
 class QuestionSetAdmin(NonSortableParentAdmin):
     inlines = [MultipleChoiceQuestionInline]
+
+class CourseEvaluationAdmin(ReadOnlyAdmin):
+    list_filter = ['evaluation_set__name', ('student', admin.RelatedOnlyFieldListFilter)]
+
+class IIPEvaluationAdmin(ReadOnlyAdmin):
+    list_filter = ['evaluation_set__name', ('student', admin.RelatedOnlyFieldListFilter)]
+    
+class DormParentEvaluationAdmin(ReadOnlyAdmin):
+    list_filter = ['evaluation_set__name', 'dorm', ('student', admin.RelatedOnlyFieldListFilter)]
     
 # Register your models here.
 admin.site.register(QuestionSet, QuestionSetAdmin)
 admin.site.register(FreeformQuestion, SortableAdmin)
 admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin)
 admin.site.register(EvaluationSet)
-admin.site.register(CourseEvaluation, ReadOnlyAdmin)
+admin.site.register(CourseEvaluation, CourseEvaluationAdmin)
+admin.site.register(IIPEvaluation, IIPEvaluationAdmin)
+admin.site.register(DormParentEvaluation, DormParentEvaluationAdmin)
