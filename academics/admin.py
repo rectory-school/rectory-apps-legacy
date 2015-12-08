@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.admin.util import flatten_fieldsets
 
 from academics.models import Dorm, AcademicYear, Student, Teacher, Enrollment, Course, Section, StudentRegistration
 

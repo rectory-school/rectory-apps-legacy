@@ -1,9 +1,25 @@
 from django.contrib import admin
 from django.core import urlresolvers
+from django.contrib.admin.util import flatten_fieldsets
 
 from adminsortable.admin import SortableAdmin, NonSortableParentAdmin, SortableStackedInline
 
 from courseevaluations.models import QuestionSet, FreeformQuestion, MultipleChoiceQuestion, MultipleChoiceQuestionOption, EvaluationSet, DormParentEvaluation, CourseEvaluation, IIPEvaluation
+
+class ReadOnlyAdmin(admin.ModelAdmin):
+    def get_readonly_fields(self, request, obj=None):
+        if self.declared_fieldsets:
+            return flatten_fieldsets(self.declared_fieldsets)
+        else:
+            return list(set(
+                [field.name for field in self.opts.local_fields] +
+                [field.name for field in self.opts.local_many_to_many]
+            ))
+    
+    def has_add_permission(self, *args, **kwargs):
+        return False
+    
+    
 
 class MultipleChoiceQuestionOptionInline(SortableStackedInline):
     model = MultipleChoiceQuestionOption
@@ -49,3 +65,4 @@ admin.site.register(QuestionSet, QuestionSetAdmin)
 admin.site.register(FreeformQuestion, SortableAdmin)
 admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin)
 admin.site.register(EvaluationSet)
+admin.site.register(CourseEvaluation, ReadOnlyAdmin)
