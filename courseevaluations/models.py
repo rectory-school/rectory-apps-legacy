@@ -9,7 +9,7 @@ from adminsortable.fields import SortableForeignKey
 from academics.models import Student, Teacher, AcademicYear, Enrollment, Course, Section, Dorm
 
 class QuestionSet(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     
     def __str__(self):
         return self.name
@@ -17,6 +17,7 @@ class QuestionSet(models.Model):
 class FreeformQuestion(SortableMixin):
     question = models.CharField(max_length=255)
     question_set = SortableForeignKey(QuestionSet)
+    required = models.BooleanField(default=False)
     
     question_order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
     order_field_name = 'question_order'
@@ -30,6 +31,7 @@ class FreeformQuestion(SortableMixin):
 class MultipleChoiceQuestion(SortableMixin):
     question = models.CharField(max_length=255)
     question_set = SortableForeignKey(QuestionSet)
+    required = models.BooleanField(default=True)
     
     question_order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
     order_field_name = 'question_order'
@@ -54,7 +56,7 @@ class MultipleChoiceQuestionOption(SortableMixin):
         return self.option
 
 class EvaluationSet(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     available_until = models.DateField()
     
     def __str__(self):
