@@ -41,7 +41,7 @@ class Command(BaseCommand):
             else:
                 mail_to = [student.email]
             
-            msg = EmailMessage("Course Evaluations", message, "Mrs. Hart <lhart@rectoryschool.org>", ["adam@thepeacock.net"])
+            msg = EmailMessage("Course Evaluations", message, "Mrs. Hart <lhart@rectoryschool.org>", mail_to)
             msg.content_subtype = "html"
             msg.send()
         
