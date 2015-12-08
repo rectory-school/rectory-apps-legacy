@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Rectory Evaluations</title>
+</head>
+
+<body>
+<h1>Evaluations for {{ student.name }}</h1>
+
+{% regroup evaluables by evaluation_type_label as evaluables_list %}
+
+{% for evaluable_type in evaluables_list %}
+<h2>{{ evaluable_type.grouper | title }}</h2>
+<ul>
+  {% for evaluable_item in evaluable_type.list %}
+   <li>{{ evaluable_item.student_display }}</li>
+  {% endfor %}
+</ul>
+
+{% endfor %}
+
+</body>
+
+</html>
