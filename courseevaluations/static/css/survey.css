@@ -1,0 +1,38 @@
+p {
+	font-size: 24px;
+	border-bottom: 1px black solid;
+}
+
+ul {
+	list-style-type: none;
+}
+
+ul li {
+	display: inline-block;
+	width: 175px;
+}
+
+div.fieldWrapper {
+	margin-bottom: 50px;
+}
+
+ul.errorlist li {
+	color: red;
+}
+
+textarea {
+	display: block;
+}
+
+span.question {
+	font-weight: bold;
+	font-size: 20px;
+}
+
+div.helpText {
+	display: none;
+}
+
+a.helpLink {
+	color: blue;
+}

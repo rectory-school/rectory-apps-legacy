@@ -1,0 +1,54 @@
+{% load staticfiles %}<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html version="-//W3C//DTD XHTML 1.1//EN"
+      xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.w3.org/1999/xhtml
+                          http://www.w3.org/MarkUp/SCHEMA/xhtml11.xsd">
+  <head>
+    <title>Rectory Evaluations</title>
+	<link rel="stylesheet" href="{% static 'css/survey.css' %}" type="text/css" />
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" type="text/css" />
+	
+	<script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.js"></script>
+	<script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	<script type="text/javascript" src="{% static 'js/survey.js' %}"></script>
+	
+	{% if form.errors %}
+		<script type="text/javascript">
+			alert("There were errors in your survey results. Please correct any answers in the form below. Your results have not been saved.");
+		</script>
+	{% endif %}
+  </head>
+
+  <body>
+	{% if form.errors %}
+		<p style="color: red; font-size: 24px; font-weight: bold;">There were problems saving your course evaluation survey. Please scroll down and correct any issues below, which will be highlighted in red and then re-record your answers. Your survey has not yet been recorded.</p>
+	{% endif %}
+	<h1>Rectory School Evaluations</h1>
+	<h2>Evaluation: {{ evaluable.student_display }}</h2>
+  <h3>Student: {{ evaluable.student.name }}</h2>
+    
+	<form method="POST">
+		{% csrf_token %}
+
+		{% for field in form %}
+	        <div class="fieldWrapper">
+	            <span class="question">{{ field.label_tag }}</span> 
+				{{ field.errors }}
+				{{ field }}
+				
+				{% if field.help_text %}
+					<a class="helpLink" href="help-{{field.id_for_label}}">Help on this question</a>
+					<div class="helpText" id="help-{{field.id_for_label}}" title="{{ field.label }}">{{ field.help_text }}</div>
+				{% endif %}
+				
+	        </div>
+	<hr />
+	    {% endfor %}
+		
+		<input type="submit" value="Record my answers">
+	</form>
+  </body>
+</html>
