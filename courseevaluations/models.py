@@ -66,6 +66,9 @@ class Evaluable(PolymorphicModel):
     evaluation_type_label = "misc evaluation"
     evaluation_type_label_plural = "misc evaluations"
     
+    evaluation_type_title = "Misc Evaluation"
+    evaluation_type_title_plural = "Misc Evaluations"
+    
     evaluation_set = models.ForeignKey(EvaluationSet)
     question_set = models.ForeignKey(QuestionSet)
     student = models.ForeignKey(Student)
@@ -79,6 +82,9 @@ class DormEvaluation(Evaluable):
     evaluation_type_label = "dorm evaluation"
     evaluation_type_label_plural = "dorm evaluations"
     
+    evaluation_type_title = "Dorm Evaluation"
+    evaluation_type_title_plural = "Dorm Evaluations"
+    
     dorm = models.ForeignKey(Dorm)
     
     @property
@@ -88,6 +94,9 @@ class DormEvaluation(Evaluable):
 class DormParentEvaluation(DormEvaluation):    
     evaluation_type_label = "dorm parent evaluation"
     evaluation_type_label_plural = "dorm parent evaluations"
+    
+    evaluation_type_title = "Dorm Parent Evaluation"
+    evaluation_type_title_plural = "Dorm Parent Evaluations"
     
     parent = models.ForeignKey(Teacher)
     
@@ -102,6 +111,9 @@ class CourseEvaluation(Evaluable):
     evaluation_type_label = "course evaluation"
     evaluation_type_label_plural = "course evaluations"
     
+    evaluation_type_title = "Course Evaluation"
+    evaluation_type_title_plural = "Course Evaluations"
+    
     section = models.ForeignKey(Section)
     
     def __str__(self):
@@ -114,6 +126,9 @@ class CourseEvaluation(Evaluable):
 class IIPEvaluation(Evaluable):
     evaluation_type_label = "IIP evaluation"
     evaluation_type_label_plural = "IIP evaluations"
+    
+    evaluation_type_title = "IIP Evaluation"
+    evaluation_type_title_plural = "IIP Evaluations"
     
     teacher = models.ForeignKey(Teacher)
     
@@ -128,9 +143,11 @@ class IIPEvaluation(Evaluable):
         return "IIP with {teacher:}".format(teacher=self.teacher.name_for_students)
     
 class MultipleChoiceQuestionAnswer(models.Model):
-    answer = models.ForeignKey(MultipleChoiceQuestionOption)
     evaluable = models.ForeignKey(Evaluable)
+    answer = models.ForeignKey(MultipleChoiceQuestionOption)
+    
     
 class FreeformQuestionAnswer(models.Model):
-    answer = models.TextField()
     evaluable = models.ForeignKey(Evaluable)
+    question = models.ForeignKey(FreeformQuestion)
+    answer = models.TextField()
