@@ -1,4 +1,5 @@
 import logging
+from random import choice
 
 from django.db import models
 
@@ -6,7 +7,10 @@ import academics.managers
 
 logger = logging.getLogger(__name__)
             
-        
+def default_auth_key():
+    chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    return "".join(choice(chars) for i in range(63))
+
 class AcademicYear(models.Model):
     year = models.CharField(max_length=9, unique=True)
     current = models.BooleanField(default=False)
@@ -28,6 +32,8 @@ class Student(models.Model):
     nickname = models.CharField(max_length=255, blank=True)
     email = models.EmailField(max_length=255, blank=True)
     current = models.BooleanField(default=False)
+    
+    auth_key = models.CharField(max_length=63, default=default_auth_key)
     
     class Meta:
         ordering = ('last_name', 'first_name')
