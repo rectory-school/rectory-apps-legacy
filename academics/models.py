@@ -68,7 +68,7 @@ class Teacher(models.Model):
         return "{first:} {last:}".format(first=self.first_name, last=self.last_name)
     
     @property
-    def nameForStudents(self):
+    def name_for_students(self):
         if self.prefix and self.last_name:
             return "{prefix:} {last:}".format(prefix=self.prefix, last=self.last_name)
         
