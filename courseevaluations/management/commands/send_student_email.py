@@ -19,7 +19,7 @@ class Command(BaseCommand):
     
     def add_arguments(self, parser):
         parser.add_argument('--override_to', metavar='EMAILOVERRIDE', help='The address to override an outgoing email to')
-        parser.add_argument('--first_only',action='store_const', const=True, default=False, help='The address to override an outgoing email to')
+        parser.add_argument('--one_random',action='store_const', const=True, default=False, help='The address to override an outgoing email to')
         
     def handle(self, *args, **kwargs):
         logger.info("Beginning IIP import routine")
@@ -28,19 +28,22 @@ class Command(BaseCommand):
         evaluables = Evaluable.objects.filter(evaluation_set__in=evaluation_sets, complete=False)
         students = Student.objects.filter(evaluable__in=evaluables).distinct()
         
+        if kwargs["one_random"]:
+            students = [students.order_by("?").first()]
+        
         for student in students:
             url = "http://apps.rectoryschool.org{url:}?auth_key={auth_key:}".format(url=reverse('courseevaluations_student_landing'), auth_key=student.auth_key)
             
             message = TEMPLATE.format(first=student.first_name, last=student.last_name, link=url)
             
+            if kwargs["override_to"]:
+                mail_to = [kwargs["override_to"]]
+            else:
+                mail_to = [student.email]
+            
             msg = EmailMessage("Course Evaluations", message, "Mrs. Hart <lhart@rectoryschool.org>", ["adam@thepeacock.net"])
             msg.content_subtype = "html"
             msg.send()
-            
-            if kwargs["first_only"]:
-                break
-        
-#        print(students)
         
 
 TEMPLATE = """<p>To {first:},</p>
