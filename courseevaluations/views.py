@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.db import transaction
 
 from academics.models import Student
-from courseevaluations.models import EvaluationSet, Evaluable, MultipleChoiceQuestion, MultipleChoiceQuestionOption, MultipleChoiceQuestionAnswer, FreeformQuestionAnswer
+from courseevaluations.models import EvaluationSet, Evaluable, MultipleChoiceQuestion, MultipleChoiceQuestionOption, MultipleChoiceQuestionAnswer, FreeformQuestionAnswer, FreeformQuestion
 
 from courseevaluations.forms import SurveyForm
 
@@ -25,8 +25,10 @@ def student_survey(request):
     student = Student.objects.get(auth_key=request.GET["auth_key"])
     evaluable = Evaluable.objects.get(student=student, pk=request.GET["evaluable"])
     
+    landing_url = "{url:}?auth_key={auth_key:}".format(url=reverse('courseevaluations_student_landing'), auth_key=student.auth_key)
+    
     if evaluable.complete:
-        return redirect("{url:}?auth_key={auth_key:}".format(url=reverse('courseevaluations_student_landing'), auth_key=student.auth_key))
+        return redirect(landing_url)
     
     question_set = evaluable.question_set
     
@@ -58,7 +60,7 @@ def student_survey(request):
                     
                     elif question_type == 'freeform':
                         question = FreeformQuestion.objects.get(pk=id)
-                        answer = FreeformQuestionanswer()
+                        answer = FreeformQuestionAnswer()
                         answer.evaluable = evaluable
                         answer.question = question
                         answer.answer = form.cleaned_data[key]
@@ -67,6 +69,7 @@ def student_survey(request):
 
                 evaluable.complete = True
                 evaluable.save()
+                return redirect(landing_url)
     else:
         form = SurveyForm(question_set)
         

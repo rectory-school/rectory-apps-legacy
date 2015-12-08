@@ -124,7 +124,10 @@ class CourseEvaluation(Evaluable):
     
     @property
     def student_display(self):
-        return "{course:} with {teacher:}".format(course=self.section.course.course_name, teacher=self.section.teacher.name_for_students)
+        if self.section.teacher:
+            return "{course:} with {teacher:}".format(course=self.section.course.course_name, teacher=self.section.teacher.name_for_students)
+        else:
+            return "{course:}".format(course=self.section.course.course_name)
         
 class IIPEvaluation(Evaluable):
     evaluation_type_label = "IIP evaluation"
