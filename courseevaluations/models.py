@@ -7,6 +7,7 @@ from adminsortable.models import SortableMixin
 from adminsortable.fields import SortableForeignKey
 
 from academics.models import Student, Teacher, AcademicYear, Enrollment, Course, Section, Dorm
+import courseevaluations.managers
 
 class QuestionSet(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -58,6 +59,8 @@ class MultipleChoiceQuestionOption(SortableMixin):
 class EvaluationSet(models.Model):
     name = models.CharField(max_length=255, unique=True)
     available_until = models.DateField()
+    
+    objects = courseevaluations.managers.EvaluationSetManager()
     
     def __str__(self):
         return self.name
