@@ -12,7 +12,7 @@ class ReadOnlyAdmin(admin.ModelAdmin):
                 [field.name for field in self.opts.local_many_to_many]
             ))
 
-class AcademicYearAdmin(ReadOnlyAdmin):
+class AcademicYearAdmin(admin.ModelAdmin):
     fields = ['year', 'current']
     list_display = ['year', 'current']
     readonly_fields = ['year']
