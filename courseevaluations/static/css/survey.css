@@ -36,3 +36,17 @@ div.helpText {
 a.helpLink {
 	color: blue;
 }
+
+input[type=submit].btnSave {
+    padding:5px 15px; 
+    background-color:red; 
+    color: white;
+    border:0 none;
+    cursor:pointer;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    width: 95%;
+    display: block;
+    margin: 0 auto;
+    font-size: 30px;
+}
