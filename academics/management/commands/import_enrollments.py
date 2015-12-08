@@ -86,6 +86,8 @@ class Command(BaseCommand):
                 try:
                     enrollment = Enrollment.objects.get(student = student, academic_year = academicYear)
                     logger.info("Found enrollment {studentID:}/{academicYear:}".format(studentID=studentID, academicYear=academicYear))
+                    forceSave = False
+                    
                 except Enrollment.DoesNotExist:
                     logger.info("Creating enrollment {studentID:}/{academicYear:}".format(studentID=studentID, academicYear=academicYear))
                     enrollment = Enrollment()
