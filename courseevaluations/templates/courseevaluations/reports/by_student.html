@@ -8,13 +8,18 @@
 </head>
 
 <body>
-  {% if perms.courseevaluations.can_view_student_links %}
-    {% if not show_links %}
-      <a href="{{request.path}}?show_links=true">Show Links</a>
-    {% else %}
-      <a href="{{request.path}}?show_links=false">Hide Links</a>
+  <h1 class="noprint" >Links</h1>
+  <ul class="noprint">
+    {% if perms.courseevaluations.can_view_student_links %}
+      {% if not show_links %}
+        <li><a href="{{request.path}}?show_links=true">Show Links</a></li>
+      {% else %}
+        <li><a href="{{request.path}}?show_links=false">Hide Links</a></li>
+      {% endif %}
     {% endif %}
-  {% endif %}
+  
+    <li><a href="{% url 'courseevaluations_reports_status_index' id=evaluation_set.id %}">Reports Home</a></li>
+  </ul>
   
   {% if incomplete %}
     <h1>Incomplete evaluations</h1>
@@ -37,8 +42,16 @@
     <h1>Complete evaluations</h1>
     <ul>
       {% for student in complete %}
-        <li>{{ student }}: {{ student.complete_count }} of {{ student.total_count }} evaluations completed</li>
-      {% endfor %}
+        <li><strong>{% if show_links %}<a href="{% url "courseevaluations_student_landing" %}?auth_key={{ student.auth_key }}">{{ student }}</a>{% else %}{{ student }}{% endif %}</strong>: {{ student.complete_count }} of {{ student.total_count }} evaluations completed</li>
+
+        {% if show_evaluables %}
+          <ul class="detail" id="detail_{{student.id}}">
+            {% for evaluable in student.evaluable_set.all %}
+              <li>{{ evaluable.student_display }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endfor %}      
     </ul>
   {% endif %}
 </body>

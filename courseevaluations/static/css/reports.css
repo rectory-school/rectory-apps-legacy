@@ -1,3 +1,9 @@
 li.completed_item {
   color: gray;
 }
+
+@media print {    
+    .noprint, .noprint * {
+        display: none !important;
+    }
+}
