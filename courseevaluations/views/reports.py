@@ -5,9 +5,10 @@ from datetime import date
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Case, When
+from django.http import HttpResponse
 
 from academics.models import Student, Section
-from courseevaluations.models import EvaluationSet, Evaluable, CourseEvaluation, IIPEvaluation, DormParentEvaluation
+from courseevaluations.models import EvaluationSet, Evaluable, CourseEvaluation, IIPEvaluation, DormParentEvaluation, StudentEmailTemplate
 
 from django.contrib.auth.decorators import permission_required
 
@@ -27,7 +28,8 @@ def index(request, id):
         'evaluables_complete': complete_evaluables, 
         'evaluables_incomplete': incomplete_evaluables,
         'evaluation_set': evaluation_set,
-        'percent_completed': (complete_evaluables.count() / evaluables.count() * 100)
+        'percent_completed': (complete_evaluables.count() / evaluables.count() * 100),
+        'student_email_templates': StudentEmailTemplate.objects.all()
     }
     
     return render(request, "courseevaluations/reports/index.html", template_vars)
@@ -91,3 +93,54 @@ def by_section(request, id):
     template_vars = {'report_data': flattened_data, 'evaluation_set': evaluation_set}
         
     return render(request, "courseevaluations/reports/by_section.html", template_vars)
+
+@permission_required('courseevaluations.can_send_emails')
+def send_student_email(request):
+    template_id = request.POST["student_email_template"]
+    operation = request.POST["send_type"]
+    
+    print(operation)
+    
+    template = StudentEmailTemplate.objects.get(pk=template_id)
+    
+    evaluation_sets = EvaluationSet.objects.open()
+    
+    to_students = []
+    
+    if operation == "sample":
+        evaluable = Evaluable.objects.filter(evaluation_set__in=evaluation_sets).order_by("?").first()
+        student = evaluable.student
+        
+        msg = template.get_message(student)
+        msg.to = [request.user.email]
+        to_students.append(student)
+        
+        msg.send()
+        
+        return HttpResponse("Your sample is on the way", content_type="text/plain")
+        
+    elif operation == "redirect":
+        evaluables = Evaluable.objects.filter(evaluation_set__in=evaluation_sets)
+        students = Student.objects.filter(evaluable__in=evaluables).distinct()
+        
+        for student in students:
+            msg = template.get_message(student)
+            to_students.append(student)
+            
+            msg.to = [request.user.email]
+            
+            msg.send()
+            
+        return HttpResponse("All {count:} student e-mails have been generated and are being redirected to you.".format(count=len(to_students)), content_type="text/plain")
+            
+    elif operation == "send":
+        evaluables = Evaluable.objects.filter(evaluation_set__in=evaluation_sets)
+        students = Student.objects.filter(evaluable__in=evaluables).distinct()
+        
+        for student in students:
+            msg = template.get_message(student)
+            to_students.append(student)
+            
+            msg.send()
+            
+        return HttpResponse("All {count:} student e-mails have been generated and are on their way.".format(count=len(to_students)), content_type="text/plain")

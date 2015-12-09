@@ -15,11 +15,44 @@
     <li>Incomplete evaluations: {{ evaluables_incomplete.count }}</li>
   </ul>
   
-  <h1>Reports</h1>
+  <h1>Status Reports</h1>
   <ul>
     <li><a href="{% url "courseevaluations_reports_by_student" id=evaluation_set.id show_evaluables=False %}">Summary by student</a></li>
     <li><a href="{% url "courseevaluations_reports_by_student" id=evaluation_set.id show_evaluables=True %}">Detail by student</a></li>
     <li><a href="{% url "courseevaluations_reports_by_section" id=evaluation_set.id %}">Details by section</a></li>
   </ul>
+  
+  {% if perms.courseevaluations.can_send_emails %}
+    <h1>Send Emails</h1>
+    <ul>
+      <li>Student e-mails
+        <ul>
+          <form method="POST" action="{% url "courseevaluations_send_student_email" %}">
+            {% csrf_token %}
+            <li>
+              <label for="student_email_template">Template</label>:
+              <select name="student_email_template">
+                {% for student_email_template in student_email_templates %}
+                  <option value="{{student_email_template.id}}">{{ student_email_template.description }}</option>
+                {% endfor %}
+              </select>
+            </li>
+          
+            <li>
+              <label for="send_type">Operation</label>: 
+              <select name="send_type">
+                <option value="sample">Send me a sample</option>
+                <option value="redirect">Redirect all e-mails to me</option>
+                <option value="send">Send e-mails to students</option>
+              </select>
+            </li>
+            <li>
+              <input type="submit" value="Send" />
+            </li>
+          </form>
+        </ul>
+      </li>
+    </ul>
+  {% endif %}
 </body>
 </html>

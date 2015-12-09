@@ -72,6 +72,7 @@ class EvaluationSet(models.Model):
         permissions = (
         ("can_view_status_reports", "Can view status reports"),
         ("can_view_student_links", "Can view student links"),
+        ("can_send_emails", "Can send e-mails"),
         )
     
     def __str__(self):
@@ -204,7 +205,7 @@ class StudentEmailTemplate(models.Model):
         return template_vars
     
     def render_body(self, student):
-        template = Template(self.template)
+        template = Template(self.body)
         template_vars = self.get_template_vars(student)
         
         return template.render(Context(template_vars))
@@ -217,8 +218,8 @@ class StudentEmailTemplate(models.Model):
         m = EmailMessage()
         m.subject = self.render_subject(student)
         m.body = self.render_body(student)
-        m.from_email = email.utils.formataddr(self.from_name, self.from_address)
-        m.to = student.email
+        m.from_email = email.utils.formataddr((self.from_name, self.from_address))
+        m.to = [student.email]
         
         return m
             

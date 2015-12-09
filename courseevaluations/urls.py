@@ -10,4 +10,5 @@ urlpatterns = [
     
     url(r'^reports/(?P<id>[0-9]+)/by_section/$', 'courseevaluations.views.reports.by_section', name='courseevaluations_reports_by_section'),
     
+    url(r'^email/send/student/$', 'courseevaluations.views.reports.send_student_email', name='courseevaluations_send_student_email'),
 ]
