@@ -4,6 +4,20 @@
 <title>Evaluation Reports for {{evaluation_set.name}}</title>
 
 <link rel="stylesheet" type="text/css" href="{% static "css/reports.css" %}">
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<script>
+$(document).ready(function() {
+  $("#form_send_student_email").submit(function(e) {
+    $("#btn_send_student_email").prop('disabled', true);
+    $.post("{% url "courseevaluations_send_student_email" %}", $("#form_send_student_email").serialize(), function(data, textStatus, jqXHR) {
+      alert(data);
+      $("#btn_send_student_email").prop('disabled', false);
+    });
+    e.preventDefault();
+  })
+});
+</script>
 
 </head>
 
@@ -27,7 +41,7 @@
     <ul>
       <li>Student e-mails
         <ul>
-          <form method="POST" action="{% url "courseevaluations_send_student_email" %}">
+          <form method="POST" id="form_send_student_email">
             {% csrf_token %}
             <li>
               <label for="student_email_template">Template</label>:
@@ -47,7 +61,7 @@
               </select>
             </li>
             <li>
-              <input type="submit" value="Send" />
+              <input type="submit" value="Send" id="btn_send_student_email" />
             </li>
           </form>
         </ul>
