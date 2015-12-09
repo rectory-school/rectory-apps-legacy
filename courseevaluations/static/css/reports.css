@@ -1,3 +1,12 @@
+a, a.visited {
+  color: blue;
+  text-decoration: none;
+}
+
+ul.report_links {
+  list-style: none;
+}
+
 li.completed_item {
   color: gray;
 }
