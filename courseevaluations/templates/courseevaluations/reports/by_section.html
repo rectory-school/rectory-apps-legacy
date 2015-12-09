@@ -1,15 +1,15 @@
 {% extends 'courseevaluations/reports/report_base.html' %}
 
 {% block content %}  
-  <h1>Incomplete evaluations by section</h1>
+  <h1>Incomplete evaluations by evaluable</h1>
   
-  {% for teacher, sections in report_data %}
+  {% for teacher, evaluable_groups in report_data %}
     <h2>{{teacher}}</h2>
     
     <ul>
-      {% for section, students in sections %}
+      {% for evaluable_group, students in evaluable_groups %}
         <li>
-          {{ section.course.course_name }}: {{ section.csn }}
+          {{ evaluable_group }}
           <ul class="inner_list">
             {% for student in students %}
               <li>{{ student.name }}</li>
