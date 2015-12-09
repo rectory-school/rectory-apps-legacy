@@ -1,10 +1,16 @@
 #!/usr/bin/python
 
+import email.utils
+
 from django.db import models
+from django.core.urlresolvers import reverse
 
 from polymorphic import PolymorphicModel
 from adminsortable.models import SortableMixin
 from adminsortable.fields import SortableForeignKey
+
+from django.template import Template, Context
+from django.core.mail import EmailMessage
 
 from academics.models import Student, Teacher, AcademicYear, Enrollment, Course, Section, Dorm
 import courseevaluations.managers
@@ -158,8 +164,63 @@ class MultipleChoiceQuestionAnswer(models.Model):
     evaluable = models.ForeignKey(Evaluable)
     answer = models.ForeignKey(MultipleChoiceQuestionOption)
     
-    
 class FreeformQuestionAnswer(models.Model):
     evaluable = models.ForeignKey(Evaluable)
     question = models.ForeignKey(FreeformQuestion)
     answer = models.TextField()
+
+class StudentEmailTemplate(models.Model):
+    description = models.CharField(max_length=50)
+    
+    subject = models.CharField(max_length=254)
+    body = models.TextField()
+    
+    from_name = models.CharField(max_length=254)
+    from_address = models.EmailField(max_length=254)
+    
+    def get_template_vars(self, student):
+        try:
+            return self._template_vars
+        except AttributeError:
+            pass
+        
+        evaluation_sets = EvaluationSet.objects.open()
+        
+        complete_evaluations = Evaluable.objects.filter(evaluation_set__in=evaluation_sets, student=student, complete=True)
+        incomplete_evaluations = Evaluable.objects.filter(evaluation_set__in=evaluation_sets, student=student, complete=False)
+        evaluations = Evaluable.objects.filter(evaluation_set__in=evaluation_sets, student=student)
+        evaluation_landing_page = "https://apps.rectoryschool.org{url:}?auth_key={auth_key:}".format(url=reverse('courseevaluations_student_landing'), auth_key=student.auth_key)
+        
+        template_vars = {
+            'student': student,
+            'complete_evaluations': complete_evaluations,
+            'incomplete_evaluations': incomplete_evaluations,
+            'evaluations': evaluations,
+            'evaluation_landing': evaluation_landing_page
+        }
+        
+        self._template_vars = template_vars
+        
+        return template_vars
+    
+    def render_body(self, student):
+        template = Template(self.template)
+        template_vars = self.get_template_vars(student)
+        
+        return template.render(Context(template_vars))
+    
+    def render_subject(self, student):
+        template = Template(self.subject)
+        template_vars = self.get_template_vars(student)
+    
+    def get_message(self, student):
+        m = EmailMessage()
+        m.subject = self.render_subject(student)
+        m.body = self.render_body(student)
+        m.from_email = email.utils.formataddr(self.from_name, self.from_address)
+        m.to = student.email
+        
+        return m
+            
+    def __str__(self):
+        return self.description

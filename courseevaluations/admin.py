@@ -4,7 +4,7 @@ from django.contrib.admin.util import flatten_fieldsets
 
 from adminsortable.admin import SortableAdmin, NonSortableParentAdmin, SortableStackedInline
 
-from courseevaluations.models import QuestionSet, FreeformQuestion, MultipleChoiceQuestion, MultipleChoiceQuestionOption, EvaluationSet, DormParentEvaluation, CourseEvaluation, IIPEvaluation, MultipleChoiceQuestionAnswer, FreeformQuestionAnswer
+from courseevaluations.models import QuestionSet, FreeformQuestion, MultipleChoiceQuestion, MultipleChoiceQuestionOption, EvaluationSet, DormParentEvaluation, CourseEvaluation, IIPEvaluation, MultipleChoiceQuestionAnswer, FreeformQuestionAnswer, StudentEmailTemplate
 from academics.models import Student
 
 class ReadOnlyAdmin(admin.ModelAdmin):
@@ -110,3 +110,4 @@ admin.site.register(EvaluationSet)
 admin.site.register(CourseEvaluation, CourseEvaluationAdmin)
 admin.site.register(IIPEvaluation, IIPEvaluationAdmin)
 admin.site.register(DormParentEvaluation, DormParentEvaluationAdmin)
+admin.site.register(StudentEmailTemplate)
