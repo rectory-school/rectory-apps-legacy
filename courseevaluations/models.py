@@ -62,6 +62,12 @@ class EvaluationSet(models.Model):
     
     objects = courseevaluations.managers.EvaluationSetManager()
     
+    class Meta:
+        permissions = (
+        ("can_view_status_reports", "Can view status reports"),
+        ("can_view_student_links", "Can view student links"),
+        )
+    
     def __str__(self):
         return self.name
     

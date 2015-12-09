@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Evaluation Reports for {{evaluation_set.name}}</title>
+</head>
+
+<body>
+  <h1>Overview</h1>
+  <ul>
+    <li>Total evaluations: {{ evaluables.count}}
+    <li>Complete evaluations: {{ evaluables_complete.count }} ({{ percent_completed | floatformat:2 }}%)</li>
+    <li>Incomplete evaluations: {{ evaluables_incomplete.count }}</li>
+  </ul>
+  
+  <h1>Reports</h1>
+  <ul>
+    <li><a href="{% url "courseevaluations_reports_by_student" id=evaluation_set.id show_evaluables=False %}">Summary by student</a></li>
+    <li><a href="{% url "courseevaluations_reports_by_student" id=evaluation_set.id show_evaluables=True %}">Detail by student</a></li>
+    <li>Details by section</li>
+  </ul>
+</body>
+</html>

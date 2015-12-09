@@ -1,0 +1,7 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls %}
+
+{% block object-tools-items %}
+    <li><a href="{% url 'courseevaluations_reports_index' id=object_id %}" target="_blank" class="historylink">Dashboard</a></li>
+    {{ block.super }}
+{% endblock %}

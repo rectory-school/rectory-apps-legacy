@@ -1,0 +1,45 @@
+{% load staticfiles %}<!DOCTYPE html>
+<html>
+<head>
+<title>Student Summary for {{evaluation_set.name}}</title>
+
+<link rel="stylesheet" type="text/css" href="{% static "css/reports.css" %}"> 
+
+</head>
+
+<body>
+  {% if perms.courseevaluations.can_view_student_links %}
+    {% if not show_links %}
+      <a href="{{request.path}}?show_links=true">Show Links</a>
+    {% else %}
+      <a href="{{request.path}}?show_links=false">Hide Links</a>
+    {% endif %}
+  {% endif %}
+  
+  {% if incomplete %}
+    <h1>Incomplete evaluations</h1>
+    <ul>
+      {% for student in incomplete %}
+        <li><strong>{% if show_links %}<a href="{% url "courseevaluations_student_landing" %}?auth_key={{ student.auth_key }}">{{ student }}</a>{% else %}{{ student }}{% endif %}</strong>: {{ student.complete_count }} of {{ student.total_count }} evaluations completed</li>
+
+        {% if show_evaluables %}
+          <ul class="detail" id="detail_{{student.id}}">
+            {% for evaluable in student.evaluable_set.all %}
+              <li {% if evaluable.complete %} class="completed_item"{% endif %}>{{ evaluable.student_display }}: {% if evaluable.complete %}Complete{% else %}Incomplete{%endif%}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endfor %}      
+    </ul>
+  {% endif %}
+  
+  {% if complete %}
+    <h1>Complete evaluations</h1>
+    <ul>
+      {% for student in complete %}
+        <li>{{ student }}: {{ student.complete_count }} of {{ student.total_count }} evaluations completed</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</body>
+</html>
