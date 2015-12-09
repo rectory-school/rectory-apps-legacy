@@ -71,6 +71,7 @@ INSTALLED_APPS = (
     'courseevaluations',
     'polymorphic',
     'adminsortable',
+    'django_rq',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -108,3 +109,12 @@ WSGI_APPLICATION = 'rectoryapps.wsgi.application'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
+
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        'DEFAULT_TIMEOUT': 360,
+    },
+}

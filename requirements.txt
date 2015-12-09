@@ -1,11 +1,13 @@
 appnope==0.1.0
 boto==2.38.0
+click==6.2
 dateparser==0.3.1
 decorator==4.0.4
 dj-database-url==0.3.0
 Django==1.8.7
 django-admin-sortable==2.0.3
 django-polymorphic==0.7.2
+django-rq==0.8.0
 django-ses-backend==0.1.1
 et-xmlfile==1.0.1
 gnureadline==6.3.3
@@ -22,7 +24,9 @@ psycopg2==2.6.1
 ptyprocess==0.5
 python-dateutil==2.4.2
 PyYAML==3.11
+redis==2.10.5
 reportlab==3.2.0
+rq==0.5.6
 simplegeneric==0.8.1
 six==1.10.0
 traitlets==4.0.0

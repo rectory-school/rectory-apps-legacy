@@ -9,8 +9,11 @@ from django.http import HttpResponse
 
 from academics.models import Student, Section
 from courseevaluations.models import EvaluationSet, Evaluable, CourseEvaluation, IIPEvaluation, DormParentEvaluation, StudentEmailTemplate
+from courseevaluations.lib.async import send_student_email_from_template
 
 from django.contrib.auth.decorators import permission_required
+
+import django_rq
 
 import courseevaluations.lib.reporting
 
@@ -99,8 +102,6 @@ def send_student_email(request):
     template_id = request.POST["student_email_template"]
     operation = request.POST["send_type"]
     
-    print(operation)
-    
     template = StudentEmailTemplate.objects.get(pk=template_id)
     
     evaluation_sets = EvaluationSet.objects.open()
@@ -111,11 +112,7 @@ def send_student_email(request):
         evaluable = Evaluable.objects.filter(evaluation_set__in=evaluation_sets).order_by("?").first()
         student = evaluable.student
         
-        msg = template.get_message(student)
-        msg.to = [request.user.email]
-        to_students.append(student)
-        
-        msg.send()
+        django_rq.enqueue(send_student_email_from_template, template.id, student.id, override_email=request.user.email)
         
         return HttpResponse("Your sample is on the way", content_type="text/plain")
         
@@ -124,12 +121,7 @@ def send_student_email(request):
         students = Student.objects.filter(evaluable__in=evaluables).distinct()
         
         for student in students:
-            msg = template.get_message(student)
-            to_students.append(student)
-            
-            msg.to = [request.user.email]
-            
-            msg.send()
+            django_rq.enqueue(send_student_email_from_template, template.id, student.id, override_email=request.user.email)
             
         return HttpResponse("All {count:} student e-mails have been generated and are being redirected to you.".format(count=len(to_students)), content_type="text/plain")
             
@@ -138,9 +130,6 @@ def send_student_email(request):
         students = Student.objects.filter(evaluable__in=evaluables).distinct()
         
         for student in students:
-            msg = template.get_message(student)
-            to_students.append(student)
-            
-            msg.send()
+            django_rq.enqueue(send_student_email_from_template, template.id, student.id)
             
         return HttpResponse("All {count:} student e-mails have been generated and are on their way.".format(count=len(to_students)), content_type="text/plain")
