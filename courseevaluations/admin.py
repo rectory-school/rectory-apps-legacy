@@ -4,7 +4,8 @@ from django.contrib.admin.util import flatten_fieldsets
 
 from adminsortable.admin import SortableAdmin, NonSortableParentAdmin, SortableStackedInline
 
-from courseevaluations.models import QuestionSet, FreeformQuestion, MultipleChoiceQuestion, MultipleChoiceQuestionOption, EvaluationSet, DormParentEvaluation, CourseEvaluation, IIPEvaluation
+from courseevaluations.models import QuestionSet, FreeformQuestion, MultipleChoiceQuestion, MultipleChoiceQuestionOption, EvaluationSet, DormParentEvaluation, CourseEvaluation, IIPEvaluation, MultipleChoiceQuestionAnswer, FreeformQuestionAnswer
+from academics.models import Student
 
 class ReadOnlyAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
@@ -60,8 +61,40 @@ class MultipleChoiceQuestionAdmin(SortableAdmin):
 class QuestionSetAdmin(NonSortableParentAdmin):
     inlines = [MultipleChoiceQuestionInline]
 
-class CourseEvaluationAdmin(ReadOnlyAdmin):
-    list_filter = ['evaluation_set__name', ('student', admin.RelatedOnlyFieldListFilter)]
+class CourseEvaluationAdmin(admin.ModelAdmin):
+    search_fields = ['student__first_name', 'student__last_name', 'student__email']
+    list_display = ['__str__', 'complete']
+    
+    class EvaluationSetListFilter(admin.SimpleListFilter):
+        title = 'evaluation set'
+        parameter_name = 'evaluation_set_id'
+    
+        def lookups(self, request, model_admin):
+            return [(es.id, es.name) for es in EvaluationSet.objects.all()]
+        
+        def queryset(self, request, queryset):
+            if self.value():
+                return queryset.filter(evaluation_set__id=self.value())
+            
+            return queryset
+    
+    class StudentListFilter(admin.SimpleListFilter):
+        title = 'student'
+        parameter_name = 'student_id'
+        
+        def lookups(self, request, model_admin):
+            current_evaluables = model_admin.get_queryset(request)
+            students = Student.objects.filter(evaluable__in=current_evaluables).distinct()
+        
+            return [(student.id, student.name) for student in students]
+        
+        def queryset(self, request, queryset):
+            if self.value():
+                return queryset.filter(student__id=self.value())
+                
+            return queryset
+    
+    list_filter = [EvaluationSetListFilter, 'complete', StudentListFilter]
 
 class IIPEvaluationAdmin(ReadOnlyAdmin):
     list_filter = ['evaluation_set__name', ('student', admin.RelatedOnlyFieldListFilter)]
