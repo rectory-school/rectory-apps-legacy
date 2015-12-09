@@ -1,18 +1,6 @@
-{% load staticfiles %}<!DOCTYPE html>
-<html>
-<head>
-<title>Section Information for {{evaluation_set.name}}</title>
+{% extends 'courseevaluations/reports/report_base.html' %}
 
-<link rel="stylesheet" type="text/css" href="{% static "css/reports.css" %}"> 
-
-</head>
-
-<body>
-  <h1 class="noprint">Links</h1>
-  <ul class="noprint">
-    <li><a href="{% url 'courseevaluations_reports_status_index' id=evaluation_set.id %}">Reports Home</a></li>
-  </ul>
-  
+{% block content %}  
   <h1>Incomplete evaluations by section</h1>
   
   {% for teacher, sections in report_data %}
@@ -31,6 +19,5 @@
       {% endfor %}
     </ul>
   {% endfor %}
-  
-</body>
-</html>
+
+{% endblock %}

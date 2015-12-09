@@ -1,27 +1,18 @@
-{% load staticfiles %}<!DOCTYPE html>
-<html>
-<head>
-<title>Student Summary for {{evaluation_set.name}}</title>
+{% extends 'courseevaluations/reports/report_base.html' %}
 
-<link rel="stylesheet" type="text/css" href="{% static "css/reports.css" %}"> 
+{% block title %}Student Summary for {{evaluation_set.name}}{% endblock %}
 
-</head>
-
-<body>
-  
-  <h1 class="noprint">Links</h1>
-  <ul class="noprint">
-    <li><a href="{% url 'courseevaluations_reports_status_index' id=evaluation_set.id %}">Reports Home</a></li>
-    
-    {% if perms.courseevaluations.can_view_student_links %}
-      {% if not show_links %}
-        <li><a href="{{request.path}}?show_links=true">Show Links</a></li>
-      {% else %}
-        <li><a href="{{request.path}}?show_links=false">Hide Links</a></li>
-      {% endif %}
+{% block links %}
+  {% if perms.courseevaluations.can_view_student_links %}
+    {% if not show_links %}
+      <li><a href="{{request.path}}?show_links=true">Show student landing links</a></li>
+    {% else %}
+      <li><a href="{{request.path}}?show_links=false">Hide student landing links</a></li>
     {% endif %}
-  </ul>
+  {% endif %}
+{% endblock %}
   
+{% block content %}
   {% if incomplete %}
     <h1>Incomplete evaluations</h1>
     <ul>
@@ -55,5 +46,4 @@
       {% endfor %}      
     </ul>
   {% endif %}
-</body>
-</html>
+{% endblock %}
