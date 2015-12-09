@@ -38,9 +38,11 @@ class Command(BaseCommand):
             
             if kwargs["override_to"]:
                 mail_to = [kwargs["override_to"]]
-            else:
+            elif student.email:
                 mail_to = [student.email]
-            
+            else:
+                mail_to = ['adam.peacock@rectoryschool.org']
+
             msg = EmailMessage("Course Evaluations", message, "Mrs. Hart <lhart@rectoryschool.org>", mail_to)
             msg.content_subtype = "html"
             msg.send()
@@ -48,10 +50,10 @@ class Command(BaseCommand):
 
 TEMPLATE = """<p>To {first:},</p>
  
-<p>Teachers continue to strive to learn and to grow.  The December, we are asking all students to complete an evaluation for all courses and for boarding students, a dorm evaluation.  The answers will be collected online, and faculty will not see your name associated with individual responses.</p>
+<p>Teachers continue to strive to learn and to grow.  This December, we are asking all students to complete an evaluation for all courses and for boarding students, a dorm evaluation.  The answers will be collected online, and faculty will not see your name associated with individual responses.</p>
  
 <p>There is an on-line evaluation for each course and dorm. <br />
-<a href="{link:}">Click here for your dorm evaluations</a></p>
+<a href="{link:}">Click here for your evaluations</a></p>
  
 <p>The link will take you to your Course/Dorm Evaluation page.  Please select one evaluation, complete the evaluation and click “Record My Answers.”  Please work your way through each evaluation until all course/dorm evaluations have been moved to your completed list.</p>
  
