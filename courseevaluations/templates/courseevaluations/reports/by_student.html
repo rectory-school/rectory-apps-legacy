@@ -8,8 +8,11 @@
 </head>
 
 <body>
-  <h1 class="noprint" >Links</h1>
+  
+  <h1 class="noprint">Links</h1>
   <ul class="noprint">
+    <li><a href="{% url 'courseevaluations_reports_status_index' id=evaluation_set.id %}">Reports Home</a></li>
+    
     {% if perms.courseevaluations.can_view_student_links %}
       {% if not show_links %}
         <li><a href="{{request.path}}?show_links=true">Show Links</a></li>
@@ -17,8 +20,6 @@
         <li><a href="{{request.path}}?show_links=false">Hide Links</a></li>
       {% endif %}
     {% endif %}
-  
-    <li><a href="{% url 'courseevaluations_reports_status_index' id=evaluation_set.id %}">Reports Home</a></li>
   </ul>
   
   {% if incomplete %}

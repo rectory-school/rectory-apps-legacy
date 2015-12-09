@@ -2,6 +2,10 @@ li.completed_item {
   color: gray;
 }
 
+ul.inner_list {
+  margin-bottom: 10px;
+}
+
 @media print {    
     .noprint, .noprint * {
         display: none !important;
