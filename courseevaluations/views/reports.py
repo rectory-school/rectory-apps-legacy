@@ -9,7 +9,7 @@ from django.http import HttpResponse
 
 from academics.models import Student, Section
 from courseevaluations.models import EvaluationSet, Evaluable, CourseEvaluation, IIPEvaluation, DormParentEvaluation, StudentEmailTemplate
-from courseevaluations.lib.async import send_student_email_from_template
+from courseevaluations.lib.async import send_student_email_from_template, send_confirmation_email
 
 from django.contrib.auth.decorators import permission_required
 
@@ -107,6 +107,7 @@ def send_student_email(request):
     evaluation_sets = EvaluationSet.objects.open()
     
     to_students = []
+    confirmation_addresses = []
     
     if operation == "sample":
         evaluable = Evaluable.objects.filter(evaluation_set__in=evaluation_sets).order_by("?").first()
@@ -129,7 +130,13 @@ def send_student_email(request):
         evaluables = Evaluable.objects.filter(evaluation_set__in=evaluation_sets)
         students = Student.objects.filter(evaluable__in=evaluables).distinct()
         
+        confirmation_addresses = []
+        
         for student in students:
+            to_students.append(student)
             django_rq.enqueue(send_student_email_from_template, template.id, student.id)
-            
+            confirmation_addresses.append(student.email)
+        
+        django_rq.enqueue(send_confirmation_email, confirmation_addresses, [request.user.email])
+        
         return HttpResponse("All {count:} student e-mails have been generated and are on their way.".format(count=len(to_students)), content_type="text/plain")
