@@ -6,8 +6,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Case, When
 
-from academics.models import Student
-from courseevaluations.models import EvaluationSet, Evaluable, MultipleChoiceQuestion, MultipleChoiceQuestionOption, MultipleChoiceQuestionAnswer, FreeformQuestionAnswer, FreeformQuestion
+from academics.models import Student, Section
+from courseevaluations.models import EvaluationSet, Evaluable, CourseEvaluation
 
 from django.contrib.auth.decorators import permission_required
 
@@ -77,3 +77,40 @@ def by_student(request, id, show_evaluables):
     }
     
     return render(request, "courseevaluations/reports/by_student.html", template_vars)
+
+@permission_required('courseevaluations.can_view_status_reports')
+def by_section(request, id):
+    evaluation_set = get_object_or_404(EvaluationSet, pk=id)
+    
+    course_evaluables = CourseEvaluation.objects.filter(evaluation_set=evaluation_set, complete=False).order_by('student__last_name', 'student__first_name')
+    
+    data = {}
+    
+    for evaluable in course_evaluables:
+        section = evaluable.section
+        course = section.course
+        teacher = section.teacher
+        student = evaluable.student
+        
+        if not evaluable.section.teacher in data:
+            data[teacher] = {}
+            
+        if not section in data[teacher]:
+            data[teacher][section] = []
+        
+        data[teacher][section].append(student)
+    
+    template_data = []
+    for teacher in sorted(data.keys(), key=lambda t: (t.last_name, t.first_name)):
+        section_row = []
+        template_data.append((teacher, section_row))
+        
+        for section in sorted(data[teacher].keys(), key=lambda sec: (sec.course.course_name, sec.csn)):
+            student_row = sorted(data[teacher][section], key=lambda stu: (stu.last_name, stu.first_name))
+            section_row.append((section, student_row))
+    
+    print(template_data)    
+    
+    template_vars = {'report_data': template_data, 'evaluation_set': evaluation_set}
+        
+    return render(request, "courseevaluations/reports/by_section.html", template_vars)

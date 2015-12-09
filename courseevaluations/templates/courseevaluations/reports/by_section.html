@@ -1,0 +1,36 @@
+{% load staticfiles %}<!DOCTYPE html>
+<html>
+<head>
+<title>Section Information for {{evaluation_set.name}}</title>
+
+<link rel="stylesheet" type="text/css" href="{% static "css/reports.css" %}"> 
+
+</head>
+
+<body>
+  <h1 class="noprint">Links</h1>
+  <ul class="noprint">
+    <li><a href="{% url 'courseevaluations_reports_status_index' id=evaluation_set.id %}">Reports Home</a></li>
+  </ul>
+  
+  <h1>Incomplete evaluations by section</h1>
+  
+  {% for teacher, sections in report_data %}
+    <h2>{{teacher}}</h2>
+    
+    <ul>
+      {% for section, students in sections %}
+        <li>
+          {{ section.course.course_name }}: {{ section.csn }}
+          <ul class="inner_list">
+            {% for student in students %}
+              <li>{{ student.name }}</li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+  
+</body>
+</html>

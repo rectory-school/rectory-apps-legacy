@@ -7,4 +7,7 @@ urlpatterns = [
     url(r'^reports/(?P<id>[0-9]+)/$', 'courseevaluations.views.reports.index', name='courseevaluations_reports_status_index'),
     url(r'^reports/(?P<id>[0-9]+)/summary_by_student/$', 'courseevaluations.views.reports.by_student', name='courseevaluations_reports_by_student', kwargs={'show_evaluables': False}),
     url(r'^reports/(?P<id>[0-9]+)/detail_by_student/$', 'courseevaluations.views.reports.by_student', name='courseevaluations_reports_by_student', kwargs={'show_evaluables': True}),
+    
+    url(r'^reports/(?P<id>[0-9]+)/by_section/$', 'courseevaluations.views.reports.by_section', name='courseevaluations_reports_by_section'),
+    
 ]
