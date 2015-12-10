@@ -1,15 +1,20 @@
 #!/usr/bin/python
 
 from datetime import date
+from random import choice
+from io import StringIO
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Case, When
 from django.http import HttpResponse
+from django.conf import settings
+from django.core.mail import EmailMessage
 
-from academics.models import Student, Section
+from academics.models import Student, Section, Course, AcademicYear, Enrollment, StudentRegistration
 from courseevaluations.models import EvaluationSet, Evaluable, CourseEvaluation, IIPEvaluation, DormParentEvaluation, StudentEmailTemplate
-from courseevaluations.lib.async import send_student_email_from_template, send_confirmation_email
+from courseevaluations.lib.async import send_student_email_from_template, send_confirmation_email, send_msg
+from courseevaluations.lib.reporting import get_incomplete_evaluables_by_teacher
 
 from django.contrib.auth.decorators import permission_required
 
@@ -141,3 +146,186 @@ def send_student_email(request):
         django_rq.enqueue(send_confirmation_email, confirmation_addresses, [request.user.email])
         
         return HttpResponse("All {count:} student e-mails have been generated and are on their way.".format(count=len(to_students)), content_type="text/plain")
+
+@permission_required('courseevaluations.can_send_emails')
+def send_teacher_per_section_email(request):
+    evaluation_set_id = request.POST["evaluation_set_id"]
+    operation = request.POST['send_type']
+    
+    evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
+    
+    data = get_incomplete_evaluables_by_teacher(evaluation_set)
+    confirmation_addresses = []
+    
+    def generate_message(teacher):
+        body = StringIO()
+        
+        body.write("Incomplete evaluations for {}\n\n".format(teacher.name))
+        
+        msg = EmailMessage()
+        msg.to = [teacher.email]
+        
+        if 'course' in data[teacher]:
+            for section in sorted(data[teacher]['course'].keys(), key=lambda sec: (sec.course.course_name, sec.csn)):
+                body.write("{course:}: {csn:}\n".format(course=section.course.course_name, csn=section.csn))
+                
+                for student in sorted(data[teacher]['course'][section], key=lambda stu: (stu.last_name, stu.first_name)):
+                    body.write("\t {first:} {last:}\n".format(first=student.first_name, last=student.last_name))
+                
+                body.write("\n")
+        
+        if 'iip' in data[teacher]:
+            body.write("IIP\n")
+            
+            for student in sorted(data[teacher]['iip'], key=lambda stu: (stu.last_name, stu.first_name)):
+                body.write("\t {first:} {last:}\n".format(first=student.first_name, last=student.last_name))
+            
+            body.write("\n")
+        
+        if 'dorm' in data[teacher]:
+            for dorm in sorted(data[teacher]['dorm'].keys(), key=lambda d: (str(d))):
+                body.write(str(dorm) + "\n")
+                
+                for student in sorted(data[teacher]['dorm'][dorm], key=lambda stu: (stu.last_name, stu.first_name)):
+                    body.write("\t {first:} {last:}\n".format(first=student.first_name, last=student.last_name))
+                
+                body.write("\n")
+        
+        msg.subject = "Students that have not completed their evaluations for you"
+        msg.body = body.getvalue()
+        msg.from_email = "technology@rectoryschool.org"
+        
+        return msg
+    
+    if operation == 'sample':
+        teacher = choice(list(data.keys()))
+        msg = generate_message(teacher)
+        msg.to = [request.user.email]
+        
+        django_rq.enqueue(send_msg, msg)
+        
+        return HttpResponse("Your sample is on the way", content_type="text/plain")
+    
+    elif operation == 'redirect':
+        for teacher in data:
+            msg = generate_message(teacher)
+            msg.to = [request.user.email]
+        
+            django_rq.enqueue(send_msg, msg)
+        
+        return HttpResponse("All {count:} teacher e-mails have been generated and are being redirected to you.".format(count=len(data)), content_type="text/plain")
+    
+    elif operation == 'send':
+        for teacher in data:
+            msg = generate_message(teacher)
+            confirmation_addresses.extend(msg.to)
+            
+            django_rq.enqueue(send_msg, msg)
+        
+        django_rq.enqueue(send_confirmation_email, confirmation_addresses, [request.user.email])
+        
+        return HttpResponse("All {count:} teacher e-mails have been queued for delivery.".format(count=len(data)), content_type="text/plain")
+    
+@permission_required('courseevaluations.can_send_emails')
+def send_advisor_tutor_status(request):
+    try:
+        iip_course_numbers = settings.IIP_COURSE_IDS
+    except AttributeError:
+        iip_course_numbers = []
+    
+    evaluation_set_id = request.POST['evaluation_set_id']
+    operation = request.POST['send_type']
+    
+    evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
+    iip_courses = Course.objects.filter(number__in=iip_course_numbers)
+    academic_year = AcademicYear.objects.current()
+    
+    evaluables = Evaluable.objects.filter(evaluation_set=evaluation_set).prefetch_related('student')
+    students = {}
+    
+    confirmation_addresses = []
+    
+    for evaluable in evaluables:
+        if evaluable.student not in students:
+            students[evaluable.student] = {'complete': [], 'incomplete': []}
+        
+        if evaluable.complete:
+            students[evaluable.student]['complete'].append(evaluable)
+        else:
+            students[evaluable.student]['incomplete'].append(evaluable)
+    
+    teacher_student_mapping = {}
+    
+    for student in students:
+        enrollment = Enrollment.objects.get(student=student, academic_year=academic_year)
+        advisor = enrollment.advisor
+        if not advisor in teacher_student_mapping:
+            teacher_student_mapping[advisor] = {}
+        
+        teacher_student_mapping[advisor][student] = students[student]
+        
+        iip_registrations = StudentRegistration.objects.filter(section__course__in=iip_courses, student=student, section__academic_year=academic_year)
+        for registration in iip_registrations:
+            tutor = registration.section.teacher
+            if not tutor in teacher_student_mapping:
+                teacher_student_mapping[tutor] = {}
+            
+            teacher_student_mapping[tutor][student] = students[student]
+    
+    def generate_message(teacher):
+        any_incomplete = False
+        status_lines = []
+        
+        for student in sorted(teacher_student_mapping[teacher], key=lambda s: (s.last_name, s.first_name)):
+            complete_count = len(teacher_student_mapping[teacher][student]['complete'])
+            incomplete_count = len(teacher_student_mapping[teacher][student]['incomplete'])
+            total_count = complete_count + incomplete_count
+            
+            if teacher_student_mapping[teacher][student]['incomplete']:    
+                any_incomplete = True
+                status_lines.append("{student:}: {complete_count:}/{total_count:} complete".format(student=student.name, complete_count=complete_count, incomplete_count=incomplete_count, total_count=total_count))
+            else:
+                status_lines.append("{student:}: All complete".format(student=student.name))
+        
+        msg = EmailMessage()
+        msg.to = [teacher.email]
+        
+        if any_incomplete:
+            msg.subject = "Course evaluation status: Incomplete student list"
+            msg.body = "{teacher:},\n\nSome of your tuttees or advisees have incomplete evaluations. The list is below:\n\n{status:}".format(status="\n".join(status_lines), teacher=teacher.first_name)
+        else:
+            msg.subject = "Course evaluation status: All students completed"
+            msg.body = "{teacher:},\n\nAll of your tutteese and advisees have completed their evaluations. The list is below:\n\n{status:}".format(status="\n".join(status_lines), teacher=teacher.first_name)
+            
+        msg.from_email = "technology@rectoryschool.org"
+        
+        return msg
+    
+    if operation == 'sample':
+        teacher = choice(list(teacher_student_mapping.keys()))
+        msg = generate_message(teacher)
+        msg.to = [request.user.email]
+        
+        django_rq.enqueue(send_msg, msg)
+        
+        return HttpResponse("Your sample is on the way", content_type="text/plain")
+    
+    elif operation == 'redirect':
+        for teacher in teacher_student_mapping:
+            msg = generate_message(teacher)
+            msg.to = [request.user.email]
+        
+            django_rq.enqueue(send_msg, msg)
+        
+        return HttpResponse("All {count:} advisor/tutor e-mails have been generated and are being redirected to you.".format(count=len(teacher_student_mapping)), content_type="text/plain")
+    
+    elif operation == 'send':
+        for teacher in teacher_student_mapping:
+            msg = generate_message(teacher)
+            confirmation_addresses.extend(msg.to)
+            
+            django_rq.enqueue(send_msg, msg)
+        
+        django_rq.enqueue(send_confirmation_email, confirmation_addresses, [request.user.email])
+        
+        return HttpResponse("All {count:} advisor/tutor e-mails have been queued for delivery.".format(count=len(teacher_student_mapping)), content_type="text/plain")

@@ -118,3 +118,5 @@ RQ_QUEUES = {
         'DEFAULT_TIMEOUT': 360,
     },
 }
+
+IIP_COURSE_IDS = ['148']

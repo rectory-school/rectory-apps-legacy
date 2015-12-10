@@ -11,4 +11,6 @@ urlpatterns = [
     url(r'^reports/(?P<id>[0-9]+)/by_section/$', 'courseevaluations.views.reports.by_section', name='courseevaluations_reports_by_section'),
     
     url(r'^email/send/student/$', 'courseevaluations.views.reports.send_student_email', name='courseevaluations_send_student_email'),
+    url(r'^email/send/advisor_tutor_status/$', 'courseevaluations.views.reports.send_advisor_tutor_status', name='courseevaluations_send_advisor_tutor_status'),
+    url(r'^email/send/section_status/$', 'courseevaluations.views.reports.send_teacher_per_section_email', name='courseevaluatons_send_teacher_per_section_email'),
 ]

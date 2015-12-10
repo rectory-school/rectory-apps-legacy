@@ -8,14 +8,25 @@
 
 <script>
 $(document).ready(function() {
-  $("#form_send_student_email").submit(function(e) {
-    $("#btn_send_student_email").prop('disabled', true);
-    $.post("{% url "courseevaluations_send_student_email" %}", $("#form_send_student_email").serialize(), function(data, textStatus, jqXHR) {
+  $("form").submit(function(e) {
+    var form = $(e.currentTarget);
+    
+    var submitButtons = form.find("input:submit")
+    submitButtons.prop('disabled', true);
+    
+    var request = $.post(form.attr('action'), form.serialize())
+    request.success(function(data) {
       alert(data);
-      $("#btn_send_student_email").prop('disabled', false);
+      submitButtons.prop('disabled', false);
     });
+    
+    request.fail(function(data) {
+      alert("Request failed, data logged");
+      console.log(data);
+    });
+    
     e.preventDefault();
-  })
+  });
 });
 </script>
 
@@ -41,7 +52,7 @@ $(document).ready(function() {
     <ul>
       <li>Student e-mails
         <ul>
-          <form method="POST" id="form_send_student_email">
+          <form method="POST" id="form_send_student_email" action="{% url "courseevaluations_send_student_email" %}">
             {% csrf_token %}
             <li>
               <label for="student_email_template">Template</label>:
@@ -66,6 +77,47 @@ $(document).ready(function() {
           </form>
         </ul>
       </li>
+      
+      <li>Advisor/tutor e-mails
+        <ul>
+          <form method="POST" id="form_send_related_teacher_student_email" action="{%url "courseevaluations_send_advisor_tutor_status" %}">
+            <input type="hidden" name="evaluation_set_id" value="{{evaluation_set.id}}">
+            {% csrf_token %}
+            <li>
+              <label for="send_type">Operation</label>: 
+              <select name="send_type">
+                <option value="sample">Send me a sample</option>
+                <option value="redirect">Redirect all e-mails to me</option>
+                <option value="send">Send e-mails to advisors and tutors</option>
+              </select>
+            </li>
+            <li>
+              <input type="submit" value="Send" id="btn_send_related_teacher_student_email" />
+            </li>
+          </form>
+        </ul>
+      </li>
+      
+      <li>Teachers per section e-mail
+        <ul>
+          <form method="POST" id="form_send_teacher_per_section_email" action="{%url "courseevaluatons_send_teacher_per_section_email" %}">
+            <input type="hidden" name="evaluation_set_id" value="{{evaluation_set.id}}">
+            {% csrf_token %}
+            <li>
+              <label for="send_type">Operation</label>: 
+              <select name="send_type">
+                <option value="sample">Send me a sample</option>
+                <option value="redirect">Redirect all e-mails to me</option>
+                <option value="send">Send e-mails to teachers</option>
+              </select>
+            </li>
+            <li>
+              <input type="submit" value="Send" id="btn_send_related_teacher_student_email" />
+            </li>
+          </form>
+        </ul>
+      </li>
+      
     </ul>
   {% endif %}
 </body>
