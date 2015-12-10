@@ -171,6 +171,9 @@ class FreeformQuestionAnswer(models.Model):
     answer = models.TextField()
 
 class StudentEmailTemplate(models.Model):
+    CONTENT_SUBTYPE_CHOICES = (('html', 'HTML'), ('plain', 'Plain Text'))
+    CONTENT_SUBTYPE_LENGTH = max(len(choice[0]) for choice in CONTENT_SUBTYPE_CHOICES)
+
     description = models.CharField(max_length=50)
     
     subject = models.CharField(max_length=254)
@@ -179,6 +182,8 @@ class StudentEmailTemplate(models.Model):
     from_name = models.CharField(max_length=254)
     from_address = models.EmailField(max_length=254)
     
+    content_subtype = models.CharField(max_length=CONTENT_SUBTYPE_LENGTH, choices=CONTENT_SUBTYPE_CHOICES, default="plain")
+
     def get_template_vars(self, student):
         try:
             return self._template_vars
@@ -213,14 +218,17 @@ class StudentEmailTemplate(models.Model):
     def render_subject(self, student):
         template = Template(self.subject)
         template_vars = self.get_template_vars(student)
-    
+        
+        return template.render(Context(template_vars))
+ 
     def get_message(self, student):
         m = EmailMessage()
         m.subject = self.render_subject(student)
         m.body = self.render_body(student)
         m.from_email = email.utils.formataddr((self.from_name, self.from_address))
         m.to = [student.email]
-        
+        m.content_subtype = self.content_subtype
+
         return m
             
     def __str__(self):
