@@ -1,4 +1,5 @@
 {% extends 'courseevaluations/reports/report_base.html' %}
+{% load admin_reverse %}
 
 {% block title %}Student Summary for {{evaluation_set.name}}{% endblock %}
 
@@ -22,7 +23,11 @@
         {% if show_evaluables %}
           <ul class="detail" id="detail_{{student.id}}">
             {% for evaluable in student.evaluable_set.all %}
-              <li {% if evaluable.complete %} class="completed_item"{% endif %}>{{ evaluable.student_display }}: {% if evaluable.complete %}Complete{% else %}Incomplete{%endif%}</li>
+              <li {% if evaluable.complete %} class="completed_item"{% endif %}>{{ evaluable.student_display }}: {% if evaluable.complete %}Complete{% else %}Incomplete{%endif%}
+              {% if show_links %}
+                - <a href="{% admin_url_for evaluable %}">Admin link</a>
+              {% endif %}
+            </li>
             {% endfor %}
           </ul>
         {% endif %}

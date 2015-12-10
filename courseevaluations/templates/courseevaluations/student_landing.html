@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% load admin_reverse %}<!DOCTYPE html>
 <html>
 <head>
 <title>Rectory Evaluations</title>
@@ -13,7 +13,13 @@
 <h2>{{ evaluable_type.grouper }}</h2>
 <ul>
   {% for evaluable_item in evaluable_type.list %}
-   <li><a href="{% url 'courseevaluations_student_survey' %}?auth_key={{student.auth_key}}&amp;evaluable={{evaluable_item.id}}">{{ evaluable_item.student_display }}</a></li>
+   <li><a href="{% url 'courseevaluations_student_survey' %}?auth_key={{student.auth_key}}&amp;evaluable={{evaluable_item.id}}">{{ evaluable_item.student_display }}</a>
+   
+   {% if perms.courseevaluations.change_evaluable %}
+     (<a href="{% admin_url_for evaluable_item %}">Admin link</a>)
+   {% endif %}
+   
+   </li>
   {% endfor %}
 </ul>
 
@@ -23,7 +29,13 @@
 <h2>Completed Evaluations</h2>
 <ul>
   {% for evaluable in completed_evaluations %}
-    <li>{{ evaluable.student_display}}</li>
+    <li>{{ evaluable.student_display}}
+
+    {% if perms.courseevaluations.change_evaluable %}
+      (<a href="{% admin_url_for evaluable %}">Admin link</a>)
+    {% endif %}
+    
+    </li>
   {% endfor %}
 </ul>
 {% endif %}
