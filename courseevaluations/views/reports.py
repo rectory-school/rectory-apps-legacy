@@ -295,7 +295,7 @@ def send_advisor_tutor_status(request):
             msg.body = "{teacher:},\n\nSome of your tuttees or advisees have incomplete evaluations. The list is below:\n\n{status:}".format(status="\n".join(status_lines), teacher=teacher.first_name)
         else:
             msg.subject = "Course evaluation status: All students completed"
-            msg.body = "{teacher:},\n\nAll of your tutteese and advisees have completed their evaluations. The list is below:\n\n{status:}".format(status="\n".join(status_lines), teacher=teacher.first_name)
+            msg.body = "Incomplete evaluations for the tutees and advisees of {teacher:}:\n\nAll of your tutteese and advisees have completed their evaluations. The list is below:\n\n{status:}".format(status="\n".join(status_lines), teacher=teacher.name)
             
         msg.from_email = "technology@rectoryschool.org"
         
