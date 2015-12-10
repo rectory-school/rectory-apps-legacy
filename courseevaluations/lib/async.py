@@ -20,3 +20,7 @@ def send_confirmation_email(addresses, to_addresses):
     body = "Your e-mail was sent to the following {count:} people: \n\n{addresses:}".format(count=len(addresses), addresses="\n".join(addresses))
     
     send_mail("Message confirmation", body, "technology@rectoryschool.org", to_addresses)
+
+def send_msg(message):
+    time.sleep(1)
+    message.send()
