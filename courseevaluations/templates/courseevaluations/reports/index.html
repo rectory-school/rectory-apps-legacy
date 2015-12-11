@@ -1,0 +1,18 @@
+{% load staticfiles %}<!DOCTYPE html>
+<html>
+<head>
+<title>Evaluation Report Index</title>
+
+<link rel="stylesheet" type="text/css" href="{% static "css/reports.css" %}">
+</head>
+
+<body>
+  <h1>Evaluation Sets for Reporting</h1>
+  
+  <ul>
+    {% for evaluation_set in evaluation_sets %}
+      <li><a href="{% url "courseevaluations_reports_status_index" id=evaluation_set.evaluation_set.id %}">{{ evaluation_set.evaluation_set }}</a>: {{ evaluation_set.complete_count }}/{{ evaluation_set.total_count }} evaluations complete</li>
+    {% endfor %}
+  </ul>  
+</body>
+</html>

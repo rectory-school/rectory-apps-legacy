@@ -23,6 +23,22 @@ import django_rq
 import courseevaluations.lib.reporting
 
 @permission_required('courseevaluations.can_view_status_reports')
+def index(request):
+    evaluation_sets = EvaluationSet.objects.all()
+    
+    flattened_evaluation_sets = []
+    
+    for evaluation_set in evaluation_sets:
+        flattened_evaluation_sets.append({
+            'evaluation_set': evaluation_set, 
+            'complete_count': evaluation_set.evaluable_set.filter(complete=True).count(), 
+            'incomplete_count': evaluation_set.evaluable_set.filter(complete=False).count(), 
+            'total_count': evaluation_set.evaluable_set.count(), 
+        })
+    
+    return render(request, "courseevaluations/reports/index.html", {'evaluation_sets': flattened_evaluation_sets})
+
+@permission_required('courseevaluations.can_view_status_reports')
 def evaluation_set_index(request, id):
     evaluation_set = get_object_or_404(EvaluationSet, pk=id)
     
