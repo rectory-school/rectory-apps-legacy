@@ -23,7 +23,7 @@ import django_rq
 import courseevaluations.lib.reporting
 
 @permission_required('courseevaluations.can_view_status_reports')
-def index(request, id):
+def evaluation_set_index(request, id):
     evaluation_set = get_object_or_404(EvaluationSet, pk=id)
     
     evaluables = Evaluable.objects.filter(evaluation_set=evaluation_set)
@@ -40,7 +40,7 @@ def index(request, id):
         'student_email_templates': StudentEmailTemplate.objects.all()
     }
     
-    return render(request, "courseevaluations/reports/index.html", template_vars)
+    return render(request, "courseevaluations/reports/evaluation_set_index.html", template_vars)
 
 @permission_required('courseevaluations.can_view_status_reports')
 def by_student(request, id, show_evaluables):
