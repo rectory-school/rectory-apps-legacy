@@ -65,6 +65,7 @@ class MultipleChoiceQuestionOption(SortableMixin):
 class EvaluationSet(models.Model):
     name = models.CharField(max_length=255, unique=True)
     available_until = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
     
     objects = courseevaluations.managers.EvaluationSetManager()
     
@@ -74,6 +75,8 @@ class EvaluationSet(models.Model):
         ("can_view_student_links", "Can view student links"),
         ("can_send_emails", "Can send e-mails"),
         )
+        
+        ordering = ['created_at']
     
     def __str__(self):
         return self.name
