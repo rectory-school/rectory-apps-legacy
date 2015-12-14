@@ -66,6 +66,11 @@ def teacher(request, evaluation_set_id, teacher_id):
     teacher = Teacher.objects.get(pk=teacher_id)
     evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
     
+    if request.GET.get("unmask_comments") == "1" and request.user.has_perm("courseevaluations.can_unmask_comments"):
+        unmask_comments=True
+    else:
+        unmask_comments=False
+    
     evaluables = CourseEvaluation.objects.filter(section__teacher=teacher, evaluation_set=evaluation_set)
     
     response = HttpResponse(content_type='application/pdf')
@@ -76,7 +81,7 @@ def teacher(request, evaluation_set_id, teacher_id):
         evaluation_set=evaluation_set.name
         )
     
-    build_report(response, evaluables, title=title)
+    build_report(response, evaluables, title=title, unmask_comments=unmask_comments)
     
     return response
 
@@ -85,6 +90,11 @@ def teacher_course(request, evaluation_set_id, teacher_id, course_id):
     course = Course.objects.get(pk=course_id)
     teacher = Teacher.objects.get(pk=teacher_id)
     evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
+    
+    if request.GET.get("unmask_comments") == "1" and request.user.has_perm("courseevaluations.can_unmask_comments"):
+        unmask_comments=True
+    else:
+        unmask_comments=False
     
     sections = Section.objects.filter(course=course, teacher=teacher)
     
@@ -99,7 +109,7 @@ def teacher_course(request, evaluation_set_id, teacher_id, course_id):
         evaluation_set=evaluation_set.name
         )
     
-    build_report(response, evaluables, title=title)
+    build_report(response, evaluables, title=title, unmask_comments=unmask_comments)
     
     return response
 
@@ -108,6 +118,11 @@ def section(request, evaluation_set_id, section_id):
     section = Section.objects.get(pk=section_id)
     evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
     
+    if request.GET.get("unmask_comments") == "1" and request.user.has_perm("courseevaluations.can_unmask_comments"):
+        unmask_comments=True
+    else:
+        unmask_comments=False
+        
     evaluables = CourseEvaluation.objects.filter(section=section, evaluation_set=evaluation_set)
     
     response = HttpResponse(content_type='application/pdf')
@@ -119,7 +134,7 @@ def section(request, evaluation_set_id, section_id):
         evaluation_set=evaluation_set.name
         )
     
-    build_report(response, evaluables, title=title)
+    build_report(response, evaluables, title=title, unmask_comments=unmask_comments)
     
     return response
 
@@ -127,6 +142,11 @@ def section(request, evaluation_set_id, section_id):
 def iip(request, evaluation_set_id, teacher_id):
     evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
     teacher = Teacher.objects.get(pk=teacher_id)
+    
+    if request.GET.get("unmask_comments") == "1" and request.user.has_perm("courseevaluations.can_unmask_comments"):
+        unmask_comments=True
+    else:
+        unmask_comments=False
     
     evaluables = IIPEvaluation.objects.filter(evaluation_set=evaluation_set, teacher=teacher)
     
@@ -137,7 +157,7 @@ def iip(request, evaluation_set_id, teacher_id):
         evaluation_set=evaluation_set.name
         )
     
-    build_report(response, evaluables, title=title)
+    build_report(response, evaluables, title=title, unmask_comments=unmask_comments)
     
     return response
 
@@ -188,6 +208,11 @@ def dorm_parent_dorm_parent(request, evaluation_set_id, dorm_id, parent_id):
     dorm = Dorm.objects.get(pk=dorm_id)
     parent = Teacher.objects.get(pk=parent_id)
     
+    if request.GET.get("unmask_comments") == "1" and request.user.has_perm("courseevaluations.can_unmask_comments"):
+        unmask_comments=True
+    else:
+        unmask_comments=False
+    
     evaluables = DormParentEvaluation.objects.filter(evaluation_set=evaluation_set, dorm=dorm, parent=parent)
     
     response = HttpResponse(content_type='application/pdf')
@@ -198,7 +223,7 @@ def dorm_parent_dorm_parent(request, evaluation_set_id, dorm_id, parent_id):
         evaluation_set=evaluation_set.name
         )
     
-    build_report(response, evaluables, title=title)
+    build_report(response, evaluables, title=title, unmask_comments=unmask_comments)
     
     return response
 
@@ -206,6 +231,11 @@ def dorm_parent_dorm_parent(request, evaluation_set_id, dorm_id, parent_id):
 def dorm_parent_dorm(request, evaluation_set_id, dorm_id):
     evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
     dorm = Dorm.objects.get(pk=dorm_id)
+    
+    if request.GET.get("unmask_comments") == "1" and request.user.has_perm("courseevaluations.can_unmask_comments"):
+        unmask_comments=True
+    else:
+        unmask_comments=False
     
     evaluables = DormParentEvaluation.objects.filter(evaluation_set=evaluation_set, dorm=dorm)
     
@@ -216,7 +246,7 @@ def dorm_parent_dorm(request, evaluation_set_id, dorm_id):
         evaluation_set=evaluation_set.name
         )
     
-    build_report(response, evaluables, title=title)
+    build_report(response, evaluables, title=title, unmask_comments=unmask_comments)
     
     return response
 

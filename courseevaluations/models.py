@@ -77,6 +77,7 @@ class EvaluationSet(models.Model):
         ("can_view_student_links", "Can view student links"),
         ("can_send_emails", "Can send e-mails"),
         ("can_create_evaluables", "Can create evaluables"),
+        ("can_unmask_comments", "Can unmask comments"),
         )
         
         ordering = ['created_at']
