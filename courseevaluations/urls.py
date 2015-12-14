@@ -15,17 +15,19 @@ urlpatterns = [
     url(r'^results/(?P<evaluation_set_id>[0-9]+)/$', 'courseevaluations.views.results.index', name='courseevaluations_results_index'),
     
     #Course results
-    url(r'^results/(?P<evaluation_set_id>[0-9]+)/teacher/(?P<teacher_id>[0-9]+)/$', 'courseevaluations.views.results.teacher', name='courseevaluations_course_results'),
-    url(r'^results/(?P<evaluation_set_id>[0-9]+)/teacher/(?P<teacher_id>[0-9]+)/course/(?P<course_id>[0-9]+)/$', 'courseevaluations.views.results.teacher_course', name='courseevaluations_course_results'),
-    url(r'^results/(?P<evaluation_set_id>[0-9]+)/section/(?P<section_id>[0-9]+)/$', 'courseevaluations.views.results.section', name='courseevaluations_course_results'),
+    url(r'^results/(?P<evaluation_set_id>[0-9]+)/course/teacher/(?P<teacher_id>[0-9]+)/$', 'courseevaluations.views.results.teacher', name='courseevaluations_course_results'),
+    url(r'^results/(?P<evaluation_set_id>[0-9]+)/course/teacher/(?P<teacher_id>[0-9]+)/course/(?P<course_id>[0-9]+)/$', 'courseevaluations.views.results.teacher_course', name='courseevaluations_course_results'),
+    url(r'^results/(?P<evaluation_set_id>[0-9]+)/course/section/(?P<section_id>[0-9]+)/$', 'courseevaluations.views.results.section', name='courseevaluations_course_results'),
+    
+    url(r'^results/(?P<evaluation_set_id>[0-9]+)/course/zip/teacher/course/$', 'courseevaluations.views.results.zip_teacher_course', name='courseevaluations_zip_course_results_teacher_course'),
     
     #IIP results
     url(r'^results/(?P<evaluation_set_id>[0-9]+)/iip/(?P<teacher_id>[0-9]+)/$', 'courseevaluations.views.results.iip', name='courseevaluations_iip_results'),
     
     #Dorm parent results
-    url(r'^results/(?P<evaluation_set_id>[0-9]+)/dorm/(?P<dorm_id>[0-9]+)/$', 'courseevaluations.views.results.dorm_parent_dorm', name='courseevaluations_dorm_parent_results'),
-    url(r'^results/(?P<evaluation_set_id>[0-9]+)/dorm/(?P<dorm_id>[0-9]+)/parent/(?P<parent_id>[0-9]+)/$', 'courseevaluations.views.results.dorm_parent_dorm_parent', name='courseevaluations_dorm_parent_results'),
-    url(r'^results/(?P<evaluation_set_id>[0-9]+)/parent/(?P<parent_id>[0-9]+)/$', 'courseevaluations.views.results.dorm_parent_parent', name='courseevaluations_dorm_parent_results'),
+    url(r'^results/(?P<evaluation_set_id>[0-9]+)/dorm_parent/dorm/(?P<dorm_id>[0-9]+)/$', 'courseevaluations.views.results.dorm_parent_dorm', name='courseevaluations_dorm_parent_results'),
+    url(r'^results/(?P<evaluation_set_id>[0-9]+)/dorm_parent/dorm/(?P<dorm_id>[0-9]+)/parent/(?P<parent_id>[0-9]+)/$', 'courseevaluations.views.results.dorm_parent_dorm_parent', name='courseevaluations_dorm_parent_results'),
+    url(r'^results/(?P<evaluation_set_id>[0-9]+)/dorm_parent/parent/(?P<parent_id>[0-9]+)/$', 'courseevaluations.views.results.dorm_parent_parent', name='courseevaluations_dorm_parent_results'),
     
     url(r'^email/send/student/$', 'courseevaluations.views.reports.send_student_email', name='courseevaluations_send_student_email'),
     url(r'^email/send/advisor_tutor_status/$', 'courseevaluations.views.reports.send_advisor_tutor_status', name='courseevaluations_send_advisor_tutor_status'),

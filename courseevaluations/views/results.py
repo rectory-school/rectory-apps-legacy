@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+from io import BytesIO
+from zipfile import ZipFile, ZIP_STORED
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import permission_required
@@ -8,6 +11,55 @@ from academics.models import Course, Section, Teacher, Dorm
 from courseevaluations.models import CourseEvaluation, DormParentEvaluation, IIPEvaluation, EvaluationSet
 
 from courseevaluations.lib.results import build_report
+
+@permission_required('courseevaluations.can_view_results')
+def zip_teacher_course(request, evaluation_set_id):
+    evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
+    
+    evaluables = CourseEvaluation.objects.filter(evaluation_set=evaluation_set)
+    
+    by_teacher = {}
+    
+    for course_evaluation in evaluables:
+        teacher = course_evaluation.section.teacher
+        course = course_evaluation.section.course
+        
+        if not teacher in by_teacher:
+            by_teacher[teacher] = {}
+        
+        if not course in by_teacher[teacher]:
+            by_teacher[teacher][course] = []
+        
+        by_teacher[teacher][course].append(course_evaluation)
+    
+    out = BytesIO()
+    with ZipFile(out, mode='w', compression=ZIP_STORED) as zip_file:
+        for teacher in by_teacher:
+            for course in by_teacher[teacher]:
+                evaluables = by_teacher[teacher][course]
+                title = "{course:} with {teacher:} ({evaluation_set:})".format(
+                    course=course.course_name,
+                    teacher=teacher.name,
+                    evaluation_set=evaluation_set.name
+                    )
+                
+                
+                report_file = BytesIO()
+                build_report(report_file, evaluables, title)
+                file_name = "{department:}/{last_name:}, {first_name:}/{course:}.pdf".format(
+                    department = course.department,
+                    last_name = teacher.last_name,
+                    first_name=teacher.first_name,
+                    course=course.course_name,
+                )
+                
+                zip_file.writestr(file_name, report_file.getvalue())
+    
+    response = HttpResponse(content_type='application/zip')
+    response['Content-Disposition'] = 'filename="Course Evaluations by Teacher and Course for {evaluation_set:}.zip"'.format(evaluation_set=evaluation_set.name)
+    
+    response.write(out.getvalue())
+    return response
 
 @permission_required('courseevaluations.can_view_results')
 def teacher(request, evaluation_set_id, teacher_id):

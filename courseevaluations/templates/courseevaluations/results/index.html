@@ -24,6 +24,12 @@ a {
   {% regroup sections|dictsort:"teacher.first_name"|dictsort:"teacher.last_name" by teacher as teacher_list %}
   
   <h2>By Teacher</h2>
+  {% if evaluation_set.is_open %}
+    Zip file download is disabled for open evaluation sets
+  {% else %}
+    <a href="{%url 'courseevaluations_zip_course_results_teacher_course' evaluation_set_id=evaluation_set.id %}">Download as zip file</a>
+  {% endif %}
+  
   <ul class="teacher_list">
     {% for teacher in teacher_list %}
     {% regroup teacher.list|dictsort:"course.course_name" by course as course_list %}

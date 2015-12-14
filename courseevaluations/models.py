@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import email.utils
+from datetime import date
 
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -77,6 +78,10 @@ class EvaluationSet(models.Model):
         )
         
         ordering = ['created_at']
+    
+    @property
+    def is_open(self):
+        return self.available_until >= date.today()
     
     def __str__(self):
         return self.name

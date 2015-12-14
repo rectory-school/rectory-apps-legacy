@@ -60,7 +60,7 @@ def build_report(output, evaluables, title=None, comments=True, unmask_comments=
             answer_counts = []
             
             for option in question.multiplechoicequestionoption_set.all():
-                count = MultipleChoiceQuestionAnswer.objects.filter(evaluable=evaluables, answer=option).count()
+                count = MultipleChoiceQuestionAnswer.objects.filter(evaluable__in=evaluables, answer=option).count()
                 
                 answer_labels.append(Paragraph(option.option, multiple_choice_option_style))
                 answer_counts.append(Paragraph(str(count), multiple_choice_count_style))
