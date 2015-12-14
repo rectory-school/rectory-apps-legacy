@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Evaluation results for {{ evaluation_set.name }}</title>
+
+<style>
+li.teacher_item {
+  padding-bottom: 20px;
+}
+
+li.course_item {
+  padding-bottom: 10px;
+}
+
+a {
+  color: blue;
+  text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+  <h1>Course Evaluations</h1>
+  {% regroup sections|dictsort:"teacher.first_name"|dictsort:"teacher.last_name" by teacher as teacher_list %}
+  
+  <h2>By Teacher</h2>
+  <ul class="teacher_list">
+    {% for teacher in teacher_list %}
+    {% regroup teacher.list|dictsort:"course.course_name" by course as course_list %}
+      <li class="teacher_item">
+        <a href="{% url 'courseevaluations_course_results' evaluation_set_id=evaluation_set.id teacher_id=teacher.grouper.id %}">{{ teacher.grouper.name }}</a>
+        <ul class="course_list">
+          {% for course in course_list %}
+            <li class="course_item">
+              <a href="{% url 'courseevaluations_course_results' evaluation_set_id=evaluation_set.id teacher_id=teacher.grouper.id course_id=course.grouper.id %}">{{ course.grouper }}</a>
+              
+              <ul class="section_list">
+                {% for section in course.list %}
+                  <li><a href="{% url 'courseevaluations_course_results' evaluation_set_id=evaluation_set.id section_id=section.id %}">{{ section }}</a></li>
+                {% endfor %}
+              </ul>
+            </li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% endfor %}
+  </ul>
+  
+  <h1>IIP Evaluations</h1>
+  <ul class="iip_list">
+    {% for teacher in iip_teachers %}
+      <li><a href="{% url 'courseevaluations_iip_results' evaluation_set_id=evaluation_set.id teacher_id=teacher.id %}">{{ teacher.name }}</a></li>
+    {% endfor %}
+  </ul>
+  
+  <h1>Dorm Parent Evaluations</h1>
+  <h2>By Dorm</h2>
+  <ul class="dorm_parent_list">
+    {% regroup dorm_parents by dorm as dorm_list %}
+    {% for dorm in dorm_list %}
+      <li>
+        <a href="{% url 'courseevaluations_dorm_parent_results' evaluation_set_id=evaluation_set.id dorm_id=dorm.grouper.id %}">{{ dorm.grouper }}</a>
+        
+        <ul>
+          {% for dorm_parent in dorm.list %}
+            <li>
+              <a href="{% url 'courseevaluations_dorm_parent_results' evaluation_set_id=evaluation_set.id dorm_id=dorm_parent.dorm.id parent_id=dorm_parent.parent.id %}">{{ dorm_parent.dorm }} with {{ dorm_parent.parent }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      
+    {% endfor %}
+  </ul>
+</body>
+
+</html>
