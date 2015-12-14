@@ -27,7 +27,7 @@ a {
   {% if evaluation_set.is_open %}
     Zip file download is disabled for open evaluation sets
   {% else %}
-    <a href="{%url 'courseevaluations_zip_course_results_teacher_course' evaluation_set_id=evaluation_set.id %}">Download as zip file</a>
+    <a href="{%url 'courseevaluations_zip_course_results_teacher_course' evaluation_set_id=evaluation_set.id %}">Download as zip file by department/teacher/course</a>
   {% endif %}
   
   <ul class="teacher_list">
@@ -53,6 +53,12 @@ a {
   </ul>
   
   <h1>IIP Evaluations</h1>
+  {% if evaluation_set.is_open %}
+    Zip file download is disabled for open evaluation sets
+  {% else %}
+    <a href="{%url 'courseevaluations_zip_iip' evaluation_set_id=evaluation_set.id %}">Download as zip file</a>
+  {% endif %}
+  
   <ul class="iip_list">
     {% for teacher in iip_teachers %}
       <li><a href="{% url 'courseevaluations_iip_results' evaluation_set_id=evaluation_set.id teacher_id=teacher.id %}">{{ teacher.name }}</a></li>
@@ -61,6 +67,12 @@ a {
   
   <h1>Dorm Parent Evaluations</h1>
   <h2>By Dorm</h2>
+  {% if evaluation_set.is_open %}
+    Zip file download is disabled for open evaluation sets
+  {% else %}
+    <a href="{%url 'courseevaluations_zip_dorm_parent_dorm_dorm_parent' evaluation_set_id=evaluation_set.id %}">Download as zip file by dorm/dorm parent</a>
+  {% endif %}
+  
   <ul class="dorm_parent_list">
     {% regroup dorm_parents by dorm as dorm_list %}
     {% for dorm in dorm_list %}

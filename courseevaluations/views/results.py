@@ -56,7 +56,7 @@ def zip_teacher_course(request, evaluation_set_id):
                 zip_file.writestr(file_name, report_file.getvalue())
     
     response = HttpResponse(content_type='application/zip')
-    response['Content-Disposition'] = 'filename="Course Evaluations by Teacher and Course for {evaluation_set:}.zip"'.format(evaluation_set=evaluation_set.name)
+    response['Content-Disposition'] = 'filename="Course Evaluations by Department, Teacher, and Course for {evaluation_set:}.zip"'.format(evaluation_set=evaluation_set.name)
     
     response.write(out.getvalue())
     return response
@@ -142,6 +142,47 @@ def iip(request, evaluation_set_id, teacher_id):
     return response
 
 @permission_required('courseevaluations.can_view_results')
+def zip_iip(request, evaluation_set_id):
+    evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
+    
+    evaluables = IIPEvaluation.objects.filter(evaluation_set=evaluation_set)
+    
+    by_teacher = {}
+    
+    for iip_evaluation in evaluables:
+        teacher = iip_evaluation.teacher
+        
+        if not teacher in by_teacher:
+            by_teacher[teacher] = []
+        
+        by_teacher[teacher].append(iip_evaluation)
+    
+    out = BytesIO()
+    with ZipFile(out, mode='w', compression=ZIP_STORED) as zip_file:
+        for teacher in by_teacher:
+            evaluables = by_teacher[teacher]
+            title = "IIP with {teacher:} ({evaluation_set:})".format(
+                teacher=teacher.name,
+                evaluation_set=evaluation_set.name
+                )
+            
+            
+            report_file = BytesIO()
+            build_report(report_file, evaluables, title)
+            file_name = "{last_name:}, {first_name:}.pdf".format(
+                last_name = teacher.last_name,
+                first_name=teacher.first_name,
+            )
+            
+            zip_file.writestr(file_name, report_file.getvalue())
+    
+    response = HttpResponse(content_type='application/zip')
+    response['Content-Disposition'] = 'filename="IIP Evaluations by Teacher for {evaluation_set:}.zip"'.format(evaluation_set=evaluation_set.name)
+    
+    response.write(out.getvalue())
+    return response
+
+@permission_required('courseevaluations.can_view_results')
 def dorm_parent_dorm_parent(request, evaluation_set_id, dorm_id, parent_id):
     evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
     dorm = Dorm.objects.get(pk=dorm_id)
@@ -195,6 +236,53 @@ def dorm_parent_parent(request, evaluation_set_id, parent_id):
     
     build_report(response, evaluables, title=title)
     
+    return response
+
+@permission_required('courseevaluations.can_view_results')
+def zip_dorm_parent_dorm_dorm_parent(request, evaluation_set_id):
+    evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
+    
+    evaluables = DormParentEvaluation.objects.filter(evaluation_set=evaluation_set)
+    
+    by_dorm = {}
+    
+    for dorm_parent_evaluation in evaluables:
+        dorm = dorm_parent_evaluation.dorm
+        parent = dorm_parent_evaluation.parent
+        
+        if not dorm in by_dorm:
+            by_dorm[dorm] = {}
+        
+        if not parent in by_dorm[dorm]:
+            by_dorm[dorm][parent] = []
+        
+        by_dorm[dorm][parent].append(dorm_parent_evaluation)
+    
+    out = BytesIO()
+    with ZipFile(out, mode='w', compression=ZIP_STORED) as zip_file:
+        for dorm in by_dorm:
+            for parent in by_dorm[dorm]:
+                evaluables = by_dorm[dorm][parent]
+                title = "{dorm:} with {parent:} ({evaluation_set:})".format(
+                    dorm = str(dorm),
+                    parent=parent.name,
+                    evaluation_set=evaluation_set.name
+                    )
+                
+                report_file = BytesIO()
+                build_report(report_file, evaluables, title)
+                file_name = "{dorm:}/{last_name:}, {first_name:}.pdf".format(
+                    dorm = str(dorm),
+                    last_name = parent.last_name,
+                    first_name=parent.first_name,
+                )
+                
+                zip_file.writestr(file_name, report_file.getvalue())
+    
+    response = HttpResponse(content_type='application/zip')
+    response['Content-Disposition'] = 'filename="Dorm Evaluations by Dorm and Parent for {evaluation_set:}.zip"'.format(evaluation_set=evaluation_set.name)
+    
+    response.write(out.getvalue())
     return response
 
 @permission_required('courseevaluations.can_view_results')
