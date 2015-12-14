@@ -1,10 +1,15 @@
 from django.conf.urls import include, url
 
+from courseevaluations.views import AdminLanding
+
 urlpatterns = [
     #Student views
     url(r'^student/landing/$', 'courseevaluations.views.student.student_landing', name='courseevaluations_student_landing'),
     url(r'^student/survey/$', 'courseevaluations.views.student.student_survey', name='courseevaluations_student_survey'),
-
+    
+    url(r'^adminlanding/$', AdminLanding.as_view(), name="courseevaluations_adminlanding"),
+    url(r'^adminlanding/(?P<evaluation_set_id>[0-9]+)/$', AdminLanding.as_view(), name="courseevaluations_adminlanding"),
+    
     #Reports
     url(r'^reports/$', 'courseevaluations.views.reports.index', name='courseevaluations_reports_status_index'),
     url(r'^reports/(?P<id>[0-9]+)/$', 'courseevaluations.views.reports.evaluation_set_index', name='courseevaluations_reports_status_index'),

@@ -2,6 +2,6 @@
 {% load i18n admin_urls %}
 
 {% block object-tools-items %}
-    <li><a href="{% url 'courseevaluations_reports_status_index' id=object_id %}" target="_blank" class="historylink">Status Reports</a></li>
+    <li><a href="{% url 'courseevaluations_adminlanding' evaluation_set_id=object_id %}" target="_blank" class="historylink">Admin Landing</a></li>
     {{ block.super }}
 {% endblock %}

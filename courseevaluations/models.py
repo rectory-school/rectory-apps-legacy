@@ -73,8 +73,10 @@ class EvaluationSet(models.Model):
     class Meta:
         permissions = (
         ("can_view_status_reports", "Can view status reports"),
+        ("can_view_results", "Can view results"),
         ("can_view_student_links", "Can view student links"),
         ("can_send_emails", "Can send e-mails"),
+        ("can_create_evaluables", "Can create evaluables"),
         )
         
         ordering = ['created_at']

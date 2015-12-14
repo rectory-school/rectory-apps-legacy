@@ -1,0 +1,25 @@
+{% load admin_reverse %}<!DOCTYPE html>
+<html>
+<head>
+<title>Evaluation System Admin Landing</title>
+</head>
+
+<body>
+<h1>Evaluation System Admin Landing</h1>
+
+{% for evaluation_set in evaluation_sets %}
+  <h2>{{ evaluation_set.name }}</h2>
+  <ul>
+    {% if perms.courseevaluations.can_view_status_reports %}
+      <li><a href="{% url 'courseevaluations_reports_status_index' id=evaluation_set.id %}">Completion Report Landing</a></li>
+    {% endif %}
+    
+    {% if perms.courseevaluations.can_view_results %}
+      <li><a href="{% url 'courseevaluations_results_index' evaluation_set_id=evaluation_set.id %}">Results Landing</a></li>
+    {% endif %}
+  </ul>
+{% endfor %}
+
+</body>
+
+</html>
