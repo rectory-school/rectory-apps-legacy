@@ -86,7 +86,7 @@ def teacher_course(request, evaluation_set_id, teacher_id, course_id):
     teacher = Teacher.objects.get(pk=teacher_id)
     evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
     
-    sections = Section.objects.filter(course=course)
+    sections = Section.objects.filter(course=course, teacher=teacher)
     
     evaluables = CourseEvaluation.objects.filter(section__in=sections, evaluation_set=evaluation_set)
     
