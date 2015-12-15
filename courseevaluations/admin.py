@@ -19,6 +19,27 @@ class MultipleChoiceQuestionOptionInline(SortableStackedInline):
             return extra - obj.multiplechoicequestionoption_set.count()
         
         return extra
+
+class FreeformQuestionInline(SortableStackedInline):
+    model = FreeformQuestion
+    
+    fields = ['question', 'edit_link']
+    readonly_fields = ['question', 'edit_link']
+    extra = 0
+    
+    def has_add_permission(self, request):
+        return False
+        
+    def has_delete_permission(self, request, obj=None):
+        return False
+    
+    def edit_link(self, o):
+        if o.id:
+            return "<a href=\"{0:}\" target=_blank>Edit Question</a>".format(urlresolvers.reverse('admin:courseevaluations_freeformquestion_change', args=(o.id,)))
+    
+    edit_link.allow_tags = True
+    edit_link.short_description = 'Edit Link'
+    
     
 class MultipleChoiceQuestionInline(SortableStackedInline):
     model = MultipleChoiceQuestion
