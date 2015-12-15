@@ -44,7 +44,13 @@
         {% if show_evaluables %}
           <ul class="detail" id="detail_{{student.id}}">
             {% for evaluable in student.evaluable_set.all %}
-              <li>{{ evaluable.student_display }}</li>
+              <li>
+                {{ evaluable.student_display }}
+                
+                {% if show_links %}
+                  - <a href="{% admin_url_for evaluable %}">Admin link</a>
+                {% endif %}
+              </li>
             {% endfor %}
           </ul>
         {% endif %}
