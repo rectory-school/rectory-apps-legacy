@@ -35,6 +35,8 @@ class Student(models.Model):
     
     auth_key = models.CharField(max_length=63, default=default_auth_key)
     
+    rectory_password = models.CharField(max_length=254, blank=True)
+    
     class Meta:
         ordering = ('last_name', 'first_name')
     

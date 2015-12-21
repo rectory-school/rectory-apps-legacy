@@ -37,6 +37,7 @@ class Command(BaseCommand):
                 nameNickname = fields['NameNickname'] or ""
                 email = fields['EMailSchool'] or ""
                 studentID = fields['IDSTUDENT']
+                password = fields["PasswordActiveDirctory"] or ""
                 
                 if not studentID:
                     continue
@@ -65,6 +66,7 @@ class Command(BaseCommand):
                     'last_name': nameLast,
                     'nickname': nameNickname,
                     'email': email,
+                    'rectory_password': password,
                 }
                 
                 for attr in attrMap:
