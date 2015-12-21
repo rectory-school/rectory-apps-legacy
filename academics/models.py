@@ -47,6 +47,13 @@ class Student(models.Model):
             return "{first:} ({nick:}) {last:}".format(first=self.first_name, last=self.last_name, nick=self.nickname)
         
         return "{first:} {last:}".format(first=self.first_name, last=self.last_name)
+    
+    @property
+    def last_name_first(self):
+        if self.nickname:
+            return "{last:}, {first:} ({nickname:})".format(last=self.last_name, first=self.first_name, nickname=self.nickname)
+        
+        return "{last:}, {first:}".format(last=self.last_name, first=self.first_name)
         
     def __str__(self):
         return self.name

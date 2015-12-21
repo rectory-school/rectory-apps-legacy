@@ -1,7 +1,12 @@
+from datetime import date, timedelta
+
 from django.contrib import admin
 from django.contrib.admin.util import flatten_fieldsets
+from django.http import HttpResponse
 
 from academics.models import Dorm, AcademicYear, Student, Teacher, Enrollment, Course, Section, StudentRegistration
+
+from academics.lib.student_info_sheet import write_info_sheets
 
 class ReadOnlyAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
@@ -18,9 +23,43 @@ class AcademicYearAdmin(admin.ModelAdmin):
     list_display = ['year', 'current']
     readonly_fields = ['year']
 
+class EnrolledWithinListFilter(admin.SimpleListFilter):
+    title = 'enrolled within'
+    parameter_name = 'enrolled_within'
+    
+    def lookups(self, request, model_admin):
+        return (
+            ('7', '7 days'),
+            ('30', '30 days'),
+            ('60', '60 days'),
+            ('90', '90 days'),
+            ('120', '120 days'),
+        )
+    
+    def queryset(self, request, queryset):
+        if self.value():
+            after_date = date.today() - timedelta(days=int(self.value()))
+            
+            return queryset.filter(enrollment__enrolled_date__gte=after_date)
+            
+
 class StudentAdmin(ReadOnlyAdmin):
     list_display = ['student_id', 'first_name', 'last_name', 'email', 'current']
-    list_filter = ['current']
+    list_filter = ['current', EnrolledWithinListFilter]
+    
+    def get_info_sheet(modeladmin, request, queryset):
+        academic_year = AcademicYear.objects.current()
+        enrollments = Enrollment.objects.filter(student__in=queryset, academic_year=academic_year)
+        
+        enrollments = enrollments.order_by('grade', 'student__last_name', 'student__first_name')
+        
+        response = HttpResponse(content_type='application/pdf')
+        
+        write_info_sheets(response, enrollments)
+        
+        return response
+    
+    actions = ['get_info_sheet']
 
 class TeacherAdmin(ReadOnlyAdmin):
     list_display = ['teacher_id', 'first_name', 'last_name', 'email', 'active']
