@@ -40,7 +40,7 @@ class Command(BaseCommand):
                 advisorID = fields["IDAdvisor"]
                 statusEnrollment = fields["StatusEnrollment"] or ""
                 statusAttending = fields["StatusAttending"] or ""
-                
+                enrolledDate = fields["EnrollmentDate"]
                 
                 if not studentID or not academicYear:
                     continue
@@ -103,7 +103,8 @@ class Command(BaseCommand):
                     'section': section,
                     'advisor': advisor,
                     'status_enrollment': statusEnrollment,
-                    'status_attending': statusAttending
+                    'status_attending': statusAttending,
+                    'enrolled_date': enrolledDate
                 }
                 
                 for attr in attrMap:

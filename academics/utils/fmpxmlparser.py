@@ -37,7 +37,7 @@ def parse_from_root(root):
     
     data['DATABASE'] = database_node.attrib
 
-    date_parser = get_date_parser(database_node.attrib['DATEFORMAT'])
+    date_parser = get_date_parser(database_node.attrib['DATEFORMAT']).parse_date
     
     field_map = []
     
@@ -175,7 +175,7 @@ class FilemakerFuzzyDateParser(object):
         self.parse_date_format = converted_date_format
         self.date_format = date_format
     
-    def parse(self, s):
+    def parse_date(self, s):
         dt = dateparser.parse(s, date_formats=[self.parse_date_format])
         return date(dt.year, dt.month, dt.day)
         

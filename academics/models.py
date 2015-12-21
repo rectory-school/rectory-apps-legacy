@@ -36,6 +36,7 @@ class Student(models.Model):
     auth_key = models.CharField(max_length=63, default=default_auth_key)
     
     rectory_password = models.CharField(max_length=254, blank=True)
+    username = models.CharField(max_length=254, blank=True)
     
     class Meta:
         ordering = ('last_name', 'first_name')
@@ -126,6 +127,8 @@ class Enrollment(models.Model):
     advisor = models.ForeignKey(Teacher, blank=True, null=True)
     status_enrollment = models.CharField(max_length=20, blank=True)
     status_attending = models.CharField(max_length=20, blank=True)
+    
+    enrolled_date = models.DateField(blank=True, null=True)
     
     objects = academics.managers.EnrollmentManager()
     
