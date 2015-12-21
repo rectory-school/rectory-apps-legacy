@@ -45,6 +45,11 @@ class Command(BaseCommand):
                 
                 seen_ids.add(studentID)
                 
+                if username:
+                    if len(username) > 20:
+                        username = username[0:20]
+                        logger.warn("Username {username:} was truncated to 20 characters".format(username=username))
+                
                 if email:
                     validEmail = validate_email(email)
                 
