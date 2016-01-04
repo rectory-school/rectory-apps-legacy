@@ -3,6 +3,8 @@ from random import choice
 
 from django.db import models
 
+from simple_history.models import HistoricalRecords
+
 import academics.managers
 
 logger = logging.getLogger(__name__)
@@ -14,6 +16,8 @@ def default_auth_key():
 class AcademicYear(models.Model):
     year = models.CharField(max_length=9, unique=True)
     current = models.BooleanField(default=False)
+    
+    history = HistoricalRecords()
     
     objects = academics.managers.AcademicYearManager()
     
@@ -37,6 +41,8 @@ class Student(models.Model):
     
     rectory_password = models.CharField(max_length=254, blank=True)
     username = models.CharField(max_length=254, blank=True)
+    
+    history = HistoricalRecords()
     
     class Meta:
         ordering = ('last_name', 'first_name')
@@ -70,6 +76,8 @@ class Teacher(models.Model):
     email = models.EmailField(max_length=255, blank=True)
     active = models.BooleanField(default=False)
     
+    history = HistoricalRecords()
+    
     class Meta:
         ordering = ['last_name', 'first_name']
     
@@ -102,6 +110,8 @@ class Dorm(models.Model):
     level = models.CharField(max_length=20, blank=True)
     
     heads = models.ManyToManyField(Teacher, related_name="+", limit_choices_to={'active': True}, blank=True, verbose_name="dorm parents")
+    
+    history = HistoricalRecords()
     
     class Meta:
         ordering = ['building', 'wing', 'level']
@@ -137,6 +147,8 @@ class Enrollment(models.Model):
     
     enrolled_date = models.DateField(blank=True, null=True)
     
+    history = HistoricalRecords()
+    
     objects = academics.managers.EnrollmentManager()
     
     class Meta:
@@ -158,6 +170,8 @@ class Course(models.Model):
     department = models.CharField(max_length=255)
     course_type = models.CharField(max_length=255)
     
+    history = HistoricalRecords()
+    
     def __str__(self):
         return "{number:}: {name:}".format(number=self.number, name=self.course_name)
 
@@ -171,6 +185,8 @@ class Section(models.Model):
     
     students = models.ManyToManyField(Student, through='StudentRegistration')
     
+    history = HistoricalRecords()
+    
     class Meta:
         unique_together = (('csn', 'academic_year'), )
     
@@ -182,6 +198,8 @@ class StudentRegistration(models.Model):
     
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    
+    history = HistoricalRecords()
     
     def __str__(self):
         return "{section:}: {student:}".format(section=self.section, student=self.student)
