@@ -72,6 +72,7 @@ INSTALLED_APPS = (
     'polymorphic',
     'adminsortable',
     'django_rq',
+    'simple_history',
 )
 
 MIDDLEWARE_CLASSES = (

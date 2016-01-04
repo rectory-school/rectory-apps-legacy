@@ -9,6 +9,7 @@ django-admin-sortable==2.0.3
 django-polymorphic==0.7.2
 django-rq==0.8.0
 django-ses-backend==0.1.1
+django-simple-history==1.7.0
 et-xmlfile==1.0.1
 gnureadline==6.3.3
 ipython==4.0.0
