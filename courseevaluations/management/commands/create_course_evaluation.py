@@ -6,7 +6,7 @@ from datetime import date
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from academics.models import Section, Course
+from academics.models import Section, Course, Enrollment
 from courseevaluations.models import EvaluationSet, QuestionSet, CourseEvaluation
 from academics.utils import fmpxmlparser
 
@@ -39,8 +39,11 @@ class Command(BaseCommand):
                 section = Section.objects.get(csn=csn, academic_year__year=academic_year)
                 
                 for student in section.students.all():
+                    enrollment = Enrollment.objects.get(student=student, academic_year__year=academic_year)
+                    
                     evaluable = CourseEvaluation()
                     evaluable.student = student
+                    evaluable.enrollment = enrollment
                     evaluable.section = section
                     evaluable.question_set = question_set
                     evaluable.evaluation_set = evaluation_set

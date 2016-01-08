@@ -43,5 +43,6 @@ class Command(BaseCommand):
                     evaluable.dorm = dorm
                     evaluable.parent = teacher
                     evaluable.student = student
+                    evaluable.enrollment = enrollment
                     
                     evaluable.save()

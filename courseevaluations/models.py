@@ -5,6 +5,7 @@ from datetime import date
 
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ValidationError
 
 from polymorphic import PolymorphicModel
 from adminsortable.models import SortableMixin
@@ -99,11 +100,17 @@ class Evaluable(PolymorphicModel):
     evaluation_set = models.ForeignKey(EvaluationSet)
     question_set = models.ForeignKey(QuestionSet)
     student = models.ForeignKey(Student)
+    enrollment = models.ForeignKey(Enrollment)
+    
     complete = models.BooleanField(default=False)
     
     @property
     def student_display(self):
         return None
+    
+    def clean(self):
+        if self.enrollment.student != self.student:
+            raise ValidationError("Student does not equal enrollment student")
     
 class DormEvaluation(Evaluable):
     evaluation_type_label = "dorm evaluation"
@@ -152,6 +159,12 @@ class CourseEvaluation(Evaluable):
             return "{course:} with {teacher:}".format(course=self.section.course.course_name, teacher=self.section.teacher.name_for_students)
         else:
             return "{course:}".format(course=self.section.course.course_name)
+    
+    def clean(self):
+        super().clean()
+        
+        if self.section.academic_year != self.enrollment.academic_year:
+            raise ValidationError("Enrollment academic year does not equal section academic year")
         
 class IIPEvaluation(Evaluable):
     evaluation_type_label = "IIP evaluation"

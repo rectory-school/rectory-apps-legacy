@@ -6,7 +6,7 @@ from datetime import date
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from academics.models import Student, Teacher
+from academics.models import Student, Teacher, Enrollment, AcademicYear
 from courseevaluations.models import EvaluationSet, QuestionSet, IIPEvaluation
 from academics.utils import fmpxmlparser
 
@@ -29,6 +29,7 @@ class Command(BaseCommand):
         with transaction.atomic():
             evaluation_set = EvaluationSet.objects.get(name=kwargs['evaluationset'])
             question_set = QuestionSet.objects.get(name=kwargs['questionset'])
+            academic_year = AcademicYear.objects.current()
             
             for row in results:
                 fields = row['parsed_fields']
@@ -38,11 +39,13 @@ class Command(BaseCommand):
                 
                 student = Student.objects.get(student_id=student_id)
                 teacher = Teacher.objects.get(teacher_id=teacher_id)
+                enrollment = Enrollment.objects.get(student=student, academic_year=academic_year)
                 
                 evaluable = IIPEvaluation()
                 evaluable.student = student
                 evaluable.teacher = teacher
                 evaluable.evaluation_set = evaluation_set
                 evaluable.question_set = question_set
+                evaluable.enrollment = enrollment
                 
                 evaluable.save()
