@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import permission_required
 
 from academics.models import Course, Section, Teacher, Dorm
-from courseevaluations.models import CourseEvaluation, DormParentEvaluation, IIPEvaluation, EvaluationSet
+from courseevaluations.models import Evaluable, CourseEvaluation, DormParentEvaluation, IIPEvaluation, EvaluationSet
 
 from courseevaluations.lib.results import build_report
 
@@ -61,6 +61,33 @@ def zip_teacher_course(request, evaluation_set_id):
     response.write(out.getvalue())
     return response
 
+@permission_required('courseevaluations.can_view_results')
+def aggregate(request, evaluation_set_id):
+    evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
+    
+    evaluables = CourseEvaluation.objects.filter(evaluation_set=evaluation_set)
+    
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="report.pdf"'
+    
+    title = "All evaluations for {evaluation_set:}".format(evaluation_set=evaluation_set.name)
+    build_report(response, evaluables, title=title, comments=False)
+    return response
+
+@permission_required('courseevaluations.can_view_results')
+def grade(request, evaluation_set_id, grade):
+    evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
+    
+    evaluables = CourseEvaluation.objects.filter(
+        evaluation_set=evaluation_set, enrollment__grade=grade)
+        
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="report.pdf"'
+    
+    title = "All evaluations for Grade {grade:} ({evaluation_set:})".format(grade=grade, evaluation_set=evaluation_set.name)
+    build_report(response, evaluables, title=title, comments=False)
+    return response
+        
 @permission_required('courseevaluations.can_view_results')
 def teacher(request, evaluation_set_id, teacher_id):
     teacher = Teacher.objects.get(pk=teacher_id)
@@ -326,10 +353,12 @@ def index(request, evaluation_set_id):
     sections = Section.objects.filter(courseevaluation__in=course_evaluables).distinct()
     iip_teachers = Teacher.objects.filter(iipevaluation__in=iip_evaluables).order_by('last_name', 'first_name').distinct()
     
+    grades = sorted(Evaluable.objects.filter(evaluation_set=evaluation_set).values_list('enrollment__grade', flat=True).distinct())
+    
     dorm_parents = []
     for evaluable in dorm_parent_evaluables:
         d = {'dorm': evaluable.dorm, 'parent': evaluable.parent}
         if not d in dorm_parents:
             dorm_parents.append(d)
     
-    return render(request, "courseevaluations/results/index.html", {'evaluation_set': evaluation_set, 'sections': sections, 'iip_teachers': iip_teachers, 'dorm_parents': dorm_parents})
+    return render(request, "courseevaluations/results/index.html", {'evaluation_set': evaluation_set, 'sections': sections, 'iip_teachers': iip_teachers, 'dorm_parents': dorm_parents, 'grades': grades})

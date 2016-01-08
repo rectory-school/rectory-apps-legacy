@@ -21,6 +21,16 @@ a {
 
 <body>
   <h1>Course Evaluations</h1>
+  <p><a href="{% url 'courseevaluations_course_results' evaluation_set_id=evaluation_set.id %}">All Evaluations</a></p>
+  
+  <h2>By Grade</h2>
+  <ul>
+    {% for grade in grades %}
+      <li><a href="{% url 'courseevaluations_course_results' evaluation_set_id=evaluation_set.id grade=grade %}">Grade {{ grade }}</a></li>
+    {% endfor %}
+  </ul>
+  
+  
   {% regroup sections|dictsort:"teacher.first_name"|dictsort:"teacher.last_name" by teacher as teacher_list %}
   
   <h2>By Teacher</h2>
