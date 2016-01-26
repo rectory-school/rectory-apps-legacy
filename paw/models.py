@@ -29,6 +29,8 @@ class PageIcon(models.Model):
   display_icon = models.ImageField(height_field='icon_height', width_field='icon_width', upload_to=iconUploadTo)
   
   display_icon_thumbnail = ImageSpecField(source='display_icon', processors=[ResizeToFit(90,90)], format='PNG')
+  display_icon_admin = ImageSpecField(source='display_icon', processors=[ResizeToFit(50,50)], format='PNG')
+  display_icon_admin_form = ImageSpecField(source='display_icon', processors=[ResizeToFit(100,100)], format='PNG')
   
   check_url = models.URLField(max_length=4096, blank=True)
   start_hidden = models.BooleanField(default=False)

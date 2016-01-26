@@ -1,7 +1,6 @@
 from django.contrib import admin
 from paw.models import TextLink, IconLink, IconFolder, Page, PageTextLink, PageIconDisplay, IconFolderIcon
 from adminsortable.admin import NonSortableParentAdmin, SortableStackedInline, SortableTabularInline, SortableAdmin
-from sorl.thumbnail import get_thumbnail
 
 class PageTextLinkInline(SortableStackedInline):
   model = PageTextLink
@@ -15,8 +14,7 @@ class PageIconDisplayInline(SortableTabularInline):
   readonly_fields = ['icon_thumbnail']
   
   def icon_thumbnail(self, o):
-    im = get_thumbnail(o.icon.display_icon, '50x50', quality=60, format="PNG")
-    return u'<img src="%s" />' % im.url
+      return '<img src="{url:}" />'.format(url=o.icon.display_icon_admin.url)
   
   icon_thumbnail.short_description = 'Thumbnail'
   icon_thumbnail.allow_tags = True
@@ -26,8 +24,7 @@ class IconFolderIconInline(SortableTabularInline):
   extra = 1
   
   def icon_thumbnail(self, o):
-    im = get_thumbnail(o.icon.display_icon, '50x50', quality=60, format="PNG")
-    return u'<img src="%s" />' % im.url
+    return '<img src="{url:}" />'.format(url=o.icon.display_icon_admin.url)
   
   icon_thumbnail.short_description = 'Thumbnail'
   icon_thumbnail.allow_tags = True
@@ -48,13 +45,10 @@ class IconFolderAdmin(NonSortableParentAdmin):
   readonly_fields = ['form_icon']
   
   def admin_icon(self, o):
-    im = get_thumbnail(o.display_icon, '50x50', quality=60, format="PNG")
-    
-    return u'<img src="%s" />' % im.url
-  
+      return '<img src="{url:}" />'.format(url=o.display_icon_admin.url)
+        
   def form_icon(self, o):
-    im = get_thumbnail(o.display_icon, '100x100', quality=60, format="PNG")
-    return u'<img src="%s" />' % im.url
+      return '<img src="{url:}" />'.format(url=o.display_icon_admin_form.url)
     
   admin_icon.short_description = 'Icon'
   admin_icon.allow_tags = True
@@ -71,13 +65,10 @@ class IconLinkAdmin(admin.ModelAdmin):
   readonly_fields = ['form_icon']
   
   def admin_icon(self, o):
-    im = get_thumbnail(o.display_icon, '50x50', quality=60, format="PNG")
-    
-    return u'<img src="%s" />' % im.url
+    return '<img src="{url:}" />'.format(url=o.display_icon_admin.url)
   
   def form_icon(self, o):
-    im = get_thumbnail(o.display_icon, '100x100', quality=60, format="PNG")
-    return u'<img src="%s" />' % im.url
+    return '<img src="{url:}" />'.format(url=o.display_icon_admin_form.url)
     
   admin_icon.short_description = 'Icon'
   admin_icon.allow_tags = True

@@ -71,8 +71,10 @@ INSTALLED_APPS = (
     'polymorphic',
     'adminsortable',
     'simple_history',
+    'imagekit',
     'academics',
     'courseevaluations',
+    'paw',
 )
 
 MIDDLEWARE_CLASSES = (
