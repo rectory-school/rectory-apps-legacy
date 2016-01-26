@@ -67,12 +67,12 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'academics',
-    'courseevaluations',
+    'django_rq',
     'polymorphic',
     'adminsortable',
-    'django_rq',
     'simple_history',
+    'academics',
+    'courseevaluations',
 )
 
 MIDDLEWARE_CLASSES = (
