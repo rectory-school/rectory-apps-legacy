@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.exceptions import ValidationError
+
 from adminsortable.fields import SortableForeignKey
 from adminsortable.models import Sortable
 
@@ -17,7 +19,23 @@ def iconUploadTo(instance, filename):
 
 class TextLink(models.Model):
   title = models.CharField(max_length=255)
-  url = models.CharField(max_length=4096)
+  explicit_url = models.CharField(max_length=4096, blank=True)
+  page_link = models.ForeignKey('Page', blank=True, null=True)
+  
+  @property
+  def url(self):
+    if self.explicit_url:
+      return self.explicit_url
+    
+    if self.page_link:
+      return reverse('paw_static', kwargs={'slug': self.page_link.slug})
+  
+  def clean(self):
+    if not self.explicit_url and not self.page_link:
+      raise ValidationError('Either explicit URL or page link must be filled')
+    
+    if self.explicit_url and self.page_link:
+      raise ValidationError('Only one of explicit URL or page link must be filled')
   
   def __str__(self):
     return self.title
