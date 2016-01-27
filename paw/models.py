@@ -2,8 +2,7 @@ from django.db import models
 from adminsortable.fields import SortableForeignKey
 from adminsortable.models import Sortable
 
-from imagekit.models import ImageSpecField
-from imagekit.processors import ResizeToFill, ResizeToFit
+from versatileimagefield.fields import VersatileImageField
 
 from django.core.urlresolvers import reverse
 
@@ -12,7 +11,7 @@ import os
 
 def iconUploadTo(instance, filename):
   originalName, ext = os.path.splitext(filename)
-  newName = "%s%s" % (uuid.uuid4().hex, ext)
+  newName = "{uuid:}{ext:}".format(uuid=uuid.uuid4().hex, ext=ext)
   
   return os.path.join("icons", newName)
 
@@ -26,12 +25,8 @@ class TextLink(models.Model):
 class PageIcon(models.Model):
   icon_height = models.IntegerField(blank=True, null=True)
   icon_width = models.IntegerField(blank=True, null=True)
-  display_icon = models.ImageField(height_field='icon_height', width_field='icon_width', upload_to=iconUploadTo)
-  
-  display_icon_thumbnail = ImageSpecField(source='display_icon', processors=[ResizeToFit(90,90)], format='PNG')
-  display_icon_admin = ImageSpecField(source='display_icon', processors=[ResizeToFit(50,50)], format='PNG')
-  display_icon_admin_form = ImageSpecField(source='display_icon', processors=[ResizeToFit(100,100)], format='PNG')
-  
+  display_icon = VersatileImageField(height_field='icon_height', width_field='icon_width', upload_to=iconUploadTo)
+   
   check_url = models.URLField(max_length=4096, blank=True)
   start_hidden = models.BooleanField(default=False)
   

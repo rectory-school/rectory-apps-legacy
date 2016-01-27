@@ -71,7 +71,7 @@ INSTALLED_APPS = (
     'polymorphic',
     'adminsortable',
     'simple_history',
-    'imagekit',
+    'versatileimagefield',
     'academics',
     'courseevaluations',
     'paw',
