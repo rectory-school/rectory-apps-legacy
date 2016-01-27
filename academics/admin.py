@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 
 from django.contrib import admin
-from django.contrib.admin.util import flatten_fieldsets
+from django.contrib.admin.utils import flatten_fieldsets
 from django.http import HttpResponse
 
 from academics.models import Dorm, AcademicYear, Student, Teacher, Enrollment, Course, Section, StudentRegistration
