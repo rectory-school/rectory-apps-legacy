@@ -14,12 +14,6 @@ def _getPageDict(page):
   
   return {'page': page, 'icons': icons, 'iconFolders': iconFolders, 'leftText': leftText, 'rightText': rightText}
   
-# Create your views here.
-def text(request, slug):
-  page = get_object_or_404(Page, slug=slug)
-  
-  return render(request, 'text.txt', _getPageDict(page), content_type='text/plain')
-
 @cache_page(5)
 def static(request, slug):
   page = get_object_or_404(Page, slug=slug)
