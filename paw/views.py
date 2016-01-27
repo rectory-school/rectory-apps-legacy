@@ -40,7 +40,7 @@ def dynamic_data(request, slug):
             out.append({
                 'checkURL': icon.check_url,
                 'icon': icon.display_icon.url,
-                'display_icon': request.build_absolute_uri(icon.display_icon_thumbnail.url),
+                'display_icon': request.build_absolute_uri(icon.display_icon.thumbnail["90x90"].url),
                 'href': icon.href,
                 'title': icon.title,
                 'classAttr': icon.classAttr,
@@ -58,7 +58,7 @@ def dynamic_data(request, slug):
             'startHidden': pageIconDisplay.icon.start_hidden,
             'checkURL': pageIconDisplay.icon.check_url,
             'icon': pageIconDisplay.icon.display_icon.url,
-            'display_icon': request.build_absolute_uri(pageIconDisplay.icon.display_icon_thumbnail.url),
+            'display_icon': request.build_absolute_uri(pageIconDisplay.icon.display_icon.thumbnail["90x90"].url),
             'classAttr': pageIconDisplay.icon.classAttr,
             'href': pageIconDisplay.icon.href,
             'title': pageIconDisplay.icon.title,
