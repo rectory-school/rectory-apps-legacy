@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.core import urlresolvers
-from django.contrib.admin.util import flatten_fieldsets
+from django.contrib.admin.utils import flatten_fieldsets
 
 from adminsortable.admin import SortableAdmin, NonSortableParentAdmin, SortableStackedInline
 
