@@ -116,3 +116,18 @@ class PageIconDisplay(Sortable):
   
   def __str__(self):
     return str(self.icon)
+
+class EntryPoint(models.Model):
+    domain = models.CharField(max_length=254, unique=True, blank=True)
+    page = models.ForeignKey(Page)
+    
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        
+        self.domain = self.domain.lower()
+        
+    def __str__(self):
+        if self.domain:
+            return self.domain
+        else:
+            return "Default"

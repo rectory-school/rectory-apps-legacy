@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 
-from paw.models import Page, IconFolder, PageTextLink, PageIconDisplay
+from paw.models import Page, IconFolder, PageTextLink, PageIconDisplay, EntryPoint
 
 from django.views.decorators.cache import cache_page
 
@@ -19,6 +19,44 @@ def static(request, slug):
   page = get_object_or_404(Page, slug=slug)
   
   return render(request, 'static.html', _getPageDict(page))
+
+def page_for_email(request):
+    email = request.GET.get("email")
+    if email:
+        parts = email.lower().split("@", 1)
+        user = parts[0]
+        
+        if len(parts) == 2:
+            domain = parts[1]
+        else:
+            domain = None
+    else:
+        user = None
+        domain = None
+        
+    if domain:
+        try:
+            entry_point = EntryPoint.objects.get(domain=domain)
+        except EntryPoint.DoesNotExist:
+            try:
+                entry_point = EntryPoint.objects.get(domain="")
+            except EntryPoint.DoesNotExist:
+                entry_point = None
+    else:
+        try:
+            entry_point = EntryPoint.objects.get(domain="")
+        except EntryPoint.DoesNotExist:
+            entry_point = None
+            
+    if entry_point:
+        data = {'page': entry_point.page.slug}
+    else:
+        data = {'page': None}
+        
+    response = JsonResponse(data)
+    response["Access-Control-Allow-Origin"] = "*"
+    
+    return response
 
 def dynamic_data(request, slug):
     page = get_object_or_404(Page, slug=slug)

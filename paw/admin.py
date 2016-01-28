@@ -1,5 +1,5 @@
 from django.contrib import admin
-from paw.models import TextLink, IconLink, IconFolder, Page, PageTextLink, PageIconDisplay, IconFolderIcon
+from paw.models import TextLink, IconLink, IconFolder, Page, PageTextLink, PageIconDisplay, IconFolderIcon, EntryPoint
 from adminsortable.admin import NonSortableParentAdmin, SortableStackedInline, SortableTabularInline, SortableAdmin
 
 class PageTextLinkInline(SortableStackedInline):
@@ -81,3 +81,4 @@ admin.site.register(TextLink)
 admin.site.register(Page, PageAdmin)
 admin.site.register(IconLink, IconLinkAdmin)
 admin.site.register(IconFolder, IconFolderAdmin)
+admin.site.register(EntryPoint)
