@@ -99,11 +99,19 @@ def dynamic_data(request, slug):
     
     for position, positionList in (('LEFT', leftText), ('RIGHT', rightText)):
         for pageTextLink in PageTextLink.objects.filter(page=page, position=position):
-            positionList.append({
-                'href': pageTextLink.text_link.url,
-                'title': pageTextLink.text_link.title,
-                'id': 'page_text_link_{page_text_link_id}'.format(page_text_link_id=pageTextLink.id)
-            })
+            if pageTextLink.text_link.page_link:
+                positionList.append({
+                    'page': pageTextLink.text_link.page_link.slug,
+                    'title': pageTextLink.text_link.title,
+                    'id': 'page_text_link_{page_text_link_id}'.format(page_text_link_id=pageTextLink.id)
+                })
+                
+            else:                
+                positionList.append({
+                    'href': pageTextLink.text_link.url,
+                    'title': pageTextLink.text_link.title,
+                    'id': 'page_text_link_{page_text_link_id}'.format(page_text_link_id=pageTextLink.id)
+                })
     
     jsonData = {
         'title': page.title,
