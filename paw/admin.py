@@ -75,10 +75,13 @@ class IconLinkAdmin(admin.ModelAdmin):
   
   form_icon.short_description = 'Thumbnail'
   form_icon.allow_tags = True
+
+class EntryPointAdmin(admin.ModelAdmin):
+  list_display=['__str__', 'page']
   
 # Register your models here.
 admin.site.register(TextLink)
 admin.site.register(Page, PageAdmin)
 admin.site.register(IconLink, IconLinkAdmin)
 admin.site.register(IconFolder, IconFolderAdmin)
-admin.site.register(EntryPoint)
+admin.site.register(EntryPoint, EntryPointAdmin)
