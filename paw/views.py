@@ -13,61 +13,8 @@ def _getPageDict(page):
   icons = [pageIconDisplay.icon for pageIconDisplay in PageIconDisplay.objects.filter(page=page)]
   
   return {'page': page, 'icons': icons, 'iconFolders': iconFolders, 'leftText': leftText, 'rightText': rightText}
-  
-@cache_page(5)
-def static(request, slug):
-  page = get_object_or_404(Page, slug=slug)
-  
-  return render(request, 'static.html', _getPageDict(page))
 
-def page_for_email(request):
-    email = request.GET.get("email")
-    if email:
-        parts = email.lower().split("@", 1)
-        user = parts[0]
-        
-        if len(parts) == 2:
-            domain = parts[1]
-        else:
-            domain = None
-    else:
-        user = None
-        domain = None
-        
-    if domain:
-        try:
-            entry_point = EntryPoint.objects.get(domain=domain)
-        except EntryPoint.DoesNotExist:
-            try:
-                entry_point = EntryPoint.objects.get(domain="")
-            except EntryPoint.DoesNotExist:
-                entry_point = None
-    else:
-        try:
-            entry_point = EntryPoint.objects.get(domain="")
-        except EntryPoint.DoesNotExist:
-            entry_point = None
-            
-    if entry_point:
-        data = {'page': entry_point.page.slug}
-    else:
-        data = {'page': None}
-        
-    response = JsonResponse(data)
-    response["Access-Control-Allow-Origin"] = "*"
-    
-    return response
-
-@cache_page(5)
-def dynamic_data(request, slug):
-    try:
-        page = Page.objects.get(slug=slug)
-    except Page.DoesNotExist:
-        response = JsonResponse({'error': 'page not found'})
-        response.status_code = 404
-        response["Access-Control-Allow-Origin"] = "*"
-        return response
-    
+def _json_for_page(request, page):
     iconFolders = []
     icons = []
     leftText = []
@@ -126,9 +73,79 @@ def dynamic_data(request, slug):
         'icons': icons,
         'leftText': leftText,
         'rightText': rightText,
+        'code': 200
     }
     
-    response = JsonResponse(jsonData)
-    response["Access-Control-Allow-Origin"] = "*"
+    return jsonData
+  
+@cache_page(5)
+def static(request, slug):
+  page = get_object_or_404(Page, slug=slug)
+  
+  return render(request, 'static.html', _getPageDict(page))
+
+def json_from_page(request, slug):
+    try:
+        page = Page.objects.get(slug=slug)
+    except Page.DoesNotExist:
+        response = JsonResponse({})
+        response.status_code = 404
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
     
+    data = _json_for_page(request, page)
+    response = JsonResponse(data)
+    response["Access-Control-Allow-Origin"] = "*"
     return response
+
+def json_from_email(request):
+    email = request.GET.get("email")
+    
+    #Check for an entry point with the given e-mail (or lack thereof), setting
+    #entry_point to none if it wasn't found
+    if email:
+        domain = email.split("@")[-1]
+        try:
+            entry_point = EntryPoint.objects.get(domain=domain)
+        except EntryPoint.DoesNotExist:
+            entry_point = None
+    else:
+        entry_point = None
+    
+    #Try to get the default entry point if we don't have one already from the e-mail
+    if not entry_point:
+        try:
+            entry_point = EntryPoint.objects.get(domain="")
+        except EntryPoint.DoesNotExist:
+            #Do nothing, entry_point is already None
+            pass
+    
+    if entry_point:
+        page = entry_point.page
+        data = _json_for_page(request, page)
+        
+        response = JsonResponse(data)
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
+    
+    #After all that, we still couldn't figure out what to serve.
+    response = JsonResponse({})
+    response.status_code = 404
+    response["Access-Control-Allow-Origin"] = "*"
+    return response
+
+def json_default(request):
+    try:
+        page = EntryPoint.objects.get(domain="").page
+        data = _json_for_page(request, page)
+        
+        response = JsonResponse(data)
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
+        
+    except EntryPoint.DoesNotExist:
+        response = JsonResponse({})
+        response.status_code = 404
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
+    
