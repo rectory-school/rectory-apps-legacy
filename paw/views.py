@@ -58,8 +58,15 @@ def page_for_email(request):
     
     return response
 
+@cache_page(5)
 def dynamic_data(request, slug):
-    page = get_object_or_404(Page, slug=slug)
+    try:
+        page = Page.objects.get(slug=slug)
+    except Page.DoesNotExist:
+        response = JsonResponse({'error': 'page not found'})
+        response.status_code = 404
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
     
     iconFolders = []
     icons = []
