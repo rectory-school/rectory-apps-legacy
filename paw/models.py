@@ -53,6 +53,8 @@ class PageIcon(models.Model):
   classAttr = models.CharField(max_length=255)
   href = models.CharField(max_length=4096)
   
+  mac_pc_only = models.BooleanField(default=False, verbose_name="Show on Windows/Mac only")
+  
   internal_description = models.CharField(max_length=255, blank=True)
 
   class Meta:

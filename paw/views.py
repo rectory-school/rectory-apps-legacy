@@ -24,6 +24,7 @@ def _json_for_page(request, page):
         out = []
         for icon in folder.icons():
             out.append({
+                'mac_pc_only': icon.mac_pc_only,
                 'checkURL': icon.check_url,
                 'icon': icon.display_icon.url,
                 'display_icon': request.build_absolute_uri(icon.display_icon.thumbnail["90x90"].url),
@@ -39,8 +40,9 @@ def _json_for_page(request, page):
             'id': 'folder_{folder_id}'.format(folder_id=folder.id),
             'icons': out})
     
-    for pageIconDisplay in PageIconDisplay.objects.filter(page=page):
+    for pageIconDisplay in PageIconDisplay.objects.filter(page=page):            
         icons.append({
+            'mac_pc_only': pageIconDisplay.icon.mac_pc_only,
             'startHidden': pageIconDisplay.icon.start_hidden,
             'checkURL': pageIconDisplay.icon.check_url,
             'icon': pageIconDisplay.icon.display_icon.url,

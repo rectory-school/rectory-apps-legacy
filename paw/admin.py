@@ -61,7 +61,7 @@ class IconFolderAdmin(NonSortableParentAdmin):
 
 class IconLinkAdmin(admin.ModelAdmin):
   list_display=['title', 'admin_icon']
-  fields = ['display_icon', 'form_icon', 'title', 'internal_description', 'url', 'check_url', 'start_hidden']
+  fields = ['display_icon', 'form_icon', 'title', 'internal_description', 'url', 'check_url', 'start_hidden', 'mac_pc_only']
   readonly_fields = ['form_icon']
   
   def admin_icon(self, o):
