@@ -1,5 +1,5 @@
 from django.contrib import admin
-from paw.models import TextLink, IconLink, IconFolder, Page, PageTextLink, PageIconDisplay, IconFolderIcon
+from paw.models import TextLink, IconLink, IconFolder, Page, PageTextLink, PageIconDisplay, IconFolderIcon, EntryPoint
 from adminsortable.admin import NonSortableParentAdmin, SortableStackedInline, SortableTabularInline, SortableAdmin
 
 class PageTextLinkInline(SortableStackedInline):
@@ -61,7 +61,7 @@ class IconFolderAdmin(NonSortableParentAdmin):
 
 class IconLinkAdmin(admin.ModelAdmin):
   list_display=['title', 'admin_icon']
-  fields = ['display_icon', 'form_icon', 'title', 'internal_description', 'url', 'check_url', 'start_hidden']
+  fields = ['display_icon', 'form_icon', 'title', 'internal_description', 'url', 'check_url', 'start_hidden', 'mac_pc_only']
   readonly_fields = ['form_icon']
   
   def admin_icon(self, o):
@@ -75,9 +75,13 @@ class IconLinkAdmin(admin.ModelAdmin):
   
   form_icon.short_description = 'Thumbnail'
   form_icon.allow_tags = True
+
+class EntryPointAdmin(admin.ModelAdmin):
+  list_display=['__str__', 'page']
   
 # Register your models here.
 admin.site.register(TextLink)
 admin.site.register(Page, PageAdmin)
 admin.site.register(IconLink, IconLinkAdmin)
 admin.site.register(IconFolder, IconFolderAdmin)
+admin.site.register(EntryPoint, EntryPointAdmin)

@@ -53,6 +53,8 @@ class PageIcon(models.Model):
   classAttr = models.CharField(max_length=255)
   href = models.CharField(max_length=4096)
   
+  mac_pc_only = models.BooleanField(default=False, verbose_name="Show on Windows/Mac only")
+  
   internal_description = models.CharField(max_length=255, blank=True)
 
   class Meta:
@@ -116,3 +118,18 @@ class PageIconDisplay(Sortable):
   
   def __str__(self):
     return str(self.icon)
+
+class EntryPoint(models.Model):
+    domain = models.CharField(max_length=254, unique=True, blank=True)
+    page = models.ForeignKey(Page)
+    
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        
+        self.domain = self.domain.lower()
+        
+    def __str__(self):
+        if self.domain:
+            return self.domain
+        else:
+            return "Default"
