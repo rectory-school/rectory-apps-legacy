@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+import calendar
 
 def get_days(calendar):
     out = {}
@@ -67,4 +68,58 @@ def get_days(calendar):
         
         out[working_date] = day_rotation[day_counter % len(day_rotation)]
         
+    return out
+
+def get_monday(d):
+    return d - timedelta(days=d.weekday())
+
+def get_friday(d):
+    return getMonday(d) + timedelta(days=4)
+
+#Spits out the calendar as a 2d list, indexed by the year and month    
+def structured_calendar_layout(days, fill_in_calendar):
+    out = {}
+    
+    first_day = min(days)
+    last_day = max(days)
+    
+    months = set()
+    
+    for day in days:
+        months.add((day.year, day.month))
+    
+    for year, month in months:
+        calendar_grid = calendar.monthcalendar(year, month)
+        for week in calendar_grid:
+            reference_day = max(week)
+            reference_date = date(year, month, reference_day)
+            reference_index = week.index(reference_day)
+            
+            for i, day in enumerate(week):
+                if day:
+                    week[i] = date(year, month, day)
+                else:
+                    if fill_in_calendar:
+                        delta = i-reference_index
+                        day = reference_date + timedelta(days=delta)
+                        week[i] = day
+                    else:
+                        week[i] = None
+            
+            #We're enumerating twice for my sanity
+            for i, day in enumerate(week):
+                if day:
+                    week[i] = (day, days.get(day))
+        
+        def work_week_in_month(week, year, month):
+            for item in week:
+                if item and item[0].year == year and item[0].month == month:
+                    return True
+                    
+            return False
+            
+        calendarGrid = [week[0:5] for week in calendar_grid if work_week_in_month(week[0:5], year, month)]
+        
+        out[(year, month)] = calendar_grid
+
     return out
