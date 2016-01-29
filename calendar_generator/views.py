@@ -31,28 +31,7 @@ def full_calendar_pdf(request, id):
     calendar = get_object_or_404(Calendar, pk=id)
     days = get_days(calendar)
     
-    header_days = []
-    if calendar.monday:
-        header_days.append(0)
-
-    if calendar.tuesday:
-        header_days.append(1)
-    
-    if calendar.wednesday:
-        header_days.append(2)
-    
-    if calendar.thursday:
-        header_days.append(3)
-    
-    if calendar.friday:
-        header_days.append(4)
-    
-    if calendar.saturday:
-        header_days.append(5)
-    
-    if calendar.sunday:
-        header_days.append(6)
-    
+    header_days = calendar.numeric_days
     
     structured_data = structured_calendar_layout(days, False)
     

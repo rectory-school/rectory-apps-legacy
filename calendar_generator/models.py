@@ -20,6 +20,33 @@ class Calendar(models.Model):
     friday = models.BooleanField(default=True)
     saturday = models.BooleanField(default=False)
     
+    @property
+    def numeric_days(self):
+        out = []
+        
+        if self.monday:
+            out.append(0)
+
+        if self.tuesday:
+            out.append(1)
+    
+        if self.wednesday:
+            out.append(2)
+    
+        if self.thursday:
+            out.append(3)
+    
+        if self.friday:
+            out.append(4)
+    
+        if self.saturday:
+            out.append(5)
+    
+        if self.sunday:
+            out.append(6)
+        
+        return out
+    
     def clean(self):
         if self.start_date > self.end_date:
             raise ValidationError("End date must be after start date")
