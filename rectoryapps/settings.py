@@ -75,6 +75,7 @@ INSTALLED_APPS = (
     'academics',
     'courseevaluations',
     'paw',
+    'calendar_generator',
 )
 
 MIDDLEWARE_CLASSES = (

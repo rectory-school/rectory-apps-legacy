@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^evaluations/', include('courseevaluations.urls')),
     url(r'^icons/', include('paw.urls')),
+    url(r'^calendar/', include('calendar_generator.urls')),
     url(r'^django-rq/', include('django_rq.urls')),
     url(r'^accounts/', include('django.contrib.auth.urls')),
 ]
