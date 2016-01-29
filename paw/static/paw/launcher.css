@@ -1,6 +1,7 @@
 div#content {
 	margin: 0 auto;
 	text-align: center;
+  display: none;
 }
 
 div.dialog {

@@ -9,7 +9,6 @@ function clickDialog(e) {
 	$(toShow).dialog("open");
 
 	$(".dialogHide").hide();
-	
 	return false;
 }
 
@@ -32,4 +31,5 @@ $(document).ready(function() {
 		beforeClose: dismissDialog});
 
 	$("a.dialogLauncher").click(clickDialog);
+  $("div#content").show();
 });

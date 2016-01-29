@@ -1,7 +1,5 @@
-{% load staticfiles %}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+{% load staticfiles %}<!DOCTYPE html>
+<html>
 	<head>
 		<title>{{ page.title }}</title>
 		
@@ -17,7 +15,7 @@
     {% for icon in icons %}
     <div class="entry"{% if icon.check_url %} data-check-url="{{ icon.check_url }}"{% endif %}>
       <div class="top">
-        <a class="{{ icon.classAttr}}" href="{{ icon.href }}"><img src="{{ icon.display_icon.thumbnail.90x90 }}"></a>
+        <a class="{{ icon.classAttr}}" href="{{ icon.href }}"><img alt="{{ icon.title }}" title="{{ icon.title }}" src="{{ icon.display_icon.thumbnail.90x90 }}" /></a>
       </div>
       <p>
         <a class="{{ icon.classAttr}}" href="{{ icon.href }}">{{ icon.title }}</a>
@@ -27,35 +25,33 @@
     
     
   
-  {% for iconFolder in iconFolders %}
-    <div id="{{ iconFolder.uuid }}" class="dialog" title="{{ iconFolder.title }}">
-      {% for icon in iconFolder.icons %}
-        <div class="entry"{% if icon.check_url %} data-check-url="{{ icon.check_url }}"{% endif %}>
-          <div class="top">
-            <a class="{{ icon.classAttr}}" href="{{ icon.href }}"><img src="{{ icon.display_icon.thumbnail.90x90 }}"></a>
+    {% for iconFolder in iconFolders %}
+      <div id="{{ iconFolder.uuid }}" class="dialog" title="{{ iconFolder.title }}">
+        {% for icon in iconFolder.icons %}
+          <div class="entry"{% if icon.check_url %} data-check-url="{{ icon.check_url }}"{% endif %}>
+            <div class="top">
+              <a class="{{ icon.classAttr}}" href="{{ icon.href }}"><img alt="{{ icon.title }}" title="{{ icon.title }}" src="{{ icon.display_icon.thumbnail.90x90 }}" /></a>
+            </div>
+            <p>
+              <a class="{{ icon.classAttr}}" href="{{ icon.href }}">{{ icon.title }}</a>
+            </p>
           </div>
-          <p>
-            <a class="{{ icon.classAttr}}" href="{{ icon.href }}">{{ icon.title }}</a>
-          </p>
-        </div>
+        {% endfor %}
+      </div>
+    {% endfor %}  
+  
+  	<p id="bottomLeftLinks" class="dialogHide">
+      {% for link in leftText %}
+        <a href="{{ link.url}}">{{ link.title }}</a>
       {% endfor %}
-    </div>
-  {% endfor %}
+    </p>
   
-  
-  
-	<p id="bottomLeftLinks" class="dialogHide">
-    {% for link in leftText %}
-      <a href="{{ link.url}}">{{ link.title }}</a>
-    {% endfor %}
-  </p>
-  
-	<p id="bottomRightLinks" class="dialogHide">
-    {% for textLink in rightText %}
-      <a href="{{ textLink.url}}">{{ textLink.title }}</a>
-    {% endfor %}
-  </p>
-  
+  	<p id="bottomRightLinks" class="dialogHide">
+      {% for textLink in rightText %}
+        <a href="{{ textLink.url}}">{{ textLink.title }}</a>
+      {% endfor %}
+    </p>
+  </div>
 </body>
 </html>
 
