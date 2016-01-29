@@ -15,7 +15,7 @@
 <body>
   <div id="content">
     {% for icon in icons %}
-    <div class="entry{% if icon.start_hidden %} startHidden{% endif %}"{% if icon.check_url %} data-check-url="{{ icon.check_url }}"{% endif %}>
+    <div class="entry"{% if icon.check_url %} data-check-url="{{ icon.check_url }}"{% endif %}>
       <div class="top">
         <a class="{{ icon.classAttr}}" href="{{ icon.href }}"><img src="{{ icon.display_icon.thumbnail.90x90 }}"></a>
       </div>
