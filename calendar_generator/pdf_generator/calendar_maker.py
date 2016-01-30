@@ -100,7 +100,7 @@ class GridDrawer(object):
                 cell_x = grid_x + i * cell_width
                 cell_right = cell_x + cell_width
                 
-                date_right = cell_right - cell_width*.075
+                date_right = cell_right - cell_width*.05
                 
                 if not day_data:
                     continue
