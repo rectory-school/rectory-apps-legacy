@@ -128,8 +128,7 @@ class GridDrawer(object):
         #Header background
         if self.formatter.header_background:
             canvas.setFillColor(self.formatter.header_background)
-            canvas.setStrokeColor(self.formatter.header_background)
-            canvas.rect(grid_x, grid_y-header_height, grid_width, header_height, stroke=1, fill=1)
+            canvas.rect(grid_x-line_width/2, grid_y-header_height, grid_width+line_width/2, header_height, stroke=0, fill=1)
         else:
             canvas.setStrokeColor(self.formatter.line_color)
             canvas.rect(grid_x, grid_y-header_height, grid_width, header_height)
