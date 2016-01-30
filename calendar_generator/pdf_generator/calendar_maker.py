@@ -149,8 +149,20 @@ class GridDrawer(object):
            
         for i in range(1, len(self.days)):
             cell_x = grid_x + i * cell_width
-            canvas.line(cell_x, grid_y + line_width/2, cell_x, grid_y - header_height-line_width/2)
-                
+            canvas.line(cell_x, grid_y, cell_x, grid_y - header_height)
+        
+        #Throw a box around all the weeks to make sure the right margin is OK
+        
+        canvas.setStrokeColor(self.formatter.line_color)
+        #Left
+        canvas.line(grid_x + line_width/2, grid_y-header_height, grid_x, grid_y - header_height - cell_height * row_count)
+        
+        #Right
+        canvas.line(grid_x + grid_width - line_width/2, grid_y-header_height, grid_x + grid_width - line_width/2, grid_y - header_height - cell_height * row_count)
+        
+        #Bottom
+        canvas.line(grid_x - line_width/2, grid_y - header_height - cell_height * row_count, grid_x + grid_width, grid_y - header_height - cell_height * row_count)
+        
     def header_font_size(self, maximum_width):
         day_headers = [HEADERMAPPING[day] for day in self.days]
         
