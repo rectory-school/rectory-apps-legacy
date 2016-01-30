@@ -1,0 +1,11 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls %}
+
+{% block object-tools-items %}
+    <li><a href="{% url 'calendar_generator_days_text' id=object_id %}" target="_blank" class="historylink">Text listing of all dates</a></li>
+    <li><a href="{% url 'calendar_generator_one_page_pdf' id=object_id %}" target="_blank" class="historylink">One-page calendar</a></li>
+    <li><a href="{% url 'calendar_generator_days_pdf' id=object_id %}" target="_blank" class="historylink">Month by month calendar</a></li>
+    <li><a href="{% url 'calendar_generator_days_zip' id=object_id %}" class="historylink">Zip of single PDFs</a></li>
+    
+    {{ block.super }}
+{% endblock %}

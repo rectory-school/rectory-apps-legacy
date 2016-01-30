@@ -17,6 +17,7 @@ class ResetDateInline(admin.StackedInline):
 
 class CalendarAdmin(NonSortableParentAdmin):
     inlines = [DayInline, SkipDateInline, ResetDateInline]
-
+    
+    change_form_template_extends = "admin/calendar_generator/calendar/change_form.html"
 
 admin.site.register(Calendar, CalendarAdmin)

@@ -80,7 +80,7 @@ class GridDrawer(object):
         cell_height = (grid_height - header_height) / max(5, row_count)
 
         day_font_size = cell_height
-        date_font_size = cell_height * .2
+        date_font_size = cell_height * .35
         
         canvas.setLineWidth(line_width)
         
@@ -128,7 +128,7 @@ class GridDrawer(object):
         #Header background
         if self.formatter.header_background:
             canvas.setFillColor(self.formatter.header_background)
-            canvas.rect(grid_x-line_width/2, grid_y-header_height, grid_width+line_width/2, header_height, stroke=0, fill=1)
+            canvas.rect(grid_x-line_width/2, grid_y-header_height, grid_width+line_width, header_height, stroke=0, fill=1)
         else:
             canvas.setStrokeColor(self.formatter.line_color)
             canvas.rect(grid_x, grid_y-header_height, grid_width, header_height)
