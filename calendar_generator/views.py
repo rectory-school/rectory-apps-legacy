@@ -78,10 +78,10 @@ def full_calendar_pdf(request, id):
         else:
             pdf.setFillColor(colors.black)
             
-        #pdf.setFont("HelveticaNeue-Bold", 72)
-        #pdf.drawString(.5*inch, 7.25*inch, month_title)
+        pdf.setFont("HelveticaNeue-Bold", 72)
+        pdf.drawString(.5*inch, 7.25*inch, month_title)
 
-        grid_drawer.draw_on(pdf, 0, 8.5*inch, 11*inch, 8.5*inch, line_width)
+        grid_drawer.draw_on(pdf, .5*inch, 7*inch, 10*inch, 6.5*inch, line_width)
         pdf.showPage()
         
         
