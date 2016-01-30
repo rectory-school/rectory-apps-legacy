@@ -78,10 +78,10 @@ def full_calendar_pdf(request, id):
         else:
             pdf.setFillColor(colors.black)
             
-        pdf.setFont("HelveticaNeue-Bold", 72)
-        pdf.drawString(.5*inch, 7.25*inch, month_title)
+        #pdf.setFont("HelveticaNeue-Bold", 72)
+        #pdf.drawString(.5*inch, 7.25*inch, month_title)
 
-        grid_drawer.draw_on(pdf, .5*inch, 7*inch, 10*inch, 6.5*inch, line_width)
+        grid_drawer.draw_on(pdf, 0, 8.5*inch, 11*inch, 8.5*inch, line_width)
         pdf.showPage()
         
         
@@ -190,12 +190,12 @@ def full_zip(request, id):
                             pdf.setFont("HelveticaNeue-Bold", 72)
                             pdf.drawString(1, 7.75*inch, month_title)
         
-                            grid_drawer.draw_on(pdf, line_width/2, 7.5*inch, 11*inch-(line_width/2), 7.5*inch - line_width/2, line_width)
+                            grid_drawer.draw_on(pdf, 0, 7.5*inch, 11*inch, 7.5*inch, line_width)
                             pdf.showPage()
                             pdf.save()
                         
                         elif embed == "Embed without titles":
-                            grid_drawer.draw_on(pdf, line_width/2, 8.5*inch, 11*inch-(line_width/2), 8.5*inch - line_width/2, line_width)
+                            grid_drawer.draw_on(pdf, 0, 8.5*inch, 11*inch, 8.5*inch, line_width)
                             pdf.showPage()
                             pdf.save()
                             

@@ -86,16 +86,58 @@ class GridDrawer(object):
         
         running_y -= header_height
         
-        #Header was drawn here, but is being moved to being drawn after the weeks so that the Z ordering is always correct
+        #Frame
+        canvas.setStrokeColor(self.formatter.line_color)
+        canvas.rect(grid_x + line_width/2, grid_y+line_width/2-grid_height, grid_width-line_width, grid_height-line_width)
         
+        #Header
+        #Header background
+        if self.formatter.header_background:
+            fill=1
+            canvas.setFillColor(self.formatter.header_background)
+        else:
+            fill=0
+        
+        canvas.setStrokeColor(self.formatter.line_color)
+        canvas.rect(grid_x+line_width/2, grid_y-header_height+line_width/2, grid_width-line_width, header_height-line_width, stroke=1, fill=fill)
+        
+        #Header text
+        canvas.setFont(self.formatter.header_font, header_font_size)
+        canvas.setFillColor(self.formatter.header_color)
+        
+        for i in range(len(self.days)):
+            cell_x = grid_x + i * cell_width
+            cell_mid = cell_x + cell_width / 2
+            
+            #Monday, Tuesday, etc
+            canvas.drawCentredString(cell_mid, grid_y - header_height * .75, HEADERMAPPING[self.days[i]])
+        
+        #Lines between Monday, Tuesday, etc
+        if self.formatter.header_line_color:
+            canvas.setStrokeColor(self.formatter.header_line_color)
+           
+            for i in range(1, len(self.days)):
+                #The stroke width of the header rectangle has to be accounted for
+                cell_x = grid_x + i * cell_width
+                canvas.line(cell_x, grid_y-line_width, cell_x, grid_y - header_height+line_width)
+        
+        #Inner lines
+        canvas.setStrokeColor(self.formatter.line_color)
+        
+        #Week lines
+        for i in range(row_count-1):
+            y = grid_y - header_height - (i+1) * cell_height
+            canvas.line(grid_x, y, grid_x + grid_width, y)
+        
+        #Day lines
+        for i in range(len(self.days)-1):
+            x = grid_x + cell_width * (i+1)
+            canvas.line(x, grid_y-header_height + line_width/2, x, grid_y-grid_height)
+                
         #Weeks
         for week in self.grid:
             running_y -= cell_height
-            
-            #Horizontal line between each week
-            canvas.setStrokeColor(self.formatter.line_color)
-            canvas.line(grid_x, running_y, grid_x + grid_width, running_y)
-            
+                        
             for i, day_data in enumerate(week):
                 cell_x = grid_x + i * cell_width
                 cell_right = cell_x + cell_width
@@ -117,59 +159,9 @@ class GridDrawer(object):
                     canvas.setFillColor(self.formatter.day_color)
                     canvas.setFont(self.formatter.day_font, day_font_size)
                     canvas.drawString(cell_x + cell_width*.1, running_y + cell_height *.15 , day.letter)
-            
-            #Lines between dates
-            for i in range(len(week) + 1):
-                cell_x = cell_x = grid_x + i * cell_width
-                
-                canvas.line(cell_x, running_y, cell_x, running_y + cell_height)
         
-        #Header
-        #Header background
-        if self.formatter.header_background:
-            canvas.setFillColor(self.formatter.header_background)
-            canvas.rect(grid_x-line_width/2, grid_y-header_height, grid_width+line_width, header_height, stroke=0, fill=1)
-        else:
-            canvas.setStrokeColor(self.formatter.line_color)
-            canvas.rect(grid_x, grid_y-header_height, grid_width, header_height)
-            
-        #Header
-        canvas.setFont(self.formatter.header_font, header_font_size)
-        canvas.setFillColor(self.formatter.header_color)
+
         
-        for i in range(len(self.days)):
-            cell_x = grid_x + i * cell_width
-            cell_mid = cell_x + cell_width / 2
-            
-            #Monday, Tuesday, etc
-            canvas.drawCentredString(cell_mid, grid_y - header_height * .75, HEADERMAPPING[self.days[i]])
-        
-        #Lines between Monday, Tuesday, etc
-        if self.formatter.header_line_color:
-            canvas.setStrokeColor(self.formatter.header_line_color)
-           
-            for i in range(1, len(self.days)):
-                cell_x = grid_x + i * cell_width
-                canvas.line(cell_x, grid_y, cell_x, grid_y - header_height)
-        
-        
-        #Extra lines - outline, below headers
-        canvas.setStrokeColor(self.formatter.line_color)
-        
-        #Below header
-        canvas.line(grid_x, grid_y - header_height, grid_x + grid_width, grid_y - header_height)
-        
-        #Left
-        canvas.line(grid_x, grid_y, grid_x, grid_y - header_height - cell_height * row_count)
-        
-        #Right
-        canvas.line(grid_x + grid_width, grid_y, grid_x + grid_width, grid_y - header_height - cell_height * row_count)
-        
-        #Top
-        canvas.line(grid_x - line_width/2, grid_y, grid_x + grid_width + line_width/2, grid_y)
-        
-        #Bottom
-        canvas.line(grid_x - line_width/2, grid_y - header_height - cell_height * row_count, grid_x + grid_width, grid_y - header_height - cell_height * row_count)
         
     def header_font_size(self, maximum_width):
         day_headers = [HEADERMAPPING[day] for day in self.days]
