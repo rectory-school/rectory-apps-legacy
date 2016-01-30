@@ -48,6 +48,13 @@ def full_calendar_pdf(request, id):
     calendar = get_object_or_404(Calendar, pk=id)
     days = get_days(calendar)
     
+    if "color" in request.GET:
+        formatter = color_formatter
+        color = True
+    else:
+        formatter = black_formatter
+        color = False
+        
     header_days = calendar.numeric_days
     
     structured_data = structured_calendar_layout(days, False)
@@ -64,8 +71,13 @@ def full_calendar_pdf(request, id):
         first_of_month = date(year, month, 1)
         month_title = first_of_month.strftime("%B %Y")
         
-        grid_drawer = GridDrawer(grid, header_days, black_formatter)
+        grid_drawer = GridDrawer(grid, header_days, formatter)
         
+        if color:
+            pdf.setFillColor(color_accent)
+        else:
+            pdf.setFillColor(colors.black)
+            
         pdf.setFont("HelveticaNeue-Bold", 72)
         pdf.drawString(.5*inch, 7.25*inch, month_title)
 
@@ -118,7 +130,7 @@ def one_page_calendar(request, id):
         pdf.setFillColor(colors.black)
         pdf.drawString(x+.25 * inch, y-6, month_title)
 
-        grid_drawer.draw_on(pdf, x+.25*inch, y-.035*inch-6, col_width-.5*inch, row_height-.25*inch, line_width)
+        grid_drawer.draw_on(pdf, x+.25*inch, y-.035*inch-6, col_width-.5*inch, row_height-.25*inch, .5)
     
     pdf.showPage()
     pdf.save()

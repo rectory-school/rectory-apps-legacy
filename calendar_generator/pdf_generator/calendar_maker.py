@@ -87,7 +87,7 @@ class GridDrawer(object):
         running_y -= header_height
         
         #Header was drawn here, but is being moved to being drawn after the weeks so that the Z ordering is always correct
-            
+        
         #Weeks
         for week in self.grid:
             running_y -= cell_height
@@ -144,21 +144,29 @@ class GridDrawer(object):
             #Monday, Tuesday, etc
             canvas.drawCentredString(cell_mid, grid_y - header_height * .75, HEADERMAPPING[self.days[i]])
         
-        #Lines between Monday, Tuesday, etc 
-        canvas.setStrokeColor(self.formatter.header_line_color)
+        #Lines between Monday, Tuesday, etc
+        if self.formatter.header_line_color:
+            canvas.setStrokeColor(self.formatter.header_line_color)
            
-        for i in range(1, len(self.days)):
-            cell_x = grid_x + i * cell_width
-            canvas.line(cell_x, grid_y, cell_x, grid_y - header_height)
+            for i in range(1, len(self.days)):
+                cell_x = grid_x + i * cell_width
+                canvas.line(cell_x, grid_y, cell_x, grid_y - header_height)
         
-        #Throw a box around all the weeks to make sure the right margin is OK
         
+        #Extra lines - outline, below headers
         canvas.setStrokeColor(self.formatter.line_color)
+        
+        #Below header
+        canvas.line(grid_x, grid_y - header_height, grid_x + grid_width, grid_y - header_height)
+        
         #Left
-        canvas.line(grid_x + line_width/2, grid_y-header_height, grid_x, grid_y - header_height - cell_height * row_count)
+        canvas.line(grid_x, grid_y, grid_x, grid_y - header_height - cell_height * row_count)
         
         #Right
-        canvas.line(grid_x + grid_width - line_width/2, grid_y-header_height, grid_x + grid_width - line_width/2, grid_y - header_height - cell_height * row_count)
+        canvas.line(grid_x + grid_width, grid_y, grid_x + grid_width, grid_y - header_height - cell_height * row_count)
+        
+        #Top
+        canvas.line(grid_x - line_width/2, grid_y, grid_x + grid_width + line_width/2, grid_y)
         
         #Bottom
         canvas.line(grid_x - line_width/2, grid_y - header_height - cell_height * row_count, grid_x + grid_width, grid_y - header_height - cell_height * row_count)
