@@ -93,7 +93,7 @@ def custom_pdf(request, id):
     calendar = get_object_or_404(Calendar, pk=id)
     days = get_days(calendar)
     
-    if "color" in request.GET:
+    if request.GET.get("color") == "color":
         formatter = color_formatter
         color = True
         title_color = color_accent
@@ -102,7 +102,7 @@ def custom_pdf(request, id):
         color = False
         title_color = colors.black
     
-    if "embed" in request.GET:
+    if request.GET.get("type") == "embed":
         embed = True
     else:
         embed = False
