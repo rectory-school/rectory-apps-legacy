@@ -66,7 +66,7 @@ class GridDrawer(object):
             if not week == [None] * len(self.days):
                 self.grid.append(week)
         
-    def draw_on(self, canvas, grid_x, grid_y, grid_width, grid_height, line_width):
+    def draw_on(self, canvas, grid_x, grid_y, grid_width, grid_height, line_width, minimum_rows=5):
         cell_width = grid_width / len(self.days)
         
         running_y = grid_y
@@ -74,14 +74,45 @@ class GridDrawer(object):
         header_font_size = self.header_font_size(cell_width * .8)
         header_height = header_font_size * 1.5
         
-        row_count = len(self.grid)
+        minimum_row_count = len(self.grid)
         
         #Always plan for at least 5 rows, with 6 being a very special case
-        cell_height = (grid_height - header_height) / max(5, row_count)
-
-        day_font_size = cell_height
+        row_count = max(minimum_rows, minimum_row_count)
+        
+        cell_height = (grid_height - header_height) / row_count
+        
+        #This is going to slow things down, but make sure we don't overlap 
+        #the date and day letters
+        
         date_font_size = cell_height * .35
         
+        day_font_size = cell_height
+        dates = set()
+        day_labels = set()
+        
+        for week in self.grid:
+            for day_cell in week:
+                if day_cell:
+                    calendar_date = str(day_cell[0].day)
+                    
+                    if day_cell[1]:
+                        label = day_cell[1].letter
+                        day_labels.add(label)
+                        
+                    dates.add(calendar_date)
+                    
+                    
+        date_widths = [stringWidth(calendar_date, self.formatter.date_font, date_font_size) for calendar_date in dates]
+        label_widths = [stringWidth(day_label, self.formatter.day_font, day_font_size) for day_label in day_labels]
+        
+        available_width = cell_width*.95
+        
+        #Iterate until we've hit our appropriate widths
+        while available_width < (max(date_widths) + max(label_widths)):
+            day_font_size -= 1
+            date_font_size -= .25
+            label_widths = [stringWidth(day_label, self.formatter.day_font, day_font_size) for day_label in day_labels]
+            
         canvas.setLineWidth(line_width)
         
         running_y -= header_height
