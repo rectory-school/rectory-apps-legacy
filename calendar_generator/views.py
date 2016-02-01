@@ -214,12 +214,7 @@ def full_zip(request, id):
     
     header_days = calendar.numeric_days
     
-    structured_data_unfilled = structured_calendar_layout(days)
-    structured_data_filled = structured_calendar_layout(days, prefill_calendar=True, postfill_calendar=True)
-    structured_data_prefilled = structured_calendar_layout(days, prefill_calendar=True, postfill_calendar=False)
-    structured_data_postfilled = structured_calendar_layout(days, prefill_calendar=False, postfill_calendar=True)
-    
-    print (structured_data_unfilled)
+    structured_data = structured_calendar_layout(days)
     
     response = HttpResponse(content_type="application/zip")
     
@@ -227,52 +222,48 @@ def full_zip(request, id):
         #Generate ALL the possibilities
         for formatter in (("Color", (color_formatter, color_accent)), ("Black", (black_formatter, colors.black))):
             for embed in ("Print", "Embed", "Embed without titles"):
-                for full_grid in (("Fully filled", structured_data_filled), ("Month only", structured_data_unfilled), ("Month with prefill", structured_data_prefilled), ("Month with postfill", structured_data_postfilled)):
+                for year, month in sorted(structured_data.keys()):
+                    file_name = "{embed:}/{formatter:}/{year:}-{month:0>2}.pdf".format(
+                        embed = embed, formatter=formatter[0],
+                        year=year, month=month)
+                
+                    out = BytesIO()
+                    pdf = canvas.Canvas(out, pagesize=(11*inch, 8.5*inch))
                     
-                    structured_data = full_grid[1]
+                    grid_formatter = formatter[1][0]
+                    title_color = formatter[1][1]
+                
+                    grid = structured_data[(year, month)]
+    
+                    first_of_month = date(year, month, 1)
+                    month_title = first_of_month.strftime("%B %Y")
+    
+                    grid_drawer = GridDrawer(grid, header_days, grid_formatter)
                     
-                    for year, month in sorted(structured_data.keys()):
-                        file_name = "{embed:}/{formatter:}/{grid:}/{year:}-{month:0>2}.pdf".format(
-                            embed = embed, formatter=formatter[0], grid=full_grid[0],
-                            year=year, month=month)
-                    
-                        out = BytesIO()
-                        pdf = canvas.Canvas(out, pagesize=(11*inch, 8.5*inch))
+                    if embed == "Print":
+                        pdf.setFillColor(title_color)
+                        pdf.setFont("HelveticaNeue-Bold", 72)
+                        pdf.drawString(.5*inch, 7.25*inch, month_title)
+    
+                        grid_drawer.draw_on(pdf, .5*inch, 7*inch, 10*inch, 6.5*inch, line_width)
+                        pdf.showPage()
+                        pdf.save()
                         
-                        grid_formatter = formatter[1][0]
-                        title_color = formatter[1][1]
+                    elif embed == "Embed":
+                        pdf.setFillColor(title_color)
+                        pdf.setFont("HelveticaNeue-Bold", 72)
+                        pdf.drawString(1, 7.75*inch, month_title)
+    
+                        grid_drawer.draw_on(pdf, 0, 7.5*inch, 11*inch, 7.5*inch, line_width)
+                        pdf.showPage()
+                        pdf.save()
                     
-                        grid = structured_data[(year, month)]
-        
-                        first_of_month = date(year, month, 1)
-                        month_title = first_of_month.strftime("%B %Y")
-        
-                        grid_drawer = GridDrawer(grid, header_days, grid_formatter)
+                    elif embed == "Embed without titles":
+                        grid_drawer.draw_on(pdf, 0, 8.5*inch, 11*inch, 8.5*inch, line_width)
+                        pdf.showPage()
+                        pdf.save()
                         
-                        if embed == "Print":
-                            pdf.setFillColor(title_color)
-                            pdf.setFont("HelveticaNeue-Bold", 72)
-                            pdf.drawString(.5*inch, 7.25*inch, month_title)
-        
-                            grid_drawer.draw_on(pdf, .5*inch, 7*inch, 10*inch, 6.5*inch, line_width)
-                            pdf.showPage()
-                            pdf.save()
-                            
-                        elif embed == "Embed":
-                            pdf.setFillColor(title_color)
-                            pdf.setFont("HelveticaNeue-Bold", 72)
-                            pdf.drawString(1, 7.75*inch, month_title)
-        
-                            grid_drawer.draw_on(pdf, 0, 7.5*inch, 11*inch, 7.5*inch, line_width)
-                            pdf.showPage()
-                            pdf.save()
-                        
-                        elif embed == "Embed without titles":
-                            grid_drawer.draw_on(pdf, 0, 8.5*inch, 11*inch, 8.5*inch, line_width)
-                            pdf.showPage()
-                            pdf.save()
-                            
-                        zip_file.writestr(file_name, out.getvalue())
+                    zip_file.writestr(file_name, out.getvalue())
 
     response['Content-Disposition'] = 'filename="{title:}.zip"'.format(title=calendar.title)
     return response
