@@ -6,8 +6,8 @@
     <li><a href="{% url 'calendar_generator_one_page_pdf' id=object_id %}" target="_blank" class="historylink">One-page calendar</a></li>
     <li><a href="{% url 'calendar_generator_days_pdf' id=object_id %}" target="_blank" class="historylink">Monthly calendar</a></li>
     <li><a href="{% url 'calendar_generator_days_pdf' id=object_id %}?color=1" target="_blank" class="historylink">Monthly calendar (color)</a></li>
-    <li><a href="{% url 'calendar_generator_custom_pdf_form' id=object_id %}" target="_blank" class="historylink">Custom Calendar</a></li>
-    <li><a href="{% url 'calendar_generator_days_zip' id=object_id %}" class="historylink">Individual Calendars (zip)</a></li>
+    <li><a href="{% url 'calendar_generator_custom_pdf_form' id=object_id %}" target="_blank" class="historylink">Custom calendar</a></li>
+    <li><a href="{% url 'calendar_generator_days_zip' id=object_id %}" class="historylink">Individual calendars (zip)</a></li>
     
     {{ block.super }}
 {% endblock %}
