@@ -40,8 +40,6 @@ def calendar_days_text(request, id):
         
         response.write(line)
     
-    print(structured_calendar_layout(days, False))
-    
     return response
 
 def full_calendar_pdf(request, id):
@@ -57,7 +55,7 @@ def full_calendar_pdf(request, id):
         
     header_days = calendar.numeric_days
     
-    structured_data = structured_calendar_layout(days, False)
+    structured_data = structured_calendar_layout(days)
     
     response = HttpResponse(content_type="application/pdf")
     
@@ -97,7 +95,7 @@ def one_page_calendar(request, id):
     
     header_days = calendar.numeric_days
     
-    structured_data = structured_calendar_layout(days, False)
+    structured_data = structured_calendar_layout(days)
     
     response = HttpResponse(content_type="application/pdf")
     
@@ -145,8 +143,12 @@ def full_zip(request, id):
     
     header_days = calendar.numeric_days
     
-    structured_data_unfilled = structured_calendar_layout(days, False)
-    structured_data_filled = structured_calendar_layout(days, True)
+    structured_data_unfilled = structured_calendar_layout(days)
+    structured_data_filled = structured_calendar_layout(days, prefill_calendar=True, postfill_calendar=True)
+    structured_data_prefilled = structured_calendar_layout(days, prefill_calendar=True, postfill_calendar=False)
+    structured_data_postfilled = structured_calendar_layout(days, prefill_calendar=False, postfill_calendar=True)
+    
+    print (structured_data_unfilled)
     
     response = HttpResponse(content_type="application/zip")
     
@@ -154,7 +156,7 @@ def full_zip(request, id):
         #Generate ALL the possibilities
         for formatter in (("Color", (color_formatter, color_accent)), ("Black", (black_formatter, colors.black))):
             for embed in ("Print", "Embed", "Embed without titles"):
-                for full_grid in (("Filled Grid", structured_data_filled), ("Normal", structured_data_unfilled)):
+                for full_grid in (("Fully filled", structured_data_filled), ("Month only", structured_data_unfilled), ("Month with prefill", structured_data_prefilled), ("Month with postfill", structured_data_postfilled)):
                     
                     structured_data = full_grid[1]
                     

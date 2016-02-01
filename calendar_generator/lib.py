@@ -74,10 +74,37 @@ def get_monday(d):
     return d - timedelta(days=d.weekday())
 
 def get_friday(d):
-    return getMonday(d) + timedelta(days=4)
+    return get_monday(d) + timedelta(days=4)
+
+def custom_range_grid(days, calendar_from, calendar_to):
+    if calendar_from >= calendar_to:
+        raise ValueError("To date must be after from date")
+    
+    out = []
+    
+    #Since the data needs to be strucutred by week, we iterate up the Mondays
+    #and then what needs to be in them
+    working_monday = get_monday(calendar_from)
+    
+    while working_monday <= calendar_to:
+        week = []
+        out.append(week)
+        
+        for i in range(7):
+            working_date = working_monday + timedelta(days=i)
+            if calendar_from <= working_date <= calendar_to:
+                #This date should be in there
+                day = days.get(working_date)
+                week.append((working_date, day))
+            else:
+                week.append(None)
+        
+        working_monday += timedelta(days=7)
+    
+    return out
 
 #Spits out the calendar as a 2d list, indexed by the year and month    
-def structured_calendar_layout(days, fill_in_calendar):
+def structured_calendar_layout(days, prefill_calendar=False, postfill_calendar=False):
     out = {}
     
     first_day = min(days)
@@ -95,18 +122,29 @@ def structured_calendar_layout(days, fill_in_calendar):
             reference_date = date(year, month, reference_day)
             reference_index = week.index(reference_day)
             
+            #First loop - put datetime objects into the week list
+            #for any dates that should be shown (taking into account backfill and forwardsfill)
             for i, day in enumerate(week):
                 if day:
                     week[i] = date(year, month, day)
                 else:
-                    if fill_in_calendar:
-                        delta = i-reference_index
-                        day = reference_date + timedelta(days=delta)
+                    delta = i - reference_index
+                    day = reference_date + timedelta(days=delta)
+                    
+                    #Date object in the week list has gone back a month
+                    if prefill_calendar and ((day.year, day.month) < (reference_date.year, reference_date.month)):
                         week[i] = day
+                    
+                    #Date object in the week list has gone forwards a month
+                    elif postfill_calendar and ((day.year, day.month) > (reference_date.year, reference_date.month)):
+                        week[i] = day
+                    
+                    #We're not filling this particular date
                     else:
                         week[i] = None
             
             #We're enumerating twice for my sanity
+            #Second loop - transform the date objects into (date, letter) tuples
             for i, day in enumerate(week):
                 if day:
                     week[i] = (day, days.get(day))
