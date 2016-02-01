@@ -154,7 +154,7 @@ def custom_pdf(request, id):
     pdf.showPage()
     pdf.save()
         
-    response['Content-Disposition'] = 'filename="{title:}.pdf"'.format(title=calendar.title)
+    response['Content-Disposition'] = 'filename="{title:}.pdf"'.format(title=(title and title or calendar.title))
     return response
 
 def one_page_calendar(request, id):
