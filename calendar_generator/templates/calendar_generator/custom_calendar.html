@@ -1,7 +1,15 @@
-<!DOCTYPE html>
+{% load staticfiles %}<!DOCTYPE html>
 <html>
 <head>
 <title>Calendar Generator for {{ calendar.title }}</title>
+
+<link rel="stylesheet" href="{% static 'calendar_generator/jquery-ui/jquery-ui.min.css' %}">
+
+
+<script src="{% static 'calendar_generator/js/jquery.min.js' %}"></script>
+<script src="{% static 'calendar_generator/jquery-ui/jquery-ui.min.js' %}"></script>
+<script src="{% static 'calendar_generator/js/custom_generator.js' %}"></script>
+
 </head>
 
 <body>
@@ -25,8 +33,8 @@
   </ul>
   
   <ul>
-    <li><label for="black">Start date: </label> <input id="from_date" type="text" name="from_date" /></li>
-    <li><label for="black">End date: </label> <input id="to_date" type="text" name="to_date" /></li>
+    <li><label for="black">Start date: </label> <input id="from_date" type="text" name="from_date" class="datepicker" /></li>
+    <li><label for="black">End date: </label> <input id="to_date" type="text" name="to_date" class="datepicker" /></li>
   </ul>
   
   <input type="submit" value="Get calendar" />
