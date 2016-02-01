@@ -12,7 +12,7 @@ from reportlab.lib.units import inch
 from reportlab.lib import colors
 
 from calendar_generator.models import Calendar
-from calendar_generator.lib import get_days, structured_calendar_layout
+from calendar_generator.lib import get_days, structured_calendar_layout, custom_range_grid
 from calendar_generator.pdf_generator.calendar_maker import GridDrawer, GridFormatter
 
 color_accent = colors.Color(83/256, 123/256, 156/256)
@@ -89,6 +89,74 @@ def full_calendar_pdf(request, id):
     response['Content-Disposition'] = 'filename="{title:}.pdf"'.format(title=calendar.title)
     return response
 
+def custom_pdf(request, id):
+    calendar = get_object_or_404(Calendar, pk=id)
+    days = get_days(calendar)
+    
+    if "color" in request.GET:
+        formatter = color_formatter
+        color = True
+        title_color = color_accent
+    else:
+        formatter = black_formatter
+        color = False
+        title_color = colors.black
+    
+    if "embed" in request.GET:
+        embed = True
+    else:
+        embed = False
+    
+    title = request.GET.get("title")
+    
+    from_string = request.GET["from_date"]
+    to_string = request.GET["to_date"]
+    
+    minimum_row_count = int(request.GET.get("minimum_row_count", 5))
+    
+    calendar_from = date(*map(int, from_string.split("-")))
+    calendar_to = date(*map(int, to_string.split("-")))
+    
+    grid = custom_range_grid(days, calendar_from, calendar_to)
+    
+    response = HttpResponse(content_type="application/pdf")
+    
+    pdf = canvas.Canvas(response, pagesize=(11*inch, 8.5*inch))
+    
+    if title:
+        pdf.setTitle("{title:}".format(title=title))
+    
+    header_days = calendar.numeric_days
+    grid_drawer = GridDrawer(grid, header_days, formatter)
+    
+    
+    
+    if embed and title:
+        pdf.setFillColor(title_color)
+        pdf.setFont("HelveticaNeue-Bold", 72)
+        pdf.drawString(1, 7.75*inch, title)
+
+        grid_drawer.draw_on(pdf, 0, 7.5*inch, 11*inch, 7.5*inch, line_width, minimum_row_count)
+    
+    elif embed and not title:
+        grid_drawer.draw_on(pdf, 0, 8.5*inch, 11*inch, 8.5*inch, line_width, minimum_row_count)
+    
+    elif not embed and title:
+        pdf.setFillColor(title_color)
+        pdf.setFont("HelveticaNeue-Bold", 72)
+        pdf.drawString(.5*inch, 7.25*inch, title)
+
+        grid_drawer.draw_on(pdf, .5*inch, 7*inch, 10*inch, 6.5*inch, line_width, minimum_row_count)
+    
+    elif not embed and not title:
+        grid_drawer.draw_on(pdf, .5*inch, 8*inch, 10*inch, 7.5*inch, line_width, minimum_row_count)
+    
+    pdf.showPage()
+    pdf.save()
+        
+    response['Content-Disposition'] = 'filename="{title:}.pdf"'.format(title=calendar.title)
+    return response
+
 def one_page_calendar(request, id):
     calendar = get_object_or_404(Calendar, pk=id)
     days = get_days(calendar)
@@ -134,8 +202,11 @@ def one_page_calendar(request, id):
     pdf.save()
     
     return response
+
+def custom_pdf_form(request, id):
+    calendar = get_object_or_404(Calendar, pk=id)
     
-    
+    return render(request, "calendar_generator/custom_calendar.html", {'calendar': calendar})
 
 def full_zip(request, id):
     calendar = get_object_or_404(Calendar, pk=id)

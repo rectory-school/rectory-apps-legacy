@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Calendar Generator for {{ calendar.title }}</title>
+</head>
+
+<body>
+<form method="GET" action="{% url 'calendar_generator_custom_pdf' id=calendar.id %}">
+  {% csrf_token %}
+  
+  <p>Calendar: {{ calendar.title }}</p>
+  <ul>
+    <li><input id="embed" type="radio" name="type" value="embed" checked="CHECKED" /> <label for="embed">Embed</label></li>
+    <li><input id="print" type="radio" name="type" value="print" /> <label for="embed">Print</label></li>
+  </ul>
+  
+  <ul>
+    <li><label for="minimum_row_count">Title:</label> <input id="title" type="text" name="title" value="" /></li>
+    <li><label for="minimum_row_count">Minimum row count:</label> <input id="minimum_row_count" type="text" name="minimum_row_count" value="5" /></li>
+  </ul>
+  
+  <ul>
+    <li><input id="color" type="radio" name="color" value="black" checked="CHECKED" /> <label for="black">Black &amp; White</label></li>
+    <li><input id="black" type="radio" name="color" value="color" /> <label for="color">Color</label></li>
+  </ul>
+  
+  <ul>
+    <li><label for="black">Start date: </label> <input id="from_date" type="text" name="from_date" /></li>
+    <li><label for="black">End date: </label> <input id="to_date" type="text" name="to_date" /></li>
+  </ul>
+  
+  <input type="submit" value="Get calendar" />
+</body>
+
+</html>
