@@ -203,11 +203,6 @@ def one_page_calendar(request, id):
     
     return response
 
-def custom_pdf_form(request, id):
-    calendar = get_object_or_404(Calendar, pk=id)
-    
-    return render(request, "calendar_generator/custom_calendar.html", {'calendar': calendar})
-
 def full_zip(request, id):
     calendar = get_object_or_404(Calendar, pk=id)
     days = get_days(calendar)

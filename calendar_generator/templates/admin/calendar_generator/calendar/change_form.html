@@ -1,13 +1,72 @@
 {% extends "admin/change_form.html" %}
 {% load i18n admin_urls %}
+{% load staticfiles %}
+
+
+{% block extrahead %}
+  <link rel="stylesheet" href="{% static 'calendar_generator/jquery-ui/jquery-ui.min.css' %}">
+  
+  <script src="{% static 'calendar_generator/js/jquery.min.js' %}"></script>
+  <script src="{% static 'calendar_generator/jquery-ui/jquery-ui.min.js' %}"></script>
+  
+  <script src="{% static 'calendar_generator/js/custom_generator.js' %}"></script>
+  
+ {{ block.super }}
+{% endblock %}
 
 {% block object-tools-items %}
     <li><a href="{% url 'calendar_generator_days_text' id=object_id %}" target="_blank" class="historylink">Text listing</a></li>
     <li><a href="{% url 'calendar_generator_one_page_pdf' id=object_id %}" target="_blank" class="historylink">One-page calendar</a></li>
     <li><a href="{% url 'calendar_generator_days_pdf' id=object_id %}" target="_blank" class="historylink">Monthly calendar</a></li>
     <li><a href="{% url 'calendar_generator_days_pdf' id=object_id %}?color=1" target="_blank" class="historylink">Monthly calendar (color)</a></li>
-    <li><a href="{% url 'calendar_generator_custom_pdf_form' id=object_id %}" target="_blank" class="historylink">Custom calendar</a></li>
+    <li><a id="custom_calendar_button" href="#" target="_blank" class="historylink">Custom calendar</a></li>
     <li><a href="{% url 'calendar_generator_days_zip' id=object_id %}" class="historylink">Individual calendars (zip)</a></li>
     
     {{ block.super }}
+{% endblock %}
+
+{% block content %}
+  {{ block.super }}
+  
+  <div class="dialog" id="custom_calendar_dialog">
+    <form method="GET" action="{% url 'calendar_generator_custom_pdf' id=object_id %}" target="_blank">
+      <h3>Display style</h3>
+      <p>
+        <input id="print" type="radio" name="type" value="print" checked="CHECKED" /> <label for="embed">Print</label>
+        <input id="embed" type="radio" name="type" value="embed" /> <label for="embed">Embed</label>
+      </p>
+      
+      <h3>Title</h3>
+      <p><input id="title" type="text" name="title" value="{% now "F Y" %}" /></p>
+      
+      <h3>Minimum Row Count</h3>
+      <select name="minimum_row_count">
+        <option value="0">0 rows</option>
+        <option value="1">1 rows</option>
+        <option value="2">2 rows</option>
+        <option value="3">3 rows</option>
+        <option value="4">4 rows</option>
+        <option value="5" selected="selected">5 rows</option>
+        <option value="6">6 rows</option>
+        <option value="7">7 rows</option>
+        <option value="8">8 rows</option>
+        <option value="9">9 rows</option>
+      </select>
+      
+      <h3>Color Options</h3>
+      <p>
+        <input id="color" type="radio" name="color" value="black" checked="CHECKED" /> <label for="black">Black &amp; White</label>
+        <input id="black" type="radio" name="color" value="color" /> <label for="color">Color</label>
+      </p>
+      
+      <h3>Date Range</h3>
+      <p>
+        <label for="from_date">From</label> <input id="from_date" type="text" name="from_date" class="datepicker" /><br />
+        <label for="to_date">To</label> <input id="to_date" type="text" name="to_date" class="datepicker" />
+      </p>
+  
+      <p><input type="submit" value="Get calendar" /></p>
+    
+  </div>
+  
 {% endblock %}

@@ -5,7 +5,6 @@ urlpatterns = [
     url(r'^pdf/month-by-month/(?P<id>[0-9]+)/$', 'calendar_generator.views.full_calendar_pdf', name='calendar_generator_days_pdf'),
     url(r'^pdf/one-page/(?P<id>[0-9]+)/$', 'calendar_generator.views.one_page_calendar', name='calendar_generator_one_page_pdf'),
     url(r'^pdf/custom/(?P<id>[0-9]+)/$', 'calendar_generator.views.custom_pdf', name='calendar_generator_custom_pdf'),
-    url(r'^pdf/custom/form/(?P<id>[0-9]+)/$', 'calendar_generator.views.custom_pdf_form', name='calendar_generator_custom_pdf_form'),
     
     url(r'^zip/(?P<id>[0-9]+)/$', 'calendar_generator.views.full_zip', name='calendar_generator_days_zip'),
 ]
