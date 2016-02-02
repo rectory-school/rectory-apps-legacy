@@ -77,7 +77,7 @@
     </div>
   
     <div class="dialog" id="dialog_create_iip_evaluations" title="Create IIP Evaluations">
-      <form method="POST">
+      <form method="POST" action="{% url 'admin:courseevaluations_evaluationset_create_iip_evals' object_id=object_id %}" enctype="multipart/form-data">
         {% csrf_token %}
         <h3>Question Set</h3>
         <p><select name="question_set_id">
@@ -88,6 +88,8 @@
       
         <h3>IIP Evaluation File</h3>
         <p><input type="file" name="iip_evaluation_file" /></p>
+        
+        <p><input type="submit" value="Create Evaluations" /></p>
       </form>
     
       <p><a class="dialog_show_button" href="#dialog_course_evaluation_help">File format help</a></p>
