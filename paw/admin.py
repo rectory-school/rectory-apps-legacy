@@ -14,6 +14,7 @@ class PageIconDisplayInline(SortableTabularInline):
   readonly_fields = ['icon_thumbnail']
   
   def icon_thumbnail(self, o):
+    if o.icon.display_icon:
       return '<img src="{url:}" />'.format(url=o.icon.display_icon.thumbnail['50x50'].url)
   
   icon_thumbnail.short_description = 'Thumbnail'
@@ -24,7 +25,8 @@ class IconFolderIconInline(SortableTabularInline):
   extra = 1
   
   def icon_thumbnail(self, o):
-    return '<img src="{url:}" />'.format(url=o.icon.display_icon.thumbnail['50x50'].url)
+    if o.icon.display_icon:
+      return '<img src="{url:}" />'.format(url=o.icon.display_icon.thumbnail['50x50'].url)
   
   icon_thumbnail.short_description = 'Thumbnail'
   icon_thumbnail.allow_tags = True
@@ -45,10 +47,12 @@ class IconFolderAdmin(NonSortableParentAdmin):
   readonly_fields = ['form_icon']
   
   def admin_icon(self, o):
-    return '<img src="{url:}" />'.format(url=o.display_icon.thumbnail['50x50'].url)
+    if o.display_icon:
+      return '<img src="{url:}" />'.format(url=o.display_icon.thumbnail['50x50'].url)
   
   def form_icon(self, o):
-    return '<img src="{url:}" />'.format(url=o.display_icon.thumbnail['100x100'].url)
+    if o.display_icon:
+      return '<img src="{url:}" />'.format(url=o.display_icon.thumbnail['100x100'].url)
     
   admin_icon.short_description = 'Icon'
   admin_icon.allow_tags = True
@@ -65,10 +69,12 @@ class IconLinkAdmin(admin.ModelAdmin):
   readonly_fields = ['form_icon']
   
   def admin_icon(self, o):
-    return '<img src="{url:}" />'.format(url=o.display_icon.thumbnail['50x50'].url)
+    if o.display_icon:
+      return '<img src="{url:}" />'.format(url=o.display_icon.thumbnail['50x50'].url)
   
   def form_icon(self, o):
-    return '<img src="{url:}" />'.format(url=o.display_icon.thumbnail['100x100'].url)
+    if o.display_icon:
+      return '<img src="{url:}" />'.format(url=o.display_icon.thumbnail['100x100'].url)
     
   admin_icon.short_description = 'Icon'
   admin_icon.allow_tags = True
