@@ -5,11 +5,14 @@ from django.http import HttpResponse
 from django.conf.urls import url
 from django.shortcuts import redirect, get_object_or_404
 from django.db import transaction
+from django.contrib.auth.decorators import permission_required
 
 from adminsortable.admin import SortableAdmin, NonSortableParentAdmin, SortableStackedInline
 
 from courseevaluations.models import QuestionSet, FreeformQuestion, MultipleChoiceQuestion, MultipleChoiceQuestionOption, EvaluationSet, DormParentEvaluation, CourseEvaluation, IIPEvaluation, MultipleChoiceQuestionAnswer, FreeformQuestionAnswer, StudentEmailTemplate
-from academics.models import Student, AcademicYear, Enrollment
+from academics.models import Student, AcademicYear, Enrollment, Section, Course
+
+from academics.utils import fmpxmlparser
 
 class ReadOnlyAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
@@ -129,11 +132,68 @@ class EvaluationSetAdmin(admin.ModelAdmin):
         
         return super().change_view(request=request, object_id=object_id, form_url=form_url, extra_context=extra_context)
     
-    @permission_required("courseevaluations.add_iipevaluation")
-    def create_dorm_parent_evals(self, request, object_id):
-    @permission_required("courseevaluations.add_dormparentevaluation")
+    def create_course_evaluations(self, request, object_id):
+        redirect_url = urlresolvers.reverse('admin:courseevaluations_evaluationset_change', args=(object_id, ))
+        
+        if not request.user.has_perm('courseevaluations.add_courseevaluation'):
+            messages.error(request, "You do not have the appropriate permissions to add course evaluations")
+            return redirect(redirect_url)
+        
+        if request.method != 'POST':
+            messages.error(request, "Invalid request, please try again. No evaluations created.")
+            return redirect(redirect_url)
+        
+        question_set_id = request.POST.get("question_set_id")
+        
+        if not question_set_id:
+            messages.error(request, "Question set is required. No evaluations created.")
+            return redirect(redirect_url)
+        
+        course_evaluation_file = request.FILES.get('course_evaluation_file')
+        
+        if not course_evaluation_file:
+            messages.error(request, "Course evaluation file is required. No evaluations created.")
+            return redirect(redirect_url)
+            
+        data = fmpxmlparser.parse_from_file(course_evaluation_file)
+        results = data['results']
+        
+        creation_count = 0
+        
+        with transaction.atomic():
+            question_set = get_object_or_404(QuestionSet, pk=question_set_id)
+            evaluation_set = get_object_or_404(EvaluationSet, pk=object_id)
+            
+            for row in results:
+                fields = row['parsed_fields']
+                
+                csn = fields['CourseSectionNumber']
+                academic_year = fields['AcademicYear']
+                
+                section = Section.objects.get(csn=csn, academic_year__year=academic_year)
+                
+                for student in section.students.all():
+                    enrollment = Enrollment.objects.get(student=student, academic_year__year=academic_year)
+                    
+                    evaluable = CourseEvaluation()
+                    evaluable.student = student
+                    evaluable.enrollment = enrollment
+                    evaluable.section = section
+                    evaluable.question_set = question_set
+                    evaluable.evaluation_set = evaluation_set
+                    evaluable.save()
+                    
+                    creation_count += 1
+        
+        messages.add_message(request, messages.SUCCESS, "Successfully created {count:} course evaluations".format(count=creation_count))
+        return redirect(redirect_url)
+    
     def create_dorm_parent_evaluations(self, request, object_id):
         redirect_url = urlresolvers.reverse('admin:courseevaluations_evaluationset_change', args=(object_id, ))
+        
+        if not request.user.has_perm('courseevaluations.add_dormparentevaluation'):
+            messages.error(request, "You do not have the appropriate permissions to add IIP evaluations")
+            return redirect(redirect_url)
         
         if request.method != 'POST':
             messages.error(request, "Invalid request, please try again. No evaluations created.")
@@ -181,9 +241,13 @@ class EvaluationSetAdmin(admin.ModelAdmin):
         urls = super().get_urls()
         
         my_urls = [
-            url(r'^(?P<object_id>[0-9]+)/create_dorm_parent_evals/$', 
-                self.admin_site.admin_view(self.create_dorm_parent_evaluations), 
-                name='courseevaluations_evaluationset_create_dorm_parent_evals')
+            url(r'^(?P<object_id>[0-9]+)/process/create/dorm/parent/$', 
+                self.admin_site.admin_view(self.create_dorm_parent_evaluations),
+                name='courseevaluations_evaluationset_create_dorm_parent_evals'),
+
+            url(r'^(?P<object_id>[0-9]+)/process/create/course/$', 
+                self.admin_site.admin_view(self.create_course_evaluations),
+                name='courseevaluations_evaluationset_create_course_evals'),
         ]
         
         return my_urls + urls

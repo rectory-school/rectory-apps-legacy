@@ -14,9 +14,18 @@
 {% endblock %}
   
 {% block object-tools-items %}
+  {% if perms.courseevaluations.add_dormparentevaluation %}
     <li><a class="dialog_show_button" href="div#dialog_create_dorm_parent_evaluations">Create dorm parent evaluations</a></li>
+  {% endif %}
+  
+  {% if perms.courseevaluations.add_iipevaluation %}
     <li><a class="dialog_show_button" href="div#dialog_create_iip_evaluations">Upload IIP evaluations</a></li>
+  {% endif %}
+  
+  {% if perms.courseevaluations.add_courseevaluation %}
     <li><a class="dialog_show_button" href="div#dialog_create_course_evaluations">Upload course evaluations</a></li>
+  {% endif %}
+  
     <li><a href="{% url 'courseevaluations_adminlanding' evaluation_set_id=object_id %}" target="_blank" class="historylink">Admin Landing</a></li>
     {{ block.super }}
 {% endblock %}
@@ -27,17 +36,19 @@
   {% if object_id %}
   
     <div class="dialog" id="dialog_create_course_evaluations" title="Create Course Evaluations">
-      <form method="POST">
+      <form method="POST" action="{% url 'admin:courseevaluations_evaluationset_create_course_evals' object_id=object_id %}" enctype="multipart/form-data">
         {% csrf_token %}
         <h3>Question Set</h3>
         <p><select name="question_set_id">
           {% for question_set in question_sets %}
-            <option value="{{ question_set_id }}">{{ question_set }}</option>
+            <option value="{{ question_set.id }}">{{ question_set }}</option>
           {% endfor %}
         </select></p>
       
         <h3>Course Evaluation File</h3>
         <p><input type="file" name="course_evaluation_file" /></p>
+        
+        <p><input type="submit" value="Create Evaluations" /></p>
       </form>
     
       <p><a class="dialog_show_button" href="#dialog_course_evaluation_help">File format help</a></p>
