@@ -24,92 +24,96 @@
 {% block content %}
   {{ block.super }}
   
-  <div class="dialog" id="dialog_create_course_evaluations" title="Create Course Evaluations">
-    <form method="POST">
-      {% csrf_token %}
-      <h3>Question Set</h3>
-      <p><select name="question_set_id">
-        {% for question_set in question_sets %}
-          <option value="{{ question_set_id }}">{{ question_set }}</option>
-        {% endfor %}
-      </select></p>
-      
-      <h3>Course Evaluation File</h3>
-      <p><input type="file" name="course_evaluation_file" /></p>
-    </form>
-    
-    <p><a class="dialog_show_button" href="#dialog_course_evaluation_help">File format help</a></p>
-  </div>
+  {% if object_id %}
   
-  <div class="dialog" id="dialog_create_dorm_parent_evaluations" title="Create Dorm Parent Evaluations">
-    <form method="POST">
-      {% csrf_token %}
-      <h3>Question Set</h3>
-      <p><select name="question_set_id">
-        {% for question_set in question_sets %}
-          <option value="{{ question_set_id }}">{{ question_set }}</option>
-        {% endfor %}
-      </select></p>
+    <div class="dialog" id="dialog_create_course_evaluations" title="Create Course Evaluations">
+      <form method="POST">
+        {% csrf_token %}
+        <h3>Question Set</h3>
+        <p><select name="question_set_id">
+          {% for question_set in question_sets %}
+            <option value="{{ question_set_id }}">{{ question_set }}</option>
+          {% endfor %}
+        </select></p>
       
-      <p>Before creating dorm parent evaluations, please ensure the following data is up to date in the <em>Academics</em> module:
+        <h3>Course Evaluation File</h3>
+        <p><input type="file" name="course_evaluation_file" /></p>
+      </form>
+    
+      <p><a class="dialog_show_button" href="#dialog_course_evaluation_help">File format help</a></p>
+    </div>
+  
+    <div class="dialog" id="dialog_create_dorm_parent_evaluations" title="Create Dorm Parent Evaluations">
+      <form method="POST" action="{%url 'admin:courseevaluations_evaluationset_create_dorm_parent_evals' object_id=object_id %}">
+        {% csrf_token %}
+        <h3>Question Set</h3>
+        <p><select name="question_set_id">
+          {% for question_set in question_sets %}
+            <option value="{{ question_set.id }}">{{ question_set }}</option>
+          {% endfor %}
+        </select></p>
+      
+        <p>Before creating dorm parent evaluations, please ensure the following data is up to date in the <em>Academics</em> module:
+          <ul>
+            <li>Academic year flagged as <em>current</em> is correct</li>
+            <li>Dorm parents for each <em>dorm</em> are correct</li>
+          </ul>
+        </p>
+      
+        <p><input type="submit" value="Create Evaluations" /></p>
+      </form>
+    
+    </div>
+  
+    <div class="dialog" id="dialog_create_iip_evaluations" title="Create IIP Evaluations">
+      <form method="POST">
+        {% csrf_token %}
+        <h3>Question Set</h3>
+        <p><select name="question_set_id">
+          {% for question_set in question_sets %}
+            <option value="{{ question_set.id }}">{{ question_set }}</option>
+          {% endfor %}
+        </select></p>
+      
+        <h3>IIP Evaluation File</h3>
+        <p><input type="file" name="iip_evaluation_file" /></p>
+      </form>
+    
+      <p><a class="dialog_show_button" href="#dialog_course_evaluation_help">File format help</a></p>
+    </div>
+  
+    <div class="dialog" id="dialog_course_evaluation_help" title="Course Evaluation File Format">
+      <p>Run a find in KSSections to show only the courses you wish to be evaluated.</p>
+      <p>Export the results with the following parameters:
         <ul>
-          <li>Academic year flagged as <em>current</em> is correct</li>
-          <li>Dorm parents for each <em>dorm</em> are correct</li>
+          <li>Format: XML</li>
+          <li>Fields:
+            <ul>
+              <li>CourseSectionNumber</li>
+              <li>AcademicYear</li>
+            </ul>
+          </li>
         </ul>
       </p>
-    </form>
-    
-  </div>
+      <p>Evaluations will be created for all sections listed in this file, based on the sync'd data from Keystone in the <em>Academics</em> module.</p>
+    </div>
   
-  <div class="dialog" id="dialog_create_iip_evaluations" title="Create IIP Evaluations">
-    <form method="POST">
-      {% csrf_token %}
-      <h3>Question Set</h3>
-      <p><select name="question_set_id">
-        {% for question_set in question_sets %}
-          <option value="{{ question_set_id }}">{{ question_set }}</option>
-        {% endfor %}
-      </select></p>
-      
-      <h3>IIP Evaluation File</h3>
-      <p><input type="file" name="iip_evaluation_file" /></p>
-    </form>
-    
-    <p><a class="dialog_show_button" href="#dialog_course_evaluation_help">File format help</a></p>
-  </div>
-  
-  <div class="dialog" id="dialog_course_evaluation_help" title="Course Evaluation File Format">
-    <p>Run a find in KSSections to show only the courses you wish to be evaluated.</p>
-    <p>Export the results with the following parameters:
-      <ul>
-        <li>Format: XML</li>
-        <li>Fields:
-          <ul>
-            <li>CourseSectionNumber</li>
-            <li>AcademicYear</li>
-          </ul>
-        </li>
-      </ul>
-    </p>
-    <p>Evaluations will be created for all sections listed in this file, based on the sync'd data from Keystone in the <em>Academics</em> module.</p>
-  </div>
-  
-  <div class="dialog" id="dialog_iip_evaluation_help" title="IIP Evaluation File Format">
-    <p>Run a find in KSSections to show only the IIP sections you wish to be evaluated.</p>
-    <p>Export the results with the following parameters:
-      <ul>
-        <li>Format: XML</li>
-        <li>Fields:
-          <ul>
-            <li>StudentID</li>
-            <li>SectionTeacher::IDTeacher</li>
-          </ul>
-        </li>
-      </ul>
-    </p>
-    <p>An evaluation will be created for every Student/Teacher mapping uploaded in this file, ignoring any data in the <em>Academics</em> module</p>
-  </div>
-  
+    <div class="dialog" id="dialog_iip_evaluation_help" title="IIP Evaluation File Format">
+      <p>Run a find in KSSections to show only the IIP sections you wish to be evaluated.</p>
+      <p>Export the results with the following parameters:
+        <ul>
+          <li>Format: XML</li>
+          <li>Fields:
+            <ul>
+              <li>StudentID</li>
+              <li>SectionTeacher::IDTeacher</li>
+            </ul>
+          </li>
+        </ul>
+      </p>
+      <p>An evaluation will be created for every Student/Teacher mapping uploaded in this file, ignoring any data in the <em>Academics</em> module</p>
+    </div>
+  {% endif %}
   
   
   

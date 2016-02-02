@@ -1,11 +1,15 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.core import urlresolvers
 from django.contrib.admin.utils import flatten_fieldsets
+from django.http import HttpResponse
+from django.conf.urls import url
+from django.shortcuts import redirect, get_object_or_404
+from django.db import transaction
 
 from adminsortable.admin import SortableAdmin, NonSortableParentAdmin, SortableStackedInline
 
 from courseevaluations.models import QuestionSet, FreeformQuestion, MultipleChoiceQuestion, MultipleChoiceQuestionOption, EvaluationSet, DormParentEvaluation, CourseEvaluation, IIPEvaluation, MultipleChoiceQuestionAnswer, FreeformQuestionAnswer, StudentEmailTemplate
-from academics.models import Student
+from academics.models import Student, AcademicYear, Enrollment
 
 class ReadOnlyAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
@@ -124,6 +128,63 @@ class EvaluationSetAdmin(admin.ModelAdmin):
         extra_context["question_sets"] = QuestionSet.objects.all()
         
         return super().change_view(request=request, object_id=object_id, form_url=form_url, extra_context=extra_context)
+    
+    #TODO: Put better permissions on this
+    def create_dorm_parent_evals(self, request, object_id):
+        redirect_url = urlresolvers.reverse('admin:courseevaluations_evaluationset_change', args=(object_id, ))
+        
+        if request.method != 'POST':
+            messages.error(request, "Invalid request, please try again. No evaluations created.")
+            return redirect(redirect_url)
+        
+        question_set_id = request.POST.get("question_set_id")
+        
+        if not question_set_id:
+            messages.error(request, "Question set is required. No evaluations created.")
+            return redirect(redirect_url)
+        
+        with transaction.atomic():
+            question_set = get_object_or_404(QuestionSet, pk=question_set_id)
+            evaluation_set = get_object_or_404(EvaluationSet, pk=object_id)
+            
+            academic_year = AcademicYear.objects.current()
+            
+            enrollments = Enrollment.objects.filter(student__current=True, academic_year=academic_year).exclude(dorm=None)
+            
+            creation_count = 0
+            
+            for enrollment in enrollments:
+                student = enrollment.student
+                dorm = enrollment.dorm
+                heads = dorm.heads.all()
+                
+                for teacher in heads:
+                    evaluable = DormParentEvaluation()
+                    evaluable.question_set = question_set
+                    evaluable.evaluation_set = evaluation_set
+                    
+                    evaluable.dorm = dorm
+                    evaluable.parent = teacher
+                    evaluable.student = student
+                    evaluable.enrollment = enrollment
+                    
+                    evaluable.save()
+                    creation_count += 1
+        
+        messages.add_message(request, messages.SUCCESS, "Successfully created {count:} dorm parent evaluations".format(count=creation_count))
+        
+        return redirect(redirect_url)
+    
+    def get_urls(self):
+        urls = super().get_urls()
+        
+        my_urls = [
+            url(r'^(?P<object_id>[0-9]+)/create_dorm_parent_evals/$', 
+                self.admin_site.admin_view(self.create_dorm_parent_evals), 
+                name='courseevaluations_evaluationset_create_dorm_parent_evals')
+        ]
+        
+        return my_urls + urls
 
 class IIPEvaluationAdmin(ReadOnlyAdmin):
     list_filter = ['evaluation_set__name', ('student', admin.RelatedOnlyFieldListFilter)]
