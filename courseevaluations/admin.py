@@ -117,6 +117,14 @@ class CourseEvaluationAdmin(admin.ModelAdmin):
     
     list_filter = [EvaluationSetListFilter, 'complete', StudentListFilter]
 
+class EvaluationSetAdmin(admin.ModelAdmin):
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        
+        extra_context["question_sets"] = QuestionSet.objects.all()
+        
+        return super().change_view(request=request, object_id=object_id, form_url=form_url, extra_context=extra_context)
+
 class IIPEvaluationAdmin(ReadOnlyAdmin):
     list_filter = ['evaluation_set__name', ('student', admin.RelatedOnlyFieldListFilter)]
     
@@ -127,7 +135,7 @@ class DormParentEvaluationAdmin(ReadOnlyAdmin):
 admin.site.register(QuestionSet, QuestionSetAdmin)
 admin.site.register(FreeformQuestion, SortableAdmin)
 admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin)
-admin.site.register(EvaluationSet)
+admin.site.register(EvaluationSet, EvaluationSetAdmin)
 admin.site.register(CourseEvaluation, CourseEvaluationAdmin)
 admin.site.register(IIPEvaluation, IIPEvaluationAdmin)
 admin.site.register(DormParentEvaluation, DormParentEvaluationAdmin)
