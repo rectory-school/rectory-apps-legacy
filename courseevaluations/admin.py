@@ -129,8 +129,10 @@ class EvaluationSetAdmin(admin.ModelAdmin):
         
         return super().change_view(request=request, object_id=object_id, form_url=form_url, extra_context=extra_context)
     
-    #TODO: Put better permissions on this
+    @permission_required("courseevaluations.add_iipevaluation")
     def create_dorm_parent_evals(self, request, object_id):
+    @permission_required("courseevaluations.add_dormparentevaluation")
+    def create_dorm_parent_evaluations(self, request, object_id):
         redirect_url = urlresolvers.reverse('admin:courseevaluations_evaluationset_change', args=(object_id, ))
         
         if request.method != 'POST':
@@ -180,7 +182,7 @@ class EvaluationSetAdmin(admin.ModelAdmin):
         
         my_urls = [
             url(r'^(?P<object_id>[0-9]+)/create_dorm_parent_evals/$', 
-                self.admin_site.admin_view(self.create_dorm_parent_evals), 
+                self.admin_site.admin_view(self.create_dorm_parent_evaluations), 
                 name='courseevaluations_evaluationset_create_dorm_parent_evals')
         ]
         
