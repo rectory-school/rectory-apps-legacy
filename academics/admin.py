@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.admin.utils import flatten_fieldsets
 from django.http import HttpResponse
 
-from academics.models import Dorm, AcademicYear, Student, Teacher, Enrollment, Course, Section, StudentRegistration
+from academics.models import Dorm, AcademicYear, Student, Teacher, Enrollment, Course, Section, StudentRegistration, Grade
 
 from academics.lib.student_info_sheet import write_info_sheets
 
@@ -41,7 +41,9 @@ class EnrolledWithinListFilter(admin.SimpleListFilter):
             after_date = date.today() - timedelta(days=int(self.value()))
             
             return queryset.filter(enrollment__enrolled_date__gte=after_date)
-            
+
+class GradeAdmin(admin.ModelAdmin):
+  readonly_fields = ['grade']            
 
 class StudentAdmin(ReadOnlyAdmin):
     list_display = ['student_id', 'first_name', 'last_name', 'email', 'current']
@@ -70,7 +72,7 @@ class DormAdmin(admin.ModelAdmin):
 
 class EnrollmentAdmin(ReadOnlyAdmin):
     list_display = ['student', 'academic_year']
-    list_filter = ['academic_year__current']
+    list_filter = ['academic_year__current', 'grade__grade']
 
 class CourseAdmin(ReadOnlyAdmin):
     list_display = ['number', 'course_name']
@@ -92,3 +94,4 @@ admin.site.register(Enrollment, EnrollmentAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Section, SectionAdmin)
 admin.site.register(StudentRegistration, StudentRegistrationAdmin)
+admin.site.register(Grade, GradeAdmin)
