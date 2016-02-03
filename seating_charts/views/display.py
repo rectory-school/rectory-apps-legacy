@@ -5,7 +5,7 @@ import re
 import time
 
 from datetime import date
-from cStringIO import StringIO
+from io import BytesIO
 
 from django.http import HttpResponse
 from django.contrib.auth.decorators import permission_required, login_required
@@ -19,19 +19,19 @@ from reportlab.platypus import BaseDocTemplate, Frame, Paragraph, PageBreak, Pag
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.pdfgen import canvas
 
-from seating import models
+from seating_charts import models
 
 FONT="Helvetica"
 BOLDFONT="Helvetica-Bold"
 
-@permission_required('seating.view')
+@permission_required('seating.view_table_assignments')
 def index(request):
     mealTimes = models.MealTime.objects.all()
     layouts = models.Layout.objects.all()
     
     return render(request, 'seating/index.html', {'mealTimes': mealTimes, 'layouts': layouts})
 
-@permission_required('seating.view')
+@permission_required('seating.view_table_assignments')
 def seatingChartByTable(request, id):
     mealTime = models.MealTime.objects.get(pk=id)
     
@@ -80,7 +80,7 @@ def seatingChartByTable(request, id):
     
     return render(request, 'seating/seating_chart_by_table.html', {'leftovers': leftovers, 'tables': data})
 
-@permission_required('seating.view')
+@permission_required('seating.view_table_assignments')
 def seatingChartByStudent(request, id):
     mealTime = models.MealTime.objects.get(pk=id)
 
@@ -113,7 +113,7 @@ def seatingChartByStudent(request, id):
     for first, last, table in data:
         story.append(Paragraph("%s %s: %s" % (first, last, table), normal))
     
-    out = StringIO()
+    out = BytesIO()
     doc = BaseDocTemplate(out)
     
     top = Frame(doc.leftMargin, doc.height, doc.width, 100)
@@ -135,11 +135,11 @@ def seatingChartByStudent(request, id):
 
     return response
 
-@permission_required('seating.view')
+@permission_required('seating.view_table_assignments')
 def seatingChartInsert(request, id):
     layout = models.Layout.objects.get(pk=id)
     
-    out = StringIO()
+    out = BytesIO()
     
     c = canvas.Canvas(out, pagesize=(6*inch, 4*inch))
     
@@ -173,7 +173,7 @@ def seatingChartInsert(request, id):
             #Left
             mealTime = layout.left_print
             assignments = models.TableAssignment.objects.filter(meal_time=mealTime, table=table)
-            students = models.Student.objects.filter(tableassignment__in=assignments)
+            students = models.SeatingStudent.objects.filter(tableassignment__in=assignments)
             fillers = models.SeatFiller.objects.filter(meal_time=mealTime, table=table)
             drawMeal(c, x=.25*inch, y=(4-.7)*inch, width=2.5*inch, height=3.3*inch, mealTime=mealTime, fillers=fillers, students=students)
             
@@ -183,7 +183,7 @@ def seatingChartInsert(request, id):
             #Right
             mealTime = layout.right_print
             assignments = models.TableAssignment.objects.filter(meal_time=mealTime, table=table)
-            students = models.Student.objects.filter(tableassignment__in=assignments)
+            students = models.SeatingStudent.objects.filter(tableassignment__in=assignments)
             fillers = models.SeatFiller.objects.filter(meal_time=mealTime, table=table)
             drawMeal(c, x=3.25*inch, y=(4-.7)*inch, width=2.75*inch, height=3.3*inch, mealTime=mealTime, fillers=fillers, students=students)
             

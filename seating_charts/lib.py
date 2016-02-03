@@ -2,7 +2,7 @@ from random import choice, random, sample
 
 import time
 
-from . import models
+from seating_charts import models
 
 class GeneratorError(Exception):
     def __init__(self, s):

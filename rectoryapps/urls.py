@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^jsreverse/$', 'django_js_reverse.views.urls_js', name='js_reverse'),
     url(r'^evaluations/', include('courseevaluations.urls')),
     url(r'^icons/', include('paw.urls')),
+    url(r'^seating/', include('seating_charts.urls')),
     url(r'^calendar/', include('calendar_generator.urls')),
     url(r'^django-rq/', include('django_rq.urls')),
     url(r'^accounts/', include('django.contrib.auth.urls')),

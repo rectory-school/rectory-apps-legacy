@@ -12,17 +12,17 @@ from django.shortcuts import render
 from django.db import transaction
 from django.contrib.auth.decorators import permission_required, login_required
 
-from seating import models
+from seating_charts import models
 
-from seating.lib import getTables, GeneratorError
+from seating_charts.lib import getTables, GeneratorError
 
-@permission_required('seating.edit')
+@permission_required('seating_charts.edit_table_assignments')
 def seatingChartEditor(request, id):
     mealTime = models.MealTime.objects.get(pk=id)
     
     return render(request, 'seating/seating_chart_editor.html', {'mealTime': mealTime})
 
-@permission_required('seating.edit')
+@permission_required('seating_charts.edit_table_assignments')
 def shuffle(request, id):
     mealTime = models.MealTime.objects.get(pk=id)
     
@@ -44,7 +44,7 @@ def shuffle(request, id):
     return HttpResponseRedirect(reverse('seating_chart_editor', kwargs={'id': mealTime.id}))
     
 
-@permission_required('seating.edit')
+@permission_required('seating_charts.edit_table_assignments')
 def seatingChartData(request, id):
     mealTime = models.MealTime.objects.get(pk=id)
     allStudents = set(mealTime.allStudents())
@@ -87,9 +87,9 @@ def seatingChartData(request, id):
         return {'first_name': student.first_name, 
             'last_name': student.last_name, 
             'id': student.id, 
-            'gender': student.gender.gender, 
-            'ethnicity': student.ethnicity.ethnicity,
-            'grade': student.grade.grade}
+#            'gender': student.gender.gender, 
+            'ethnicity': (student.ethnicity and student.ethnicity.ethnicity),
+            'grade': student.enrollment.grade.grade}
         
     def fillerToDict(filler):
         return {'description': filler.description,
@@ -103,23 +103,23 @@ def seatingChartData(request, id):
     
     for t in tables:        
         d = tableToDict(t)
-        d['students'] = map(studentToDict, students[t])
-        d['fillers'] = map(fillerToDict, fillers[t])
+        d['students'] = list(map(studentToDict, students[t]))
+        d['fillers'] = list(map(fillerToDict, fillers[t]))
         
         out['tables'].append(d)
         
-    out['leftovers'] = map(studentToDict, leftovers)
-        
+    out['leftovers'] = list(map(studentToDict, leftovers))
+    
     return JsonResponse(out)
 
-@permission_required('seating.edit')
+@permission_required('seating.edit_table_assignments')
 def moveStudent(request, id):
     studentID = request.POST["student_id"]
     newTableID = request.POST.get("table_id", None)
     
     mealTime = models.MealTime.objects.get(pk=id)
     
-    student = models.Student.objects.get(pk=studentID)
+    student = models.SeatingStudent.objects.get(pk=studentID)
     
     with transaction.atomic():
         models.TableAssignment.objects.filter(student=student, meal_time=mealTime).delete()
