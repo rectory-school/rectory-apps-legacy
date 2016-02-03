@@ -32,6 +32,10 @@ class SeatingStudent(models.Model):
   def last_name(self):
     return self.enrollment.student.last_name
   
+  @property
+  def gender(self):
+    return self.enrollment.student.gender
+    
   class Meta:
     ordering = ['enrollment__student__last_name', 'enrollment__student__first_name']
   

@@ -45,10 +45,10 @@ class Student(object):
         self.id = o.id
         self.first_name = o.first_name
         self.last_name = o.last_name
-        self.gender = o.gender.gender
-        self.ethnicity = o.ethnicity.ethnicity
-        self.boarder = o.boarder
-        self.grade = o.grade.grade      
+        self.gender = o.gender
+        self.ethnicity = o.ethnicity and o.ethnicity.ethnicity
+        self.boarder = o.enrollment.boarder
+        self.grade = o.enrollment.grade.grade      
 
 class SeatingChartGenerator(object):
     def __init__(self, students, tables, pinnedStudents):
@@ -193,7 +193,10 @@ def getCollection(students, attr):
 
     for s in students:
         o = getattr(s, attr)
-
+        
+        if not o:
+          continue
+        
         if o not in collection:
             collection[o] = 0
 

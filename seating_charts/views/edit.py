@@ -33,7 +33,7 @@ def shuffle(request, id):
             for table in getTables(mealTime):
                 for student in table.students:
                     ta = models.TableAssignment()
-                    ta.student = models.Student.objects.get(pk=student.id)
+                    ta.student = models.SeatingStudent.objects.get(pk=student.id)
                     ta.table = models.Table.objects.get(pk=table.id)
                     ta.meal_time = mealTime
                     ta.save()
