@@ -42,6 +42,8 @@ class Student(models.Model):
     rectory_password = models.CharField(max_length=254, blank=True)
     username = models.CharField(max_length=254, blank=True)
     
+    gender = models.CharField(max_length=1, blank=True, default="")
+    
     history = HistoricalRecords()
     
     class Meta:
