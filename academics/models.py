@@ -131,6 +131,13 @@ class Dorm(models.Model):
             return self.building
             
 
+class Grade(models.Model):
+  grade = models.CharField(max_length=2, unique=True)
+  description = models.CharField(max_length=63, unique=True)
+  
+  def __str__(self):
+    return self.description
+
 class Enrollment(models.Model):
     #Keystone table: ksEnrollment
     
@@ -138,7 +145,7 @@ class Enrollment(models.Model):
     academic_year = models.ForeignKey(AcademicYear)
     boarder = models.BooleanField()
     dorm = models.ForeignKey(Dorm, blank=True, null=True)
-    grade = models.CharField(max_length=2)
+    grade = models.ForeignKey(Grade, null=True)
     division = models.CharField(max_length=2)
     section = models.CharField(max_length=1, blank=True)
     advisor = models.ForeignKey(Teacher, blank=True, null=True)
