@@ -26,6 +26,9 @@ class SeatingStudent(models.Model):
   #also to make porting easier
   @property
   def first_name(self):
+    if self.enrollment.student.nickname:
+      return self.enrollment.student.nickname
+      
     return self.enrollment.student.first_name
   
   @property
@@ -35,20 +38,17 @@ class SeatingStudent(models.Model):
   @property
   def gender(self):
     return self.enrollment.student.gender
-  
+
   @property
-  def flaggedName(self):
-    if self.enrollment.student.nickname:
-      name = "{nickname:} {last:}".format(nickname=self.enrollment.student.nickname, last=self.enrollment.student.last_name)
-    else:
-      name = "{first:} {last:}".format(first=self.enrollment.student.first_name, last=self.enrollment.student.last_name)
-    
+  def flaggedName(self):    
     if self.food_allergy == "ALLERGY":
-      return "{name:}**".format(name=name)
+      template = "{first:} {last:}**"
     elif self.food_allergy == "EPIPEN":
-      return "{name:}**E".format(name=name)
+      template = "{first:} {last:}**E"
+    else:
+      template = "{first:} {last:}"
     
-    return name
+    return template.format(first=self.first_name, last=self.last_name)
     
   class Meta:
     ordering = ['enrollment__student__last_name', 'enrollment__student__first_name']
