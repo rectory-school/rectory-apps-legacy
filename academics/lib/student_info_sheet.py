@@ -129,7 +129,7 @@ def write_info_sheets(output, enrollments):
         enrollment = doc.current_enrollment
         if enrollment:
             canvas.drawString(.75*inch, .75*inch, enrollment.student.last_name_first)
-            canvas.drawRightString(7.75*inch, .75*inch, "Grade: {}".format(enrollment.grade))
+            canvas.drawRightString(7.75*inch, .75*inch, "Grade: {}".format(enrollment.grade.grade))
         
         canvas.restoreState()
     

@@ -25,7 +25,7 @@ urlpatterns = [
     url(r'^results/(?P<evaluation_set_id>[0-9]+)/course/teacher/(?P<teacher_id>[0-9]+)/$', 'courseevaluations.views.results.teacher', name='courseevaluations_course_results'),
     url(r'^results/(?P<evaluation_set_id>[0-9]+)/course/teacher/(?P<teacher_id>[0-9]+)/course/(?P<course_id>[0-9]+)/$', 'courseevaluations.views.results.teacher_course', name='courseevaluations_course_results'),
     url(r'^results/(?P<evaluation_set_id>[0-9]+)/course/section/(?P<section_id>[0-9]+)/$', 'courseevaluations.views.results.section', name='courseevaluations_course_results'),
-    url(r'^results/(?P<evaluation_set_id>[0-9]+)/course/grade/(?P<grade>[0-9a-zA-Z]{1,2})/$', 'courseevaluations.views.results.grade', name='courseevaluations_course_results'),
+    url(r'^results/(?P<evaluation_set_id>[0-9]+)/course/grade/(?P<grade_id>[0-9]+)/$', 'courseevaluations.views.results.grade', name='courseevaluations_course_results'),
     url(r'^results/(?P<evaluation_set_id>[0-9]+)/course/all/$', 'courseevaluations.views.results.aggregate', name='courseevaluations_course_results'),
     
     url(r'^results/(?P<evaluation_set_id>[0-9]+)/course/zip/teacher/course/$', 'courseevaluations.views.results.zip_teacher_course', name='courseevaluations_zip_course_results_teacher_course'),

@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import permission_required
 
-from academics.models import Course, Section, Teacher, Dorm
+from academics.models import Course, Section, Teacher, Dorm, Grade
 from courseevaluations.models import Evaluable, CourseEvaluation, DormParentEvaluation, IIPEvaluation, EvaluationSet
 
 from courseevaluations.lib.results import build_report
@@ -75,16 +75,17 @@ def aggregate(request, evaluation_set_id):
     return response
 
 @permission_required('courseevaluations.can_view_results')
-def grade(request, evaluation_set_id, grade):
+def grade(request, evaluation_set_id, grade_id):
     evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
+    grade = Grade.objects.get(pk=grade_id)
     
     evaluables = CourseEvaluation.objects.filter(
         evaluation_set=evaluation_set, enrollment__grade=grade)
         
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="report.pdf"'
+    response['Content-Disposition'] = 'filename="{grade:} ({evaluation_set:}).pdf"'.format(grade=grade, evaluation_set=evaluation_set.name)
     
-    title = "All evaluations for Grade {grade:} ({evaluation_set:})".format(grade=grade, evaluation_set=evaluation_set.name)
+    title = "All evaluations for {grade:} ({evaluation_set:})".format(grade=grade, evaluation_set=evaluation_set.name)
     build_report(response, evaluables, title=title, comments=False)
     return response
         
@@ -353,7 +354,9 @@ def index(request, evaluation_set_id):
     sections = Section.objects.filter(courseevaluation__in=course_evaluables).distinct()
     iip_teachers = Teacher.objects.filter(iipevaluation__in=iip_evaluables).order_by('last_name', 'first_name').distinct()
     
-    grades = sorted(Evaluable.objects.filter(evaluation_set=evaluation_set).values_list('enrollment__grade', flat=True).distinct())
+    used_grade_ids = course_evaluables.values_list('enrollment__grade', flat=True).order_by().distinct()
+    
+    grades = Grade.objects.filter(pk__in=used_grade_ids)
     
     dorm_parents = []
     for evaluable in dorm_parent_evaluables:

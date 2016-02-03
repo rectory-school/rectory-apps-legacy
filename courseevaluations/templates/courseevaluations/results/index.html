@@ -26,7 +26,7 @@ a {
   <h2>By Grade</h2>
   <ul>
     {% for grade in grades %}
-      <li><a href="{% url 'courseevaluations_course_results' evaluation_set_id=evaluation_set.id grade=grade %}">Grade {{ grade }}</a></li>
+      <li><a href="{% url 'courseevaluations_course_results' evaluation_set_id=evaluation_set.id grade_id=grade.id %}">{{ grade }}</a></li>
     {% endfor %}
   </ul>
   
