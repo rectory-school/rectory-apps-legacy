@@ -1,0 +1,36 @@
+div.table {
+	display: inline-block;
+	vertical-align: top;
+	margin: 10px;
+}
+
+div.table h1, div#leftovers h1 {
+	text-align: center;
+	margin: 0;
+}
+
+ul {
+	min-height: 10px;
+	background-color: #eeeeee;
+	list-style-type: none;
+	width: 200px;
+	
+	margin: 0;
+	padding: 5px;
+}
+		
+div#tables {
+	width: 600px;
+	display: inline-block;
+	vertical-align: top;
+}
+
+div#leftovers {
+	width: 225px;
+	display: inline-block;
+	vertical-align: top;
+}
+
+li.ui-state-disabled {
+	color: white;
+}
