@@ -8,7 +8,7 @@ from django.db import transaction
 
 from validate_email import validate_email
 
-from academics.models import Student, Enrollment, AcademicYear, Dorm, Teacher
+from academics.models import Student, Enrollment, AcademicYear, Dorm, Teacher, Grade
 from academics.utils import fmpxmlparser
 
 logger = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ class Command(BaseCommand):
                 academicYear = fields['AcademicYear']
                 boarderDay = fields['BoarderDay']
                 dormName = fields['DormName'] or ""
-                grade = fields['Grade'] or ""
+                grade_code = fields['Grade']
                 division = fields['Division'] or ""
                 section = fields["Section Letter"] or ""
                 advisorID = fields["IDAdvisor"]
@@ -82,6 +82,14 @@ class Command(BaseCommand):
                 else:
                     advisor = None
                 
+                if grade_code:
+                  try:
+                    grade = Grade.objects.get(grade=grade_code)
+                  except Grade.DoesNotExist:
+                    grade = Grade()
+                    grade.grade = grade_code
+                    grade.description = "Grade {grade:}".format(grade=grade_code)
+                    grade.save()
                 
                 try:
                     enrollment = Enrollment.objects.get(student = student, academic_year = academicYear)
