@@ -2,6 +2,8 @@ from django.db import models
 from simple_history.models import HistoricalRecords
 from django.core.exceptions import ValidationError
 
+from adminsortable.models import SortableMixin
+
 from academics.models import Enrollment, Grade
 
 # Create your models here.
@@ -56,7 +58,7 @@ class SeatingStudent(models.Model):
   def __str__(self):
     return str(self.enrollment.student)
 
-class MealTime(models.Model):
+class MealTime(SortableMixin):
     name = models.CharField(max_length=200)
 
     history = HistoricalRecords()
@@ -65,6 +67,11 @@ class MealTime(models.Model):
     
     include_boarding_students = models.BooleanField(default=False)
     include_day_students = models.BooleanField(default=False)
+    
+    order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+    
+    class Meta:
+      ordering = ['order']
     
     def allStudents(self):
       students = SeatingStudent.objects.filter(enrollment__grade__in=self.include_grades.all())

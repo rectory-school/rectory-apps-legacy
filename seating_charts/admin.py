@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from adminsortable.admin import SortableAdmin
+
 from seating_charts.models import Table, MealTime, SeatFiller, PinnedStudent, Layout, SeatingStudent, Ethnicity
 
 class SeatFillerInline(admin.TabularInline):
@@ -14,7 +16,7 @@ class TableAdmin(admin.ModelAdmin):
     filter_horizontal = ['for_meals']
     inlines = [SeatFillerInline, PinnedStudentInline]
 
-class MealTimeAdmin(admin.ModelAdmin):
+class MealTimeAdmin(SortableAdmin):
     filter_horizontal = ['include_grades']
 
 class SeatingStudentAdmin(admin.ModelAdmin):
