@@ -60,6 +60,8 @@ MANAGERS = [email.utils.parseaddr(a.strip()) for a in config['email']['MANAGERS'
 DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 SECRET_KEY = config['django']['SECRET_KEY']
 
+IIP_COURSE_IDS = config['courseevaluations']['IIP_COURSE_IDS']
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -71,6 +73,7 @@ INSTALLED_APPS = (
     'polymorphic',
     'adminsortable',
     'simple_history',
+    'django_js_reverse',
     'versatileimagefield',
     'academics',
     'courseevaluations',
@@ -123,5 +126,3 @@ RQ_QUEUES = {
         'DEFAULT_TIMEOUT': 360,
     },
 }
-
-IIP_COURSE_IDS = ['148']

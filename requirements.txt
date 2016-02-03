@@ -8,6 +8,7 @@ Django==1.8.9
 django-admin-sortable==2.0.3
 django-appconf==1.0.1
 django-imagekit==3.3
+django-js-reverse==0.6.1
 django-polymorphic==0.7.2
 django-rq==0.8.0
 django-ses-backend==0.1.1
