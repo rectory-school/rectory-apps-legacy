@@ -73,6 +73,7 @@ INSTALLED_APPS = (
     'polymorphic',
     'adminsortable',
     'simple_history',
+    'django_js_reverse',
     'versatileimagefield',
     'academics',
     'courseevaluations',

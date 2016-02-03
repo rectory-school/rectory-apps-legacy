@@ -21,6 +21,7 @@ from django.conf import settings
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^jsreverse/$', 'django_js_reverse.views.urls_js', name='js_reverse'),
     url(r'^evaluations/', include('courseevaluations.urls')),
     url(r'^icons/', include('paw.urls')),
     url(r'^calendar/', include('calendar_generator.urls')),
