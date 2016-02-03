@@ -114,7 +114,7 @@ def seatingChartByStudent(request, id):
         story.append(Paragraph("%s %s: %s" % (first, last, table), normal))
     
     out = BytesIO()
-    doc = BaseDocTemplate(out)
+    doc = BaseDocTemplate(out, pagesize=letter, author="Rectory School Seating Chart Generator", title=mealTime.name)
     
     top = Frame(doc.leftMargin, doc.height, doc.width, 100)
     frame1 = Frame(doc.leftMargin, doc.bottomMargin, doc.width/2-6, doc.height-75, id='col1')
@@ -129,7 +129,7 @@ def seatingChartByStudent(request, id):
     doc.build(story)
     
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="Seating chart {mealTime:}.pdf"'.format(mealTime=mealTime.name)
+    response['Content-Disposition'] = 'filename="{mealTime:} by student.pdf"'.format(mealTime=mealTime.name)
 
     response.write(out.getvalue())
 
