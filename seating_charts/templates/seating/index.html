@@ -1,0 +1,72 @@
+{% load staticfiles %}<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html version="-//W3C//DTD XHTML 1.1//EN"
+      xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.w3.org/1999/xhtml
+                          http://www.w3.org/MarkUp/SCHEMA/xhtml11.xsd">
+	<head>
+    	<title>Seating Chart System</title>
+		<link rel="stylesheet" href="{% static 'unsemantic/assets/stylesheets/unsemantic-grid-responsive.css' %}" />
+		
+		<script src="{% url 'js_reverse' %}" type="text/javascript"></script>
+	
+	    <script type="text/javascript" src="{% static 'jquery/jquery-1.9.1.js' %}"></script>
+	    <script type="text/javascript" src="{% static 'jquery/ui/jquery-ui.js' %}"></script>
+		<script type="text/javascript" src="{% static 'jquery/ui/jquery-ui.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/seating_chart_index.js' %}"></script>
+	</head>
+	<body>
+		<div class="grid-container">
+			<div class="grid-50">
+				<h1>View Data</h1>
+				<h2>Table inserts</h2>
+				<ul>
+					{% for layout in layouts %}
+						<li><a href="{% url 'seating_chart_view_inserts' id=layout.id %}">{{ layout.name }}</a></li>
+						{% endfor %}
+				</ul>
+
+				<h2>Table Listing (by table)</h2>
+				<ul>
+					{% for mealTime in mealTimes %}
+						<li><a href="{% url 'seating_chart_view_table' id=mealTime.id %}">{{ mealTime.name }}</a></li>
+					{% endfor %}
+				</ul>
+
+				<h2>Table Listing (by student)</h2>
+				<ul>
+					{% for mealTime in mealTimes %}
+						<li><a href="{% url 'seating_chart_view_student' id=mealTime.id %}">{{ mealTime.name }}</a></li>
+					{% endfor %}
+				</ul>
+			</div>
+		
+			<div class="grid-50">
+				<h1>Change Seating Arrangements</h1>
+	
+				<h2>Shuffle Seating Chart</h2>
+				<ul>
+					{% for mealTime in mealTimes %}
+						<li><a href="{% url 'seating_chart_shuffle' id=mealTime.id %}" class="shuffleConfirm">{{ mealTime.name }}</a></li>
+					{% endfor %}
+				</ul>
+	
+				<h2>Edit Seating Chart</h2>
+				<ul>
+					{% for mealTime in mealTimes %}
+						<li><a href="{% url 'seating_chart_editor' id=mealTime.id %}">{{ mealTime.name }}</a></li>
+					{% endfor %}
+				</ul>
+	
+	
+				<h2>Edit Backend Data</h2>
+				<ul>
+					<li><a href="{% url 'admin:seating_table_changelist' %}">Edit available tables</a></li>
+					<li><a href="{% url 'admin:reslife_student_changelist' %}">Edit students</a></li>
+				</ul>
+			</div>
+		</div>
+	</body>
+</html>

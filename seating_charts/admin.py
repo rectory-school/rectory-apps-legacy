@@ -1,0 +1,33 @@
+from django.contrib import admin
+
+from seating_charts.models import Table, MealTime, SeatFiller, PinnedStudent, Layout, SeatingStudent, Ethnicity
+
+class SeatFillerInline(admin.TabularInline):
+	model = SeatFiller
+	extra = 0
+
+class PinnedStudentInline(admin.TabularInline):
+	model = PinnedStudent
+	extra = 0
+	
+class TableAdmin(admin.ModelAdmin):
+    filter_horizontal = ['for_meals']
+    inlines = [SeatFillerInline, PinnedStudentInline]
+
+class MealTimeAdmin(admin.ModelAdmin):
+    filter_horizontal = ['include_grades']
+
+class SeatingStudentAdmin(admin.ModelAdmin):
+  fields = ['enrollment', 'ethnicity', 'food_allergy']
+  readonly_fields = ['enrollment']
+  
+  list_filter = ['enrollment__grade', 'ethnicity']
+  list_display = ['__str__', 'ethnicity', 'food_allergy']
+  list_editable = ['ethnicity', 'food_allergy']
+  
+  
+admin.site.register(Table, TableAdmin)
+admin.site.register(MealTime, MealTimeAdmin)
+admin.site.register(Layout)
+admin.site.register(SeatingStudent, SeatingStudentAdmin)
+admin.site.register(Ethnicity)

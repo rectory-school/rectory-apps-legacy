@@ -1,0 +1,32 @@
+{% load staticfiles %}{% load i18n admin_urls %}<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html version="-//W3C//DTD XHTML 1.1//EN"
+      xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.w3.org/1999/xhtml
+                          http://www.w3.org/MarkUp/SCHEMA/xhtml11.xsd">
+  <head>
+    <title>Seating Chart Editor</title>
+	
+	<script type="text/javascript">
+		var MEALTIMEID = {{ mealTime.id }};
+	</script>
+	
+	<script src="{% url 'js_reverse' %}" type="text/javascript"></script>
+	
+    <script type="text/javascript" src="{% static 'jquery/jquery-1.9.1.js' %}"></script>
+    <script type="text/javascript" src="{% static 'jquery/ui/jquery-ui.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/seating_chart_editor.js' %}"></script>
+	
+	<link rel="stylesheet" type="text/css" href="{% static 'css/seating_chart_editor.css' %}" />
+  </head>
+  <body>
+	<p style="background-color: black; text-align: center; color: white; margin-top: 0;" id="status">&nbsp;</p>
+	<h1>{{ mealTime.name }}</h1>
+	<div id="page-wrap">
+		<div id="tables"></div>
+		<div id="leftovers"><h1>Unassigned</h1><ul id="leftovers" class="connected"></ul></div>
+	</div>
+  </body>
+</html>
