@@ -153,7 +153,7 @@ def seatingChartInsert(request, id):
             c.setFontSize(20)
             c.drawCentredString(3*inch, 3.65*inch, table.description)
             assignments = models.TableAssignment.objects.filter(meal_time=mealTime, table=table)
-            students = models.Student.objects.filter(tableassignment__in=assignments)
+            students = models.SeatingStudent.objects.filter(tableassignment__in=assignments)
             fillers = models.SeatFiller.objects.filter(meal_time=mealTime, table=table)
             
             drawMeal(c, x=.25*inch, y=(4-.6)*inch, width=5.5*inch, height=3.5*inch, mealTime=mealTime, fillers=fillers, students=students)
@@ -194,6 +194,8 @@ def seatingChartInsert(request, id):
             
             
     
+    c.setTitle(layout.name)
+    c.setAuthor("Rectory School Seating Chart Generator")
     c.save()
     
     response = HttpResponse(content_type='application/pdf')
@@ -208,13 +210,13 @@ def drawMeal(c, x, y, width, height, mealTime, fillers, students):
     
     c.setFillColor(colors.black)
     c.setFontSize(16)
-    c.drawCentredString(xCenter, y, mealTime.name)
+    c.drawCentredString(xCenter, y, mealTime.name.strip())
     y -= 16
     
     c.setFontSize(12)
     for f in fillers:
         if f.display:
-            c.drawCentredString(xCenter, y, f.description)
+            c.drawCentredString(xCenter, y, f.description.strip())
             y -= 12
     
     if fillers:

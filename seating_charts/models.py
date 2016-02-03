@@ -35,6 +35,20 @@ class SeatingStudent(models.Model):
   @property
   def gender(self):
     return self.enrollment.student.gender
+  
+  @property
+  def flaggedName(self):
+    if self.enrollment.student.nickname:
+      name = "{nickname:} {last:}".format(nickname=self.enrollment.student.nickname, last=self.enrollment.student.last_name)
+    else:
+      name = "{first:} {last:}".format(first=self.enrollment.student.first_name, last=self.enrollment.student.last_name)
+    
+    if self.food_allergy == "ALLERGY":
+      return "{name:}**".format(name=name)
+    elif self.food_allergy == "EPIPEN":
+      return "{name:}**E".format(name=name)
+    
+    return name
     
   class Meta:
     ordering = ['enrollment__student__last_name', 'enrollment__student__first_name']
