@@ -8,12 +8,15 @@ from academics.models import Enrollment, Grade
 
 # Create your models here.
 class Ethnicity(models.Model):
-	ethnicity = models.CharField(max_length=200)
+  ethnicity = models.CharField(max_length=200)
 	
-	history = HistoricalRecords()
+  history = HistoricalRecords()
 	
-	def __str__(self):
-		return self.ethnicity
+  class Meta:
+    ordering = ['ethnicity']
+  
+  def __str__(self):
+    return self.ethnicity
 
 class SeatingStudent(models.Model):
   ALLERGYCHOICES = (('', 'No Allergies'), ('ALLERGY', 'Allergy'), ('EPIPEN', 'Allergy (EpiPen)'))
