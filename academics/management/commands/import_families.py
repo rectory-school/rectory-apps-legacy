@@ -36,7 +36,11 @@ class Command(BaseCommand):
             
             parents = {}
             
-            parent_attr_map = {
+            address = fields['P_address_full'] or ""
+            address_lines = address.splitlines()
+            address = "\n".join([line.strip() for line in address_lines])
+            
+            parent_attr_map = {              
               'Pa': {
                 'first_name': (fields['Pa_first'] or "").strip(),
                 'last_name': (fields['Pa_last'] or "").strip(),
@@ -44,6 +48,7 @@ class Command(BaseCommand):
                 'phone_home': (fields['P_phone_H'] or "").strip(),
                 'phone_work': (fields['Pa_phone_W'] or "").strip(),
                 'phone_cell': (fields['Pa_phone_cell'] or "").strip(),
+                'address': address,
                 'family_id': family_id,
                 'parent_id': 'Pa',
               },
@@ -54,6 +59,7 @@ class Command(BaseCommand):
                 'phone_home': (fields['P_phone_H'] or "").strip(),
                 'phone_work': (fields['Pb_phone_W'] or "").strip(),
                 'phone_cell': (fields['Pb_phone_cell'] or "").strip(),
+                'address': address,
                 'family_id': family_id,
                 'parent_id': 'Pa',
               }

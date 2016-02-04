@@ -44,6 +44,8 @@ class Student(models.Model):
     
     gender = models.CharField(max_length=1, blank=True, default="")
     
+    parents = models.ManyToManyField('Parent', through='StudentParentRelation', blank=True)
+    
     history = HistoricalRecords()
     
     class Meta:
@@ -239,6 +241,8 @@ class Parent(models.Model):
   phone_work = models.CharField(max_length=100, blank=True)
   phone_cell = models.CharField(max_length=100, blank=True)
   
+  address = models.TextField(blank=True)
+  
   history = HistoricalRecords()
   
   class Meta:
@@ -256,8 +260,12 @@ class StudentParentRelation(models.Model):
   parent = models.ForeignKey(Parent, db_index=True)
   
   relationship = models.CharField(max_length=20, blank=True)
+  family_id_key = models.CharField(max_length=20, blank=True)
   
   history = HistoricalRecords()
+  
+  def __str__(self):
+    return "{:}/{:}".format(self.student, self.parent)
   
   class Meta:
     unique_together = (('student', 'parent'), )

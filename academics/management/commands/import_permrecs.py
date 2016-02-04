@@ -8,7 +8,7 @@ from django.db import transaction
 
 from validate_email import validate_email
 
-from academics.models import Student
+from academics.models import Student, Parent, StudentParentRelation
 from academics.utils import fmpxmlparser
 
 logger = logging.getLogger(__name__)
@@ -88,8 +88,60 @@ class Command(BaseCommand):
                     
                 if forceSave:
                     student.save()
+                
+                self.sync_relations(student, fields)
                     
             extra_students = Student.objects.exclude(student_id__in=seen_ids)
             for extra_student in extra_students:
                 logger.warn("Deleting extra student {}".format(extra_student.id))
                 extra_student.delete()
+
+    def sync_relations(self, student, fields):
+      relevant_parent_ids = set()
+      
+      for family_number in ('1', '2', '3', '4'):
+        family_id_key = "IDFamily" + family_number
+        family_id = fields[family_id_key]
+        
+        if not family_id:
+          continue
+        
+        for parent_code in ('a', 'b'):
+          relation_field = "P" + family_number + parent_code + "_Relation"
+          full_parent_id = family_id + "P" + parent_code
+          
+          relationship = fields[relation_field] or ""
+          
+          try:
+            parent = Parent.objects.get(full_id=full_parent_id)
+          except Parent.DoesNotExist:
+            continue
+          
+          do_save = False
+          
+          try:
+            student_parent_relation = StudentParentRelation.objects.get(parent=parent, student=student)
+          except StudentParentRelation.DoesNotExist:
+            student_parent_relation = StudentParentRelation(parent=parent, student=student)
+            do_save = True
+          
+          attr_map = {
+            'relationship': relationship,
+            'family_id_key': family_id_key
+          }
+          
+          for attr, desired_value in attr_map.items():
+            db_value = getattr(student_parent_relation, attr)
+            
+            if db_value != desired_value:
+              setattr(student_parent_relation, attr, desired_value)
+              do_save = True
+          
+          if do_save:
+            student_parent_relation.save()
+            
+          relevant_parent_ids.add(parent.id)
+
+      extra_parents = student.parents.exclude(pk__in=relevant_parent_ids)
+      for extra_parent in extra_parents:
+        logger.warn("Deleting parent {:}".format(extra_parent.id))

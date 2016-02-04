@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.admin.utils import flatten_fieldsets
 from django.http import HttpResponse
 
-from academics.models import Dorm, AcademicYear, Student, Teacher, Enrollment, Course, Section, StudentRegistration, Grade, Parent
+from academics.models import Dorm, AcademicYear, Student, Teacher, Enrollment, Course, Section, StudentRegistration, Grade, Parent, StudentParentRelation
 
 from academics.lib.student_info_sheet import write_info_sheets
 
@@ -48,9 +48,22 @@ class EnrolledWithinListFilter(admin.SimpleListFilter):
 class GradeAdmin(admin.ModelAdmin):
   readonly_fields = ['grade']            
 
+class FamilyRelationInline(admin.StackedInline):
+  model = StudentParentRelation
+  
+  fields = ['parent', 'relationship', 'family_id_key']
+  readonly_fields = fields
+  
+  extra = 0
+  max_num = 0
+  
 class StudentAdmin(ReadOnlyAdmin):
     list_display = ['student_id', 'first_name', 'last_name', 'email', 'current']
     list_filter = ['current', EnrolledWithinListFilter]
+    
+    inlines = [
+      FamilyRelationInline
+    ]
     
     def get_info_sheet(modeladmin, request, queryset):
         academic_year = AcademicYear.objects.current()
@@ -87,6 +100,9 @@ class SectionAdmin(ReadOnlyAdmin):
 class StudentRegistrationAdmin(ReadOnlyAdmin):
     list_filter = ['section__academic_year']
     list_display = ['student_reg_id', 'section', 'student']
+
+class StudentParentRelationAdmin(ReadOnlyAdmin):
+  pass
     
 # Register your models here.
 admin.site.register(Dorm, DormAdmin)
@@ -99,3 +115,4 @@ admin.site.register(Section, SectionAdmin)
 admin.site.register(StudentRegistration, StudentRegistrationAdmin)
 admin.site.register(Grade, GradeAdmin)
 admin.site.register(Parent, ParentAdmin)
+admin.site.register(StudentParentRelation, StudentParentRelationAdmin)
