@@ -3,9 +3,12 @@
 import logging
 from datetime import date
 
+from io import StringIO
+
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.utils import timezone
+from django.core.mail import send_mail
 
 from academics.models import Parent
 from change_notifier.models import FamilyChangeNotification
@@ -28,5 +31,58 @@ class Command(BaseCommand):
           
           return
         
-        updated_models = Parent.objects.filter(updated_at__gte=last_run)
-        print (updated_models)
+        
+        to_emails = [user.email for user in config.users.all() if user.email]
+        
+        if not to_emails:
+          logger.error("No e-mails addresses specified")
+          return 1
+        
+        email_body = StringIO()
+        
+        updated_parents = Parent.objects.filter(updated_at__gte=last_run)
+        
+        for parent_i, updated_parent in enumerate(updated_parents):
+          old_version = updated_parent.history.as_of(last_run)
+          
+          compare_attrs = ['first_name', 'last_name', 'email', 'phone_home', 'phone_work', 'phone_cell', 'address']
+          
+          email_body.write("="*80 + "\n")
+          email_body.write(" Family ID: {:} ".format(updated_parent.family_id).center(80, "=") + "\n")
+          email_body.write(" Parent: {:} ".format(updated_parent.parent_id).center(80, "=") + "\n")
+          email_body.write("="*80 + "\n\n")
+          
+          changed_attrs = []
+          unchanged_attrs = []
+          
+          for attr in compare_attrs:
+            old_value = getattr(old_version, attr)
+            new_value = getattr(updated_parent, attr)
+            
+            if old_value == new_value:
+              unchanged_attrs.append((attr, old_value))
+            
+            else:
+              changed_attrs.append((attr, old_value, new_value))
+          
+          email_body.write("Changed values".center(80, "-") + "\n")
+          for attr, old_value, new_value in changed_attrs:
+            email_body.write("{attr:}\nOld value: {old_value:}\nNew value: {new_value:}\n\n".format(attr=attr, old_value=old_value, new_value=new_value))
+          
+          
+          email_body.write("Unchanged values".center(80, "-") + "\n")
+          for i, (attr, value) in enumerate(unchanged_attrs):
+            if value:
+              email_body.write("{attr:}\n{value:}".format(attr=attr, value=value))
+            
+              if i != len(unchanged_attrs) - 1:
+                email_body.write("\n\n")
+          
+          if parent_i != updated_parents.count() - 1:
+            email_body.write("\n\n\n\n")
+            
+        if updated_parents:
+          send_mail(subject="{update_count:} parent file(s) updated".format(update_count=updated_parents.count()), message=email_body.getvalue(), from_email='technology@rectoryschool.org', recipient_list=to_emails)
+
+        config.last_run = timezone.now()
+        config.save()
