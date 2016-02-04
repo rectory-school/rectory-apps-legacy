@@ -23,7 +23,7 @@ class SeatingStudentAdmin(admin.ModelAdmin):
   fields = ['enrollment', 'ethnicity', 'food_allergy']
   readonly_fields = ['enrollment']
   
-  list_filter = ['enrollment__grade', 'ethnicity']
+  list_filter = ['enrollment__grade', 'enrollment__grade__school', 'ethnicity']
   list_display = ['__str__', 'ethnicity', 'food_allergy']
   list_editable = ['ethnicity', 'food_allergy']
   

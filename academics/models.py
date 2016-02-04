@@ -134,8 +134,13 @@ class Dorm(models.Model):
             
 
 class Grade(models.Model):
+  SCHOOL_CHOICES = (('', '--'), ('elementary', 'Elementary School'), ('middle', 'Middle School'), ('high', 'High School'))
+  SCHOOL_CHOICES_LENGTH = max(len(choice[0]) for choice in SCHOOL_CHOICES)
+    
   grade = models.CharField(max_length=2, unique=True)
   description = models.CharField(max_length=63, unique=True)
+  
+  school = models.CharField(max_length=SCHOOL_CHOICES_LENGTH, choices=SCHOOL_CHOICES, default='', blank=True)
   
   class Meta:
     ordering = ['grade']
