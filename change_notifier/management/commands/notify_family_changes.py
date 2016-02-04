@@ -10,7 +10,7 @@ from django.db import transaction
 from django.utils import timezone
 from django.core.mail import send_mail
 
-from academics.models import Parent
+from academics.models import Parent, StudentParentRelation
 from change_notifier.models import FamilyChangeNotification
 
 logger = logging.getLogger(__name__)
@@ -41,8 +41,25 @@ class Command(BaseCommand):
         email_body = StringIO()
         
         updated_parents = Parent.objects.filter(updated_at__gte=last_run)
+        updated_parent_count = 0
+        
+        relevant_parents = []
+        irrelevant_parents = []
         
         for parent_i, updated_parent in enumerate(updated_parents):
+          is_relevant = False
+          
+          for student_parent_relation in StudentParentRelation.objects.filter(parent=updated_parent):
+            if student_parent_relation.student.current and student_parent_relation.family_id_key in ("IDFamily1", "IDFamily2"):
+              is_relevant = True
+              break
+          
+          if not is_relevant:
+            irrelevant_parents.append(updated_parent)
+            continue
+          
+          relevant_parents.append(updated_parent)
+            
           old_version = updated_parent.history.as_of(last_run)
           
           compare_attrs = ['first_name', 'last_name', 'email', 'phone_home', 'phone_work', 'phone_cell', 'address']
@@ -80,9 +97,9 @@ class Command(BaseCommand):
           
           if parent_i != updated_parents.count() - 1:
             email_body.write("\n\n\n\n")
-            
-        if updated_parents:
-          send_mail(subject="{update_count:} parent file(s) updated".format(update_count=updated_parents.count()), message=email_body.getvalue(), from_email='technology@rectoryschool.org', recipient_list=to_emails)
+                    
+        if relevant_parents:
+          send_mail(subject="{update_count:} parent file(s) updated".format(update_count=len(relevant_parents)), message=email_body.getvalue(), from_email='technology@rectoryschool.org', recipient_list=to_emails)
 
         config.last_run = timezone.now()
         config.save()
