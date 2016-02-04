@@ -77,7 +77,7 @@ class Command(BaseCommand):
                     
                     if dbValue != attrMap[attr]:
                         setattr(student_registration, attr, attrMap[attr])
-                        logger.info("Updating {attr:} on {student_registration:} from {oldValue:} to {newValue:}".format(attr=attr, student_registration=student_registration.student_registration_id, oldValue=dbValue, newValue=attrMap[attr]))
+                        logger.info("Updating {attr:} on {student_registration:} from {oldValue:} to {newValue:}".format(attr=attr, student_registration=student_registration.student_reg_id, oldValue=dbValue, newValue=attrMap[attr]))
                         forceSave = True
                 
                 seen_ids.add(student_reg_id)
