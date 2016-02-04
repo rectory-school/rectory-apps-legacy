@@ -75,11 +75,13 @@ INSTALLED_APPS = (
     'simple_history',
     'django_js_reverse',
     'versatileimagefield',
+    'solo',
     'academics',
     'courseevaluations',
     'paw',
     'calendar_generator',
     'seating_charts',
+    'change_notifier',
 )
 
 MIDDLEWARE_CLASSES = (
