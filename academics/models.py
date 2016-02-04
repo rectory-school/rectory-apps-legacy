@@ -243,6 +243,8 @@ class Parent(models.Model):
   
   address = models.TextField(blank=True)
   
+  updated_at = models.DateTimeField(auto_now=True)
+  
   history = HistoricalRecords()
   
   class Meta:
