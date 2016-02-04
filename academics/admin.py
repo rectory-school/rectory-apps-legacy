@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.admin.utils import flatten_fieldsets
 from django.http import HttpResponse
 
-from academics.models import Dorm, AcademicYear, Student, Teacher, Enrollment, Course, Section, StudentRegistration, Grade
+from academics.models import Dorm, AcademicYear, Student, Teacher, Enrollment, Course, Section, StudentRegistration, Grade, Parent
 
 from academics.lib.student_info_sheet import write_info_sheets
 
@@ -17,6 +17,9 @@ class ReadOnlyAdmin(admin.ModelAdmin):
                 [field.name for field in self.opts.local_fields] +
                 [field.name for field in self.opts.local_many_to_many]
             ))
+
+class ParentAdmin(ReadOnlyAdmin):
+  pass
 
 class AcademicYearAdmin(admin.ModelAdmin):
     fields = ['year', 'current']
@@ -95,3 +98,4 @@ admin.site.register(Course, CourseAdmin)
 admin.site.register(Section, SectionAdmin)
 admin.site.register(StudentRegistration, StudentRegistrationAdmin)
 admin.site.register(Grade, GradeAdmin)
+admin.site.register(Parent, ParentAdmin)

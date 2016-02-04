@@ -220,6 +220,7 @@ class StudentRegistration(models.Model):
     
     def __str__(self):
         return "{section:}: {student:}".format(section=self.section, student=self.student)
+  
 
 class Parent(models.Model):
   PARENT_ID_CHOICES = (('Pa', 'Parent A'), ('Pb', 'Parent B'))
@@ -234,6 +235,25 @@ class Parent(models.Model):
   last_name = models.CharField(max_length=50, blank=True)
   
   email = models.EmailField(max_length=254, blank=True)
-  phone_home = models.CharField(max_length=20, blank=True)
-  phone_work = models.CharField(max_length=20, blank=True)
-  phone_cell = models.CharField(max_length=20, blank=True)
+  phone_home = models.CharField(max_length=100, blank=True)
+  phone_work = models.CharField(max_length=100, blank=True)
+  phone_cell = models.CharField(max_length=100, blank=True)
+  
+  class Meta:
+    ordering = ['last_name', 'first_name']
+  
+  @property
+  def name(self):
+    return "{:} {:}".format(self.first_name, self.last_name)
+
+  def __str__(self):
+    return self.name
+    
+class StudentParentRelation(models.Model):
+  student = models.ForeignKey(Student, db_index=True)
+  parent = models.ForeignKey(Parent, db_index=True)
+  
+  relationship = models.CharField(max_length=20, blank=True)
+  
+  class Meta:
+    unique_together = (('student', 'parent'), )
