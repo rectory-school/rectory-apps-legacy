@@ -7,6 +7,7 @@ from solo.models import SingletonModel
 class FamilyChangeNotification(models.Model):
   users = models.ManyToManyField(User, blank=True)
   last_run = models.DateTimeField(null=True)
+  current_students_only = models.BooleanField(default=True)
   
   def __str__(self):
     return "Family Change Notification Configuration"

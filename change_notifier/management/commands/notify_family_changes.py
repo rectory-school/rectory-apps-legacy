@@ -47,13 +47,17 @@ class Command(BaseCommand):
         irrelevant_parents = []
         
         for parent_i, updated_parent in enumerate(updated_parents):
-          is_relevant = False
+          if config.current_students_only:
+            is_relevant = False
           
-          for student_parent_relation in StudentParentRelation.objects.filter(parent=updated_parent):
-            if student_parent_relation.student.current and student_parent_relation.family_id_key in ("IDFamily1", "IDFamily2"):
-              is_relevant = True
-              break
-          
+            for student_parent_relation in StudentParentRelation.objects.filter(parent=updated_parent):
+              if student_parent_relation.student.current and student_parent_relation.family_id_key in ("IDFamily1", "IDFamily2"):
+                is_relevant = True
+                break
+          else:
+            #If not doing current students only, they're always relevant
+            is_relevant = True
+            
           if not is_relevant:
             irrelevant_parents.append(updated_parent)
             continue
