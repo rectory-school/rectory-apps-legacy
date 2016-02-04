@@ -220,3 +220,20 @@ class StudentRegistration(models.Model):
     
     def __str__(self):
         return "{section:}: {student:}".format(section=self.section, student=self.student)
+
+class Parent(models.Model):
+  PARENT_ID_CHOICES = (('Pa', 'Parent A'), ('Pb', 'Parent B'))
+  PARENT_ID_LENGTH = max(len(choice[0]) for choice in PARENT_ID_CHOICES)
+  
+  family_id = models.CharField(max_length=20)
+  parent_id = models.CharField(max_length=PARENT_ID_LENGTH)
+  
+  full_id = models.CharField(max_length=(20 + PARENT_ID_LENGTH), unique=True)
+  
+  first_name = models.CharField(max_length=50, blank=True)
+  last_name = models.CharField(max_length=50, blank=True)
+  
+  email = models.EmailField(max_length=254, blank=True)
+  phone_home = models.CharField(max_length=20, blank=True)
+  phone_work = models.CharField(max_length=20, blank=True)
+  phone_cell = models.CharField(max_length=20, blank=True)
