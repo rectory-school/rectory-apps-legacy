@@ -239,6 +239,8 @@ class Parent(models.Model):
   phone_work = models.CharField(max_length=100, blank=True)
   phone_cell = models.CharField(max_length=100, blank=True)
   
+  history = HistoricalRecords()
+  
   class Meta:
     ordering = ['last_name', 'first_name']
   
@@ -254,6 +256,8 @@ class StudentParentRelation(models.Model):
   parent = models.ForeignKey(Parent, db_index=True)
   
   relationship = models.CharField(max_length=20, blank=True)
+  
+  history = HistoricalRecords()
   
   class Meta:
     unique_together = (('student', 'parent'), )
