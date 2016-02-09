@@ -9,10 +9,10 @@ class EnrichmentSlotAdmin(admin.ModelAdmin):
     inlines = [EnrichmentOptionInline]
     
 class StudentAdmin(admin.ModelAdmin):
-    fields = ["academic_student", "advisor", "lockout"]
+    fields = ["academic_student", "advisor", "lockout", "associated_teachers"]
     search_fields = ["academic_student__first_name", "academic_student__last_name"]
     
-    readonly_fields = ("academic_student", "advisor")
+    readonly_fields = ("academic_student", "advisor", "associated_teachers")
     
     search_fields = ["academic_student__first_name", "academic_student__last_name"]
     

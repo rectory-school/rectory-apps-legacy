@@ -124,8 +124,18 @@ class Command(BaseCommand):
                     enrichment_student = enrichmentmanager.models.Student()
                     enrichment_student.academic_student = academic_student
                     enrichment_student.advisor = enrichment_advisor
-                    enrichment_student.save()        
-            
+                    enrichment_student.save()
+                
+                #Make our way through getting to the relevant teachers
+                registrations = academics.models.StudentRegistration.objects.filter(
+                    student=academic_student, section__academic_year=current_academic_year)
+                
+                sections = academics.models.Section.objects.filter(studentregistration__in=registrations)
+                academic_teachers = academics.models.Teacher.objects.filter(section__in=sections).order_by().distinct()
+                enrichment_teachers = enrichmentmanager.models.Teacher.objects.filter(academic_teacher__in=academic_teachers)
+                
+                enrichment_student.associated_teachers = enrichment_teachers
+                
             # Delete extra students
             enrichmentmanager.models.Student.objects.filter(academic_student__current=False).delete()
             
