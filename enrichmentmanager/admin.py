@@ -9,10 +9,12 @@ class EnrichmentSlotAdmin(admin.ModelAdmin):
     inlines = [EnrichmentOptionInline]
     
 class StudentAdmin(admin.ModelAdmin):
-    fields = ["academic_student", "lockout"]
+    fields = ["academic_student", "advisor", "lockout"]
     search_fields = ["academic_student__first_name", "academic_student__last_name"]
     
-    readonly_fields = ("academic_student", )
+    readonly_fields = ("academic_student", "advisor")
+    
+    search_fields = ["academic_student__first_name", "academic_student__last_name"]
     
     def has_add_permission(self, *args, **kwargs):
         return False

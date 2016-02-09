@@ -20,7 +20,11 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         with transaction.atomic():
             # Sync the academic and enrichment teacher objects
+            
+            current_academic_year = academics.models.AcademicYear.objects.current()
+            
             academic_teachers = academics.models.Teacher.objects.all()
+            
             for academic_teacher in academic_teachers:
                 # Either get the existing enrichment teacher or create an appropriate one
                 try:
@@ -29,7 +33,7 @@ class Command(BaseCommand):
                 except enrichmentmanager.models.Teacher.DoesNotExist:
                     enrichment_teacher = enrichmentmanager.models.Teacher(academic_teacher=academic_teacher)
                     enrichment_teacher.save()
-            
+                
                 # Description change, update all future options matching the old description
                 if academic_teacher.default_enrichment_room != enrichment_teacher.default_room:
                     previous_default = enrichment_teacher.default_description
@@ -95,3 +99,36 @@ class Command(BaseCommand):
                 
                     enrichment_teacher.default_room = academic_teacher.default_enrichment_room
                     enrichment_teacher.save()
+                    
+                    
+            
+            relevant_enrollments = academics.models.Enrollment.objects.filter(
+                student__current=True, academic_year=current_academic_year, grade__school='middle').exclude(advisor=None)
+                
+            relevant_academic_students = academics.models.Student.objects.filter(enrollment__in=relevant_enrollments)
+            
+            for enrollment in relevant_enrollments:
+                academic_student = enrollment.student
+                
+                # Get the enrichment teacher that matches the advisor in academics
+                enrichment_advisor = enrichmentmanager.models.Teacher.objects.get(academic_teacher=enrollment.advisor)
+                
+                #Either get the enrichment student or create a new one
+                try:
+                    enrichment_student = enrichmentmanager.models.Student.objects.get(academic_student=academic_student)
+                    if enrichment_student.advisor != enrichment_advisor:
+                        enrichment_student.advisor = enrichment_advisor
+                        enrichment_student.save()
+                        
+                except enrichmentmanager.models.Student.DoesNotExist:
+                    enrichment_student = enrichmentmanager.models.Student()
+                    enrichment_student.academic_student = academic_student
+                    enrichment_student.advisor = enrichment_advisor
+                    enrichment_student.save()        
+            
+            # Delete extra students
+            enrichmentmanager.models.Student.objects.filter(academic_student__current=False).delete()
+            
+            # Teachers are not deleted because a recently fired teacher may still be indicated as the advisor for a student,
+            # which is not an optional foreign key.
+            
