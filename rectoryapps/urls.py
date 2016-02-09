@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^icons/', include('paw.urls')),
     url(r'^seating/', include('seating_charts.urls')),
     url(r'^calendar/', include('calendar_generator.urls')),
+    url(r'^enrichment/', include('enrichmentmanager.urls')),
     url(r'^django-rq/', include('django_rq.urls')),
     url(r'^accounts/', include('django.contrib.auth.urls')),
 ]
