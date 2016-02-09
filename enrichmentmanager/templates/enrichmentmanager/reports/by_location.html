@@ -1,0 +1,36 @@
+{% load enrichment_extra %}
+{% load staticfiles %}{% load enrichment_extra %}<!DOCTYPE html>
+<html>
+<head>
+<title>Room Counts</title>
+<link rel="stylesheet" href="{% static "unsemantic/assets/stylesheets/unsemantic-grid-responsive.css" %}" />
+<link rel="stylesheet" href="{% static "css/reporting.css" %}" />
+</head>
+
+<body>
+<div class="grid-container">
+	<div class="grid-100">
+		<a href="{% url 'reporting_index' %}" class="noPrint">Reporting Home</a>
+		<h1>Room Counts for the week of {{ monday | date:"F jS"}}</h1>
+		<div class="grid-100">
+				{% for slot, rooms in roomCounts %}
+					<h2>{{ slot.date | date:"F jS" }}</h2>
+					<ul>
+						{% for locationName, count, options in rooms %}
+							<li class="locationName"><span class="locationName">{{ locationName }}</span>: <span class="locationCount">{{ count }}</span>
+							<ul>
+								{% for option, count in options %}
+									<li class="locationOption">{{ option }}: {{ count }}</li>
+								{% endfor %}
+							</ul>
+							</li>
+						{% endfor %}
+					</ul>
+					
+					</li>
+				{% endfor %}
+		</div>
+	</div>	
+</div>
+</body>
+</html>

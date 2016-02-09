@@ -1,0 +1,89 @@
+{% load staticfiles %}{% load enrichment_extra %}<!DOCTYPE html>
+<html>
+<head>
+<title>Enrichment Signup System</title>
+<link rel="stylesheet" href="{% static "unsemantic/assets/stylesheets/unsemantic-grid-responsive.css" %}" />
+<link rel="stylesheet" href="{% static "css/reporting.css" %}" />
+
+
+
+</head>
+
+<body>
+  <div class="grid-container">
+    <div class="grid-100">
+  
+      <div class="grid-25">&nbsp;</div>
+      <div class="grid-50">
+        <div class="grid-100" style="background-color:orange;text-align:center; font-size:20pt">Rectory School Enrichment System</div>
+        <div class="grid-100 noPrint" style="background-color:#ddd;">
+
+          <ul>
+            {% if perms.enrichmentmanager.can_edit_own_advisees %}
+              <li class="noPrint"><a href="{% url 'assign_advisor' %}">Assignment</a></li>
+            {% endif %}
+    
+            {% if perms.enrichmentmanager.can_view_reports %}
+              <li class="noPrint"><a href="{% url 'reporting_index' %}">Reporting</a></li>
+            {% endif %}     
+    
+            {% if user.is_staff %}
+              <li class="noPrint"><a href="{% url 'admin:index' %}">Slot/Student Admin</a></li>
+            {% endif %}
+    
+            {% if perms.enrichmentmanager.can_view_reports %}
+              {% if adviseeQuickReport or teacherQuickReport %}
+                {% if adviseeQuickReport %}
+                  <li class="noPrint"><strong><a href="{{ adviseeQuickReport }}">My advsee's enrichment sessions for today</a></strong></li>
+                {% endif %}
+    
+                {% if teacherQuickReport %}
+                  <li class="noPrint"><strong><a href="{{ teacherQuickReport }}">Students coming to see me today</a></strong></li>
+                {% endif %}       
+              {% endif %}
+            {% endif %}
+          </ul>
+  
+          <p class="noPrint">You are logged in as {{ user.email }}.</p>
+        </div>
+        
+        {% if optionToday or advisees %}
+          <div class="grid-100" style="background-color:#FFFF00;text-align:center; font-size:20pt; margin-top: 20px">Today's information</div>
+          <div class="grid-100" style="background-color:#ddd;">          
+            <p style="text-align: center; margin-top: 0; font-size: 16pt; margin: 0">{% now "F jS" %}</p>
+            <p style="text-align:center; font-size:16pt; margin:0" class="printOnly">{{ currentAdvisor.name }}</p>
+            
+            <ul>
+              {% if optionToday %}
+                <li style="margin-top: 15px">Students coming to see me in {{ optionToday.location }}
+                  <ul>
+                    {% if optionToday.students.count %}
+                      {% for student in optionToday.students.all %}
+                        <li>{{ student.name }}</li>
+                      {% endfor %}
+                    {% else %}
+                      <li>None. Please stay in your room, as students may still be sent to you.</li>
+                    {% endif %}
+                  </ul>
+                </li>
+              {% endif %}
+  
+              {% if advisees %}
+                <li style="margin-top: 15px">My advisee's locations
+                  <ul>
+                    {% for advisee, location in advisees %}
+                      <li>{{ advisee.name }}: {{ location }}</li>
+                    {% endfor %}
+                  </ul>
+                </li>
+              {% endif %}
+            </ul>
+            <p class="printOnly" style="text-align: right; color: #ccc;">Generated at {% now "c" %}</p>
+          </div>
+        {% endif %}
+      </div>
+      <div class="grid-25">&nbsp;</div>
+    </div>
+  </div>
+</body>
+</html>

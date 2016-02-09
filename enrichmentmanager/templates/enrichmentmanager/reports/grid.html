@@ -1,0 +1,71 @@
+{% load enrichment_extra %}
+{% load staticfiles %}{% load enrichment_extra %}<!DOCTYPE html>
+<html>
+<head>
+<title>Enrichment Signup</title>
+<link rel="stylesheet" href="{% static "unsemantic/assets/stylesheets/unsemantic-grid-responsive.css" %}" />
+<link rel="stylesheet" href="{% static "css/reporting.css" %}" />
+</head>
+
+<body>
+<div class="grid-container">
+	<div class="grid-100">
+		<a href="{% url 'reporting_index' %}" class="noPrint">Reporting Home</a>
+		<h1>{{ reportTitle }} for the week of {{ monday | date:"F jS"}}</h1>
+		<div class="grid-100">
+			<h2>By Student</h2>
+			<table class="selector">
+				<tr>
+					<th class="student">Advisee</th>
+					{% for slot in slots %}
+						<th class="day">{{ slot.date | date:"F jS" }}</th>
+					{% endfor %}
+				</tr>
+	
+				{% for student in students %}
+					<tr>
+						<td class="student" title="Advisor: {{student.advisor.name}}">{{ student.name }}</td>
+			
+						{% for slot in slots %}
+							{% display_for slot student as display %}
+							<td>{{ display | safe }}</td>
+						{% endfor %}
+					</tr>
+				{% endfor %}
+			</table>
+      
+      <p>Total students: {{ students.count }}</p>
+		</div>
+		
+		<div class="grid-100">
+			<h2>By Advisor</h2>
+			<table class="selector">
+				
+				<tr>
+					<th class="student">Advisee</th>
+					{% for slot in slots %}
+						<th class="day">{{ slot.date | date:"F jS" }}</th>
+					{% endfor %}
+				</tr>
+				
+			{% for advisor, students in byAdvisor %}
+			
+				<tr><td COLSPAN="{{ slots|length|add:"1"}}"><h3>{{ advisor.name }}</h3></td></tr>
+					{% for student in students %}
+						<tr>
+							<td class="student">{{ student.name }}</td>
+			
+							{% for slot in slots %}
+								{% display_for slot student as display %}
+								<td>{{ display | safe }}</td>
+							{% endfor %}
+						</tr>
+					{% endfor %}
+			{% endfor %}
+				
+			</table>
+		</div>
+	</div>	
+</div>
+</body>
+</html>

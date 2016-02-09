@@ -1,0 +1,62 @@
+ul.parent {
+	padding-left: 0;
+}
+
+li.week {
+	list-style: none;
+	margin-left: 0;
+}
+
+li.week p.weekHeader {
+	font-weight: bold;
+}
+
+li.week ul li {
+	list-style: none;
+}
+
+table.selector th.day, table.selector td.day {
+	padding-left: 5px;
+}
+
+table.selector th.student, table.selector td.student {
+	padding-right: 5px;
+}
+
+table.selector th.student, table.selector td.student {
+	text-align: right;
+}
+
+table.selector td {
+	text-align: left;
+}
+
+table.selector tr:nth-child(3n+4) td {
+	padding-bottom: 20px;
+}
+
+p.printOnly {
+	display: none;
+}
+
+@media print {
+	p.printOnly {
+		display: block;
+	}
+	
+	.noPrint {
+		display: none;
+	}
+}
+
+li.locationName {
+	padding-bottom: 20px;
+}
+
+span.locationName {
+	font-weight: bold;
+}
+
+li.locationOption {
+	color: gray;
+}

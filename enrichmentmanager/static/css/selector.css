@@ -1,0 +1,117 @@
+table.selector th.day, table.selector td.day {
+	padding-left: 5px;
+}
+
+table.selector th.day a {
+  color: black;
+}
+
+table.selector th.student, table.selector td.student {
+	padding-right: 5px;
+}
+
+table.selector th.student, table.selector td.student {
+	text-align: right;
+}
+
+table.selector td {
+	text-align: left;
+}
+
+.split-2 {
+	-webkit-column-count: 2; /* Chrome, Safari, Opera */
+	-moz-column-count: 2; /* Firefox */
+	column-count: 2;
+}
+
+a, a:visited {
+	color: blue;
+	text-decoration: none;
+}
+
+table.selector {
+	margin-bottom: 20px;
+}
+
+div#dates, div#advisors, div#weekdays {
+	display: none;
+}
+
+div#dates ul, div#advisors ul, div#specialLinks ul, div#weekdays ul {
+	margin: 0;
+	padding: 0;
+}
+
+div#dates li, div#advisors li, div#specialLinks li, div#weekdays li {
+	list-style-type: none;
+	padding-left: 0;
+	margin-left: 0;
+}
+
+div#specialLinks {
+	margin-top: 20px;
+}
+
+div#specialLinks a {
+
+}
+
+a#showAdvisor, a#showDates {
+	text-decoration: none;
+	color: #ccc;
+}
+
+div.clickable {
+	padding: 0;
+	color: #ccc;
+	cursor: pointer;
+}
+
+div#hideOptions {
+	display: none;
+}
+
+p.readOnlySignup {
+	margin: 0;
+	padding: 0;
+	
+	font-style: italic;
+}
+
+p.printOnly {
+	display: none;
+}
+
+@media print {
+	p.printOnly {
+		display: block;
+	}
+	
+	.noPrint {
+		display: none;
+	}
+}
+
+p.warning {
+	font-size: 20pt;
+}
+
+p.notice {
+  text-align: center;
+  font-size: 14pt;
+  display: none;
+}
+
+p#savedNotice {
+  color: #ccc;
+  display: block;
+}
+
+p#unsavedNotice {
+  color: red;
+  font-weight: bold;
+}
+
+p#savingNotice {
+  color: red;
+}

@@ -1,0 +1,76 @@
+{% load staticfiles %}{% load enrichment_extra %}<!DOCTYPE html>
+<html>
+<head>
+<title>Enrichment Signup</title>
+<link rel="stylesheet" href="{% static "unsemantic/assets/stylesheets/unsemantic-grid-responsive.css" %}" />
+<link rel="stylesheet" href="{% static "css/selector.css" %}" />
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/selector.js' %}"></script>
+</head>
+
+<body>
+<div class="grid-container">
+	<div class="grid-75">
+		<a href="{% url 'enrichment_index' %}" class="noPrint">Enrichment Home</a>
+		{% if perms.enrichmentmanager.can_view_reports %}
+			<br />
+			<a href="{% url 'reporting_unassigned' year=currentDate.year month=currentDate.month day=currentDate.day %}" class="noPrint">Unassigned Report</a>
+		{% endif %}
+
+		<h1 style="margin-bottom: 0" class="noPrint">Unassigned Students</h1>
+    	<p class="printOnly warning">Warning: This page should not be printed. Please use the printable report at the bottom of the day or the reporting section for printable reports.</p>
+		
+		<p style="margin-top: 0; margin-bottom: 20px">Week of {{ currentDate|date:"F jS" }}</p>
+    {% include "enrichmentmanager/partial/assignment_grid.html" %}
+    		
+	</div>
+	<div class="grid-25 noPrint">
+		<div class="grid-100">
+			
+			<div class="grid-100" style="margin-top: 20px">
+				<div class="grid-100 clickable" id="showDates">Change Date</div>
+        <div class="grid-100 clickable" id="showAdvisor">Change Advisor</div>
+				<div class="grid-100 clickable" id="hideOptions">Close Options</div>
+				
+			</div>
+			
+			<div class="grid-100" id="dates">
+				<ul>
+					{% for weekOption in weekOptions %}
+            {% if currentDate == weekOption %}
+							<li>Week of {{ weekOption | date:"F jS" }}</li>
+						{% else %}
+							<li><a href="{% url 'assign_unassigned' year=weekOption.year month=weekOption.month day=weekOption.day %}" class="hashOption">Week of {{ weekOption | date:"F jS" }}</a></li>
+						{% endif %}
+					{% endfor %}
+				</ul>	
+			</div>
+		</div>
+    
+		<div class="grid-100">
+			<div class="grid-100" id="advisors">
+				<ul>
+					{% for advisor in advisors %}
+						{% if advisor == currentAdvisor %}
+							<li>{{ advisor.name }}</li>
+						{% else %}
+							<li><a href="{% url 'assign_advisor' advisor=advisor.id year=currentDate.year month=currentDate.month day=currentDate.day %}" class="hashOption">{{ advisor.name }}</a></li>
+						{% endif %}
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+    
+    
+    <div class="grid-100">
+		<div class="grid-100" id="specialLinks">
+			<ul>
+				<li><a href="{% url 'assign_all' year=currentDate.year month=currentDate.month day=currentDate.day %}" class="hashOption">All Advisees</a></li>
+			</ul>
+		</div>
+  </div>
+	</div>
+</div>
+</body>
+
+</html>

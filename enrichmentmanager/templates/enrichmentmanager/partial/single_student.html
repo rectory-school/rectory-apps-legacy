@@ -1,0 +1,39 @@
+{% load enrichment_extra %}
+<form>
+	<input type="submit" value="Save" disabled="true" class="btnSave noPrint" />
+  <p class="notice" id="unsavedNotice">Warning: Your changes have not yet been saved</p>
+  <p class="notice" id="savedNotice">No changes have been made - you may leave this page</p>
+  <p class="notice" id="savingNotice">Saving changes, please do not close this window</p>
+  
+	<table class="selector noPrint">
+		<tr>
+			<th class="day">Enrichment Slot</th>
+      <th class="student">
+        <select id="massTeacher">
+          <option value="--">--</option>
+          
+          {% for teacher in allTeachers %}
+            <option value="{{teacher.name}}">{{ teacher.name }}</option>
+          {% endfor %}
+        </select> <input type="checkbox" id="checkall" />
+      </th>
+		</tr>
+    
+		{% for slot in slots %}
+    {% select_for slot student as select %}    
+			<tr>
+				<td class="day">{{ slot.date}}<br /><spam style="color: #999">{{ slot.date | date:"l" }}</span></td>
+        <td class="day">{{ select | safe }}</td>
+			</tr>
+		{% endfor %}
+		
+	</table>
+	
+	<p class="noPrint">Total slots: {{ slots | length }}</p>
+  
+  <input type="submit" value="Save" disabled="true" class="btnSave noPrint" />
+</form>
+<form id="saveData" method="post" action="{% url 'save_assignments' %}">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.path }}" id="redirectSavePath" />
+</form>

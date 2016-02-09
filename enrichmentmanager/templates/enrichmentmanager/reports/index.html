@@ -1,0 +1,33 @@
+{% load staticfiles %}{% load enrichment_extra %}<!DOCTYPE html>
+<html>
+<head>
+<title>Enrichment Reports</title>
+<link rel="stylesheet" href="{% static "unsemantic/assets/stylesheets/unsemantic-grid-responsive.css" %}" />
+<link rel="stylesheet" href="{% static "css/reporting.css" %}" />
+</head>
+<body>
+  <div class="grid-container">
+  	<div class="grid-100">
+  
+  <a href="{% url 'enrichment_index' %}">Enrichment Home</a>
+	<ul class="parent">
+		{% for weekOption, slotOptions in weekOptions %}
+		<li class="week">
+			<p class="weekHeader">Week of {{ weekOption | date:"F jS"}}</p>
+			<ul>
+				<li class="report"><a href="{% url 'reporting_unassigned' year=weekOption.year month=weekOption.month day=weekOption.day %}">Unassigned students</a></li>
+        		<li class="report"><a href="{% url 'reporting_assigned' year=weekOption.year month=weekOption.month day=weekOption.day %}">Assignment grid</a></li>
+				<li class="report"><a href="{% url 'reporting_locations' year=weekOption.year month=weekOption.month day=weekOption.day %}">Location counts</a></li>
+				<li><a href="{% url 'reporting_by_enrichment_option' year=weekOption.year month=weekOption.month day=weekOption.day %}">Students by enrichment option</a></li>
+				
+				{% for slot in slotOptions %}
+					<li><a href="{% url "reporting_student_printable" year=slot.date.year month=slot.date.month day=slot.date.day %}?backURL={{ request.path }}&amp;backTitle=Reporting%20Home">Student signups for {{ slot }}</a></li>
+				{% endfor %}
+			</ul>
+		</li>
+		{% endfor %}
+	</ul>
+</div>
+</div>
+</body>
+</html>

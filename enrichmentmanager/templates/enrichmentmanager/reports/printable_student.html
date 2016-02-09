@@ -1,0 +1,101 @@
+{% load staticfiles %}<html>
+<head>
+<title>Enrichment Report</title>
+<link rel="stylesheet" href="{% static "unsemantic/assets/stylesheets/unsemantic-grid-responsive.css" %}" />
+<link rel="stylesheet" href="{% static "css/reporting.css" %}" />
+
+<style>
+p.header {
+	font-size: 24pt;
+	margin: 0;
+	margin-top: 20px;
+}
+
+p.advisor {
+	font-size: 18pt;
+	color: #999;
+	margin: 0;
+	padding: 0;
+}
+
+p.date {
+	font-size: 18pt;
+	color: #999;
+	margin: 0;
+	padding: 0;
+}
+
+p.warning {
+	font-size: 14pt;
+	color: red;
+}
+
+p.footer {
+	text-align: right;
+	color: #ccc;
+}
+
+span.student {
+	font-weight: bold;
+}
+
+span.unassigned {
+	color: red;
+}
+
+a {
+	text-decoration: none;
+}
+
+@media print {
+	#backLink {
+		display: none;
+	}
+	
+	p.warning {
+		color: black;
+		font-weight: bold;
+	}
+}
+
+</style>
+
+</head>
+
+<body>
+<div class="grid-container">
+	<div class="grid-100">
+		
+		{% if backURL and backTitle %}
+			<a id="backLink" href="{{ backURL }}">{{ backTitle }}</a>
+		{% endif %}
+		
+		<p class="header">Enrichment report</p>
+		
+		{% if advisor %}
+			<p class="advisor">Advisees of {{ advisor.name }}</p>
+		{% endif %}
+		
+		<p class="date">{{ slot.date | date:"l, F d, Y" }}</p>
+		
+		{% if futureWarning %}
+			<p class="warning">Warning: This assignment sheet is being printed in advance and is subject to change.</p>
+		{% endif %}
+		
+		<ul class="students">
+			{% for student, signup in students %}
+				{% if student.lockout %}
+					<li><span class="student">{{ student.name }}</span>: <span class="lockout">{{ student.lockout }}</span></li>
+				{% elif signup %}
+					<li><span class="student">{{ student.name }}</span>: <span class="signup">{{ signup.enrichment_option.displayWithLocation }}</span></li>
+				{% else %}
+					<li><span class="student">{{ student.name }}</span>: <span class="unassigned">Unassigned</span></li>
+				{% endif %}
+			{% endfor %}
+		</ul>
+		
+		<p class="footer">Generated at {% now "c" %}</p>
+	</div>
+</div>
+</body>
+</html>

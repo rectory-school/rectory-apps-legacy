@@ -1,0 +1,65 @@
+{% load staticfiles %}{% load enrichment_extra %}<!DOCTYPE html>
+<html>
+<head>
+<title>Enrichment Signup</title>
+<link rel="stylesheet" href="{% static "unsemantic/assets/stylesheets/unsemantic-grid-responsive.css" %}" />
+<link rel="stylesheet" href="{% static "css/selector.css" %}" />
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/selector.js' %}"></script>
+</head>
+
+<body>
+<div class="grid-container">
+	<div class="grid-75">
+		<a href="{% url 'enrichment_index' %}" class="noPrint">Enrichment Home</a>
+
+		<h1 style="margin-bottom: 0" class="noPrint">{{ student.name }}</h1>
+    	<p class="printOnly warning">Warning: This page should not be printed. Please use the printable report at the bottom of the day or the reporting section for printable reports.</p>
+		
+    {% include "enrichmentmanager/partial/single_student.html" %}
+    		
+	</div>
+	<div class="grid-25 noPrint">
+		<div class="grid-100" style="margin-top: 20px">
+			<div class="grid-100 clickable" id="showWeekdays">Change Weekday</div>
+			<div class="grid-100 clickable" id="hideOptions">Close Options</div>
+		</div>
+    
+		<div class="grid-100" id="weekdays">
+			<ul>
+        {% if 0 in weekdays %}
+          <li><a href="{% url 'assign_single_student' student_id=student.id weekday=0 %}" class="hashOption">Monday</a></li>
+        {% endif %}
+        
+        {% if 1 in weekdays %}
+          <li><a href="{% url 'assign_single_student' student_id=student.id weekday=1 %}" class="hashOption">Tuesday</a></li>
+        {% endif %}
+        
+        {% if 2 in weekdays %}
+          <li><a href="{% url 'assign_single_student' student_id=student.id weekday=2 %}" class="hashOption">Wednesday</a></li>
+        {% endif %}
+        
+        {% if 3 in weekdays %}
+          <li><a href="{% url 'assign_single_student' student_id=student.id weekday=3 %}" class="hashOption">Thursday</a></li>
+        {% endif %}
+        
+        {% if 4 in weekdays %}
+          <li><a href="{% url 'assign_single_student' student_id=student.id weekday=4 %}" class="hashOption">Friday</a></li>
+        {% endif %}
+        
+        {% if 5 in weekdays %}
+          <li><a href="{% url 'assign_single_student' student_id=student.id weekday=5 %}" class="hashOption">Saturday</a></li>
+        {% endif %}
+        
+        {% if 6 in weekdays %}
+          <li><a href="{% url 'assign_single_student' student_id=student.id weekday=6 %}" class="hashOption">Sunday</a></li>
+        {% endif %}
+        
+        <li><a href="{% url 'assign_single_student' student_id=student.id %}" class="hashOption">All Days</a></li>
+			</ul>	
+		</div>
+	</div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+{% load enrichment_extra %}
+<form>
+	<input type="submit" value="Save" disabled="true" class="btnSave noPrint" />
+  <p class="notice" id="unsavedNotice">Warning: Your changes have not yet been saved</p>
+  <p class="notice" id="savedNotice">No changes have been made - you may leave this page</p>
+  <p class="notice" id="savingNotice">Saving changes, please do not close this window</p>
+  
+	<table class="selector noPrint">
+		<tr>
+			<th class="student">Advisee</th>
+			{% for slot in slots %}
+        {% if allowSlotSort %}
+				  <th class="day"><a href="?sort={{slot.id}}">{{ slot.date|date:"l" }}</a></th>
+        {% else %}
+          <th class="day">{{ slot.date|date:"l" }}</th>
+        {% endif %}
+			{% endfor %}
+		</tr>
+	
+		{% for student in students %}
+			<tr>
+        {% if perms.can_view_single_student %}
+          <td class="student" title="Advisor: {{student.advisor.name}}"><a href="{% url 'assign_single_student' student_id=student.id %}">{{ student.name }}</a></td>
+        {% else %}
+          <td class="student" title="Advisor: {{student.advisor.name}}">{{ student.name }}</td>
+        {% endif %}
+        
+				{% for slot in slots %}
+					{% select_for slot student as select %}
+					
+					<td class="day">{{ select | safe }}</td>
+				{% endfor %}
+			</tr>
+		{% endfor %}
+		
+		{% if perms.enrichmentmanager.can_view_reports %}		
+			<tr>
+				<td>&nbsp;</td>
+				{% for slot in slots %}
+					{% if currentAdvisor %}
+						<td><a href="{% url "reporting_student_printable" year=slot.date.year month=slot.date.month day=slot.date.day advisor=currentAdvisor.id %}?backURL={{ request.path }}&amp;backTitle=Advisement%20Grid">Printable Report</a></td>
+					{% else %}
+						<td><a href="{% url "reporting_student_printable" year=slot.date.year month=slot.date.month day=slot.date.day %}?backURL={{ request.path }}&amp;backTitle=Advisement%20Grid">Printable Report</a></td>
+					{% endif %}
+				{% endfor %}
+			</tr>
+		{% endif %}
+	</table>
+	
+	<p class="noPrint">Total students: {{ students | length }}</p>
+  
+  <input type="submit" value="Save" disabled="true" class="btnSave noPrint" />
+</form>
+<form id="saveData" method="post" action="{% url 'save_assignments' %}">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.path }}" id="redirectSavePath" />
+</form>
