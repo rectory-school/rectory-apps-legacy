@@ -26,7 +26,7 @@ def parseDate(s):
 @login_required(login_url='/login/google-oauth2/')
 def index(request):
     currentUser = request.user
-    advisor = Teacher.objects.get(email=currentUser.email)
+    advisor = Teacher.objects.get(academic_teacher__email=currentUser.email)
     
     try:
         slotToday = EnrichmentSlot.objects.get(date=date.today())
@@ -174,11 +174,11 @@ def getTemplateData(request, advisor, unassigned, monday):
         #This is ineffecient, but it guarantees that I get a QuerySet back out, as opposed to working on a list later on
         students = Student.objects.filter(id__in=unassignedStudentIDs)
     
-    students = students.order_by('last_name', 'first_name')
+    students = students.order_by('academic_student__last_name', 'academic_student__first_name')
     
     slotChoices = {}
     for slot in slots:
-        slotChoices[slot] = EnrichmentOption.objects.filter(slot=slot).prefetch_related('teacher').order_by('teacher__last_name', 'teacher__first_name').all()
+        slotChoices[slot] = EnrichmentOption.objects.filter(slot=slot).prefetch_related('teacher').order_by('teacher__academic_teacher__last_name', 'teacher__academic_teacher__first_name').all()
     
     #This is an extra query if we're grabbing the unassigned set    
     relatedSignups = {}
@@ -196,7 +196,7 @@ def getTemplateData(request, advisor, unassigned, monday):
         'currentDate': date(monday.year, monday.month, monday.day),
         'slots': slots,
         'students': students,
-        'advisors': Teacher.objects.exclude(student=None).order_by('last_name', 'first_name').all(),
+        'advisors': Teacher.objects.exclude(student=None).order_by('academic_teacher__last_name', 'academic_teacher__first_name').all(),
         'weekOptions': sorted(weekOptions),
         'currentAdvisor': advisor,
         'slotChoices': slotChoices,
@@ -215,7 +215,7 @@ def advisor_quick(request):
     currentUser = request.user
     
     #TODO: Handle case of advisor not found
-    advisor = Teacher.objects.get(email=currentUser.email)
+    advisor = Teacher.objects.get(academic_teacher__email=currentUser.email)
     
     templateData = getTemplateData(request, advisor=advisor, unassigned=False, monday=monday)
     
@@ -266,7 +266,7 @@ def unassigned_explicit(request, year, month, day):
 def single_student(request, student_id, weekday=None):
     slots = EnrichmentSlot.objects.filter(date__gte=date.today())
     student = Student.objects.get(pk=student_id)
-    allTeachers = Teacher.objects.exclude(default_room = "").order_by('last_name', 'first_name').all()
+    allTeachers = Teacher.objects.exclude(default_room = "").order_by('academic_teacher__last_name', 'academic_teacher__first_name').all()
     
     weekdays = set()
     
@@ -286,7 +286,7 @@ def single_student(request, student_id, weekday=None):
             relatedSignups[key] = enrichmentSignup.enrichment_option.id
     
         for slot in slots:
-            slotChoices[slot] = EnrichmentOption.objects.filter(slot=slot).prefetch_related('teacher').order_by('teacher__last_name', 'teacher__first_name').all()
+            slotChoices[slot] = EnrichmentOption.objects.filter(slot=slot).prefetch_related('teacher').order_by('teacher__academic_teacher__last_name', 'teacher__academic_teacher__first_name').all()
     
     return render(request, "enrichmentmanager/assign_single.html", {'slots': slots, 'student': student, 'relatedSignups': relatedSignups, 'slotChoices': slotChoices, 'weekdays': weekdays, 'allTeachers': allTeachers})
     
