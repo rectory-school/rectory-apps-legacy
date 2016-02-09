@@ -1,6 +1,8 @@
 from django.db import models
 from simple_history.models import HistoricalRecords
 
+import academics.models
+
 class EmailSuppression(models.Model):
     suppression_date = models.DateField(unique=True)
     
@@ -9,48 +11,84 @@ class EmailSuppression(models.Model):
 
 # Create your models here.
 class Teacher(models.Model):
-    teacher_id = models.CharField(max_length=5, unique=True)
-    email = models.EmailField(max_length=254, blank=True)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+    academic_teacher = models.ForeignKey(academics.models.Teacher)
+    
+    # These are staying synthesized on this model so that I can compare
+    # their old values during the teacher sync and update the enrichment
+    # slots appropriately
     default_room = models.CharField(max_length=100, blank=True)
     default_description = models.CharField(max_length=100, blank=True)
     
     history = HistoricalRecords()
     
-    class Meta:
-        ordering = ['last_name', 'first_name']
+    @property
+    def teacher_id(self):
+        return self.academic_teacher.teacher_id
+    
+    @property
+    def email(self):
+        return self.academic_teacher.email
+    
+    @property
+    def first_name(self):
+        return self.academic_teacher.first_name
+    
+    @property
+    def last_name(self):
+        return self.academic_teacher.last_name
     
     @property
     def name(self):
-        return "{first} {last}".format(first=self.first_name, last=self.last_name)
+        return self.academic_teacher.name
+    
+    class Meta:
+        ordering = ['academic_teacher__last_name', 'academic_teacher__first_name']
         
     def __str__(self):
         return self.name
 
 class Student(models.Model):
-    student_id = models.CharField(max_length=8, unique=True)
-    email = models.EmailField(max_length=254)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    nickname = models.CharField(max_length=100, blank=True)
+    # This is a proxy model for the academics student model,
+    # ported from the original standalone model
+
+    academic_student = models.ForeignKey(academics.models.Student)
+    
     lockout = models.CharField(max_length=100, blank=True)
     
+    #Teacher fields are staying a foreign key to my teacher for consistency and querying
     advisor = models.ForeignKey(Teacher)
     associated_teachers = models.ManyToManyField(Teacher, related_name='associated_teachers', blank=True)
     
     history = HistoricalRecords()
     
-    class Meta:
-        ordering = ['last_name', 'first_name']
+    @property
+    def student_id(self):
+        return self.academic_student.student_id
+    
+    @property
+    def email(self):
+        return self.academic_student.email
+    
+    @property
+    def first_name(self):
+        return self.academic_student.first_name
+    
+    @property
+    def last_name(self):
+        return self.academic_student.last_name
+    
+    @property
+    def nickname(self):
+        return self.academic_student.nickname
     
     @property
     def name(self):
-        if self.nickname:
-            return "{first} ({nickname}) {last}".format(first=self.first_name, nickname=self.nickname, last=self.last_name)
+        return self.academic_student.name
         
-        return "{first} {last}".format(first=self.first_name, last=self.last_name)
-        
+    class Meta:
+        pass
+        ordering = ['academic_student__last_name', 'academic_student__first_name']
+            
     def __str__(self):
         return self.name
     
@@ -77,7 +115,7 @@ class EnrichmentOption(models.Model):
     
     class Meta:
         unique_together = ('slot', 'teacher')
-        ordering = ['teacher__last_name', 'teacher__first_name']
+        ordering = ['teacher__academic_teacher__last_name', 'teacher__academic_teacher__first_name']
         
     @property
     def displayWithLocation(self):

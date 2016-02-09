@@ -82,6 +82,7 @@ INSTALLED_APPS = (
     'calendar_generator',
     'seating_charts',
     'change_notifier',
+    'enrichmentmanager',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -80,6 +80,9 @@ class Teacher(models.Model):
     email = models.EmailField(max_length=255, blank=True)
     active = models.BooleanField(default=False)
     
+    default_enrichment_room = models.CharField(max_length=255, blank=True)
+    default_enrichment_description = models.CharField(max_length=255, blank=True)
+    
     history = HistoricalRecords()
     
     class Meta:

@@ -40,6 +40,14 @@ class Command(BaseCommand):
                 uniqueName = fields['NameUnique'] or ""
                 teacherID = fields['IDTEACHER']
                 
+                defaultEnrichmentRoom = fields["Enrichment Meeting Room"] or ""
+                defaultEnrichmentDescription = fields["Enrichment_Description"] or ""
+                
+                # Preprocess the default enrichment room to be empty
+                # if the employee no longer works here
+                if not activeEmployee:
+                    defaultEnrichmentRoom = ""
+                
                 if not teacherID:
                     continue
                 
@@ -73,7 +81,9 @@ class Command(BaseCommand):
                     'prefix': namePrefix,
                     'email': email,
                     'active': activeEmployee,
-                    'unique_name': uniqueName
+                    'unique_name': uniqueName,
+                    'default_enrichment_room': defaultEnrichmentRoom,
+                    'default_enrichment_description': defaultEnrichmentDescription,
                 }
                 
                 for attr in attrMap:
