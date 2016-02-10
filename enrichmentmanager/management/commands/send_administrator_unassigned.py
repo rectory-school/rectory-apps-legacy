@@ -3,6 +3,7 @@ from datetime import date
 from django.core.management.base import BaseCommand, CommandError
 from django.template.loader import get_template
 from django.template import Context
+from django.conf import settings
 
 from enrichmentmanager.management.commands._emailcommands import EmailCommand
 from enrichmentmanager.lib import getUnassignedStudents, getUnassignedAdvisors
@@ -53,7 +54,7 @@ class Command(EmailCommand):
         template = get_template('enrichmentmanager/emails/unassigned_administrator.html')
         count = len(allStudents)
         
-        context = Context({'slots': flattenedData, 'count': count})
+        context = Context({'slots': flattenedData, 'count': count, 'base_url': settings.MAIL_BASE_URL})
         body = template.render(context)
         
         if self.slots.count():

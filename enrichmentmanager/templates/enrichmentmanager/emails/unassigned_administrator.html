@@ -316,7 +316,7 @@ a {
                 {% if count > 0 %}
   								<tr>
   									<td class="content-block">
-  										<a href="http://enrichment.rectoryschool.org/assign/unassigned/" class="btn-primary">Assign unassigned students</a>
+  										<a href="{{base_url}}{% url 'assign_unassigned' %}" class="btn-primary">Assign unassigned students</a>
   									</td>
                   </tr>
 								{% endif %}

@@ -60,7 +60,10 @@ MANAGERS = [email.utils.parseaddr(a.strip()) for a in config['email']['MANAGERS'
 DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 SECRET_KEY = config['django']['SECRET_KEY']
 
-IIP_COURSE_IDS = config['courseevaluations']['IIP_COURSE_IDS']
+IIP_COURSE_IDS = map(str.strip, config['courseevaluations']['IIP_COURSE_IDS'].split(","))
+
+#The base URL to use when generating e-mails from the command line that link back to the main site
+MAIL_BASE_URL = config['production'].get('MAIL_BASE_URL')
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -69,6 +72,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'django_rq',
     'polymorphic',
     'adminsortable',

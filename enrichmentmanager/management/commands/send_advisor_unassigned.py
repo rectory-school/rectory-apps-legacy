@@ -52,7 +52,7 @@ class Command(EmailCommand):
                 deadline = min([slot.editable_until for slot in byAdvisor[advisor].keys() if slot.editable_until]) - timedelta(hours=1)
                 
                 template = get_template('enrichmentmanager/emails/unassigned_advisor.html')
-                context = Context({'slots': flattenedSlots, 'count': studentCount, 'advisor': advisor, 'deadline': deadline})
+                context = Context({'slots': flattenedSlots, 'count': studentCount, 'advisor': advisor, 'deadline': deadline, 'base_url': settings.MAIL_BASE_URL})
                 body = template.render(context)
             
                 self.sendMail(
