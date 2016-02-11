@@ -9,9 +9,15 @@
   <meta name="google-signin-client_id" content="{{ google_client_id }}">
   <meta name="google-signin-hosted_domain" content="{{ google_hosted_domain }}">
   
+  {% if start_django_form %}
+    <meta name="start_django_form">
+  {% endif %}
+  
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="{% static 'google_auth/jquery-ui/jquery-ui.min.css' %}">
   <link href="{% static 'google_auth/style.css' %}" rel="stylesheet" type="text/css">
+  
+  <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
   
   <script src="{% static 'google_auth/jquery-1.12.0.min.js' %}"></script>
   <script src="{% static 'google_auth/jquery-ui/jquery-ui.min.js' %}"></script>
@@ -22,17 +28,34 @@
 </head>
 
 <body>
-      <div id="gSignInWrapper">
+  <div id="content">
+    <div id="header">
+      <p>Log on required</p>
+    </div>
+    
+    <div id="signon-area">
+      <div id="google-signon">
         <div id="customBtn" class="customGPlusSignIn">
           {% if google_hosted_domain %}
-            <span class="buttonText">Sign in with your  <br />{{ google_hosted_domain }} Google account</span>
+            Sign in with your  <br />{{ google_hosted_domain }} Google account
           {% else %}
-            <span class="buttonText">Sign in with your Google account</span>
+            Sign in with your Google account
           {% endif %}
-          
         </div>
       </div>
-      <div id="name"></div>
-     
+      
+      <p id="django-signon">Sign in with your Django Account</p>
+    </div>
+  </div>
+  
+  <div id="django-signon-form" title="Sign in with your local account">
+    <form method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="logon_type" value="native" />
+      <input type="hidden" name="redirect_to" value="{{ redirect_to }}">
+      {{ django_auth_form.as_p }}
+      <input type="submit" value="Log on">
+    </form>
+  </div>
 </body>
 </html>

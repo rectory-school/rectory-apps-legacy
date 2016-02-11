@@ -6,6 +6,20 @@ $("document").ready(function() {
   googleClientID = $('meta[name=google-signin-client_id]').attr("content");
   googleHostedDomain = $("meta[name=google-signin-hosted_domain]").attr("content");
   
+  var autoOpenDialog = ($("meta[name=start_django_form]").length > 0)
+  
+  $("#django-signon").click(function(e) {
+    $("#django-signon-form").dialog("open");
+  })
+  
+  
+  
+  $("#django-signon-form").dialog({
+    autoOpen: autoOpenDialog,
+    width: 500,
+    movable: false,
+  })
+  
   startGoogleApp();
 });
 
@@ -17,7 +31,7 @@ function startGoogleApp() {
 }
 
 function onAuth2Load() {
-  auth2_params = {
+  var auth2_params = {
     client_id: googleClientID,
     cookiepolicy: 'single_host_origin'
   }
@@ -25,8 +39,8 @@ function onAuth2Load() {
   if (googleHostedDomain)
     auth2_params.hosted_domain = googleHostedDomain;
   
-  auth2 = gapi.auth2.init(auth2_params);
-  attachClickHandler(auth2, "gSignInWrapper")
+  var auth2 = gapi.auth2.init(auth2_params);
+  attachClickHandler(auth2, "google-signon");
 }
 
 function attachClickHandler(auth2, elementID) {
@@ -34,9 +48,12 @@ function attachClickHandler(auth2, elementID) {
 }
 
 function onSuccess(googleUser) {
-document.getElementById('name').innerText = "Signed in: " +
-    googleUser.getBasicProfile().getName() + " (" + googleUser.getBasicProfile().getEmail() + ")";
+  var profile = googleUser.getBasicProfile();
   
+  jQueryAlert("Successfully signed in", profile.getName() + "<br />" + profile.getEmail());
+  console.log(googleUser);
+  
+  alert(Urls["google-auth:login"]())
 }
 
 function onError(error) {
@@ -50,8 +67,10 @@ function onError(error) {
 }
 
 function jQueryAlert(title, message) {
-  div = $("<div/>");
+  var div = $("<div/>");
   div.attr("title", title);
+  div.attr("class", "dialog-alert");
+  
   div.html(message);
   
   div.dialog({
