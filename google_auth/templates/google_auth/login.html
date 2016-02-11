@@ -8,10 +8,12 @@
   
   <meta name="google-signin-client_id" content="{{ google_client_id }}">
   <meta name="google-signin-hosted_domain" content="{{ google_hosted_domain }}">
-  
   {% if start_django_form %}
+  
     <meta name="start_django_form">
   {% endif %}
+  
+  <meta name="next" content="{{next}}">
   
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="{% static 'google_auth/jquery-ui/jquery-ui.min.css' %}">
@@ -21,6 +23,7 @@
   
   <script src="{% static 'google_auth/jquery-1.12.0.min.js' %}"></script>
   <script src="{% static 'google_auth/jquery-ui/jquery-ui.min.js' %}"></script>
+  <script src="{% static 'google_auth/jquery.cookie.js' %}"></script>
   <script src="{% static 'google_auth/login.js' %}"></script>
   
   <script src="https://apis.google.com/js/api:client.js"></script>
@@ -52,7 +55,7 @@
     <form method="POST">
       {% csrf_token %}
       <input type="hidden" name="logon_type" value="native" />
-      <input type="hidden" name="redirect_to" value="{{ redirect_to }}">
+      <input type="hidden" name="next" value="{{ next }}">
       {{ django_auth_form.as_p }}
       <input type="submit" value="Log on">
     </form>
