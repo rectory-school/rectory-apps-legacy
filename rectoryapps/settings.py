@@ -60,6 +60,9 @@ MANAGERS = [email.utils.parseaddr(a.strip()) for a in config['email']['MANAGERS'
 DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 SECRET_KEY = config['django']['SECRET_KEY']
 
+GOOGLE_OAUTH_CLIENT_ID = config['cloud'].get('GOOGLE_OAUTH_CLIENT_ID')
+GOOGLE_HOSTED_DOMAIN = config['cloud'].get("GOOGLE_HOSTED_DOMAIN")
+
 IIP_COURSE_IDS = config['courseevaluations']['IIP_COURSE_IDS']
 
 INSTALLED_APPS = (

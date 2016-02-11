@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^calendar/', include('calendar_generator.urls')),
     url(r'^django-rq/', include('django_rq.urls')),
     url(r'^accounts/', include('django.contrib.auth.urls')),
+    url(r'^google_auth/', include('google_auth.urls', namespace="google-auth"))
 ]
 
 if settings.DEBUG:
