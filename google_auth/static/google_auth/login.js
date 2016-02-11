@@ -55,19 +55,15 @@ function onAuth2Load() {
 }
 
 function attachClickHandler(auth2, elementID) {
-  //auth2.attachClickHandler(elementID, {}, onSuccess, onError);
-  
-  $("#" + elementID).click(function(e) {
-    auth2.grantOfflineAccess({'redirect_uri': 'postmessage'}).then(onGoogleLoginSuccess);
-  })
+  auth2.attachClickHandler(elementID, {}, onGoogleLoginSuccess, onError);
 }
 
-function onGoogleLoginSuccess(authResult) {
+function onGoogleLoginSuccess(googleUser) {
   var processURL = Urls["google-auth:login"]()
   
   $.post({
     url: processURL,
-    data: {'code': authResult.code, logon_type: 'google'},
+    data: {'id_token': googleUser.getAuthResponse().id_token, logon_type: 'google'},
     success: onDjangoLoginSuccess
   });
 }

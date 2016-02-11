@@ -11,10 +11,7 @@ from django.http import JsonResponse
 
 from django.views.generic import View
 
-from apiclient import discovery
-import httplib2
-from oauth2client import client
-
+import requests
 
 class LogonView(View):
     def get(self, request):
@@ -29,20 +26,22 @@ class LogonView(View):
             return self.handle_google_logon(request)
     
     def handle_google_logon(self, request):
-        auth_code = request.POST.get("code")
+        id_token = request.POST.get("id_token")
         
-        if not auth_code:
+        if not id_token:
             raise ValueError()
+        
+        payload = {'id_token': id_token}
             
-        CLIENT_SECRET_FILE = settings.GOOGLE_OAUTH_CLIENT_SECRET_FILE
+        r = requests.get("https://www.googleapis.com/oauth2/v3/tokeninfo", params=payload)
         
-        credentials = client.credentials_from_clientsecrets_and_code(CLIENT_SECRET_FILE,
-        ['https://www.googleapis.com/auth/drive.appdata', 'profile', 'email'],
-        auth_code)
+        data = r.json()
         
-        email = credentials.id_token['email']
-        hosted_domain = credentials.id_token.get('hd', "")
-        
+        email = data["email"]
+        last_name = data["family_name"]
+        first_name = data["given_name"]
+        hosted_domain = data.get("hd", "")
+                
         desired_hosted_domain = settings.GOOGLE_HOSTED_DOMAIN
         
         if desired_hosted_domain and hosted_domain.lower() != desired_hosted_domain.lower():
