@@ -1,0 +1,28 @@
+#customBtn {
+  display: inline-block;
+  background: #4285f4;
+  color: white;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+#customBtn:hover {
+  cursor: pointer;
+}
+span.label {
+  font-weight: bold;
+}
+
+span.buttonText {
+  display: inline-block;
+  vertical-align: middle;
+  padding-left: 42px;
+  padding-right: 42px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  /* Use the Roboto font that is loaded in the <head> */
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+}
