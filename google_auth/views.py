@@ -34,8 +34,7 @@ class LogonView(View):
         if not auth_code:
             raise ValueError()
             
-        #TODO: Move to settings
-        CLIENT_SECRET_FILE = '/Users/adam.peacock/development/rectoryapps/client_secret_file.json'
+        CLIENT_SECRET_FILE = settings.GOOGLE_OAUTH_CLIENT_SECRET_FILE
         
         credentials = client.credentials_from_clientsecrets_and_code(CLIENT_SECRET_FILE,
         ['https://www.googleapis.com/auth/drive.appdata', 'profile', 'email'],
