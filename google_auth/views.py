@@ -29,8 +29,6 @@ class LogonView(View):
             return self.handle_google_logon(request)
     
     def handle_google_logon(self, request):
-        print (request.POST)
-        
         auth_code = request.POST.get("code")
         
         if not auth_code:
