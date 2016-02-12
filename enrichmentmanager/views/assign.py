@@ -23,7 +23,7 @@ def parseDate(s):
     year, month, day = map(int, s.split("-"))
     return date(year, month, day)
 
-@login_required(login_url='/login/google-oauth2/')
+@login_required(login_url='/google_auth/login/')
 def index(request):
     currentUser = request.user
     advisor = Teacher.objects.get(academic_teacher__email=currentUser.email)
