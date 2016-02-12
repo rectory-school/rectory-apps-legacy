@@ -19,7 +19,10 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
 
+from google_auth.views import LogonView
+
 urlpatterns = [
+    url(r'^admin/login/$', LogonView.as_view()),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^jsreverse/$', 'django_js_reverse.views.urls_js', name='js_reverse'),
     url(r'^evaluations/', include('courseevaluations.urls')),
@@ -29,6 +32,7 @@ urlpatterns = [
     url(r'^enrichment/', include('enrichmentmanager.urls')),
     url(r'^django-rq/', include('django_rq.urls')),
     url(r'^accounts/', include('django.contrib.auth.urls')),
+    url(r'^google_auth/', include('google_auth.urls', namespace="google-auth"))
 ]
 
 if settings.DEBUG:
