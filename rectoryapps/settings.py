@@ -60,10 +60,12 @@ MANAGERS = [email.utils.parseaddr(a.strip()) for a in config['email']['MANAGERS'
 DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 SECRET_KEY = config['django']['SECRET_KEY']
 
-IIP_COURSE_IDS = map(str.strip, config['courseevaluations']['IIP_COURSE_IDS'].split(","))
+GOOGLE_OAUTH_CLIENT_ID = config['cloud'].get('GOOGLE_OAUTH_CLIENT_ID')
+GOOGLE_HOSTED_DOMAIN = config['cloud'].get("GOOGLE_HOSTED_DOMAIN")
 
-#The base URL to use when generating e-mails from the command line that link back to the main site
-MAIL_BASE_URL = config['production'].get('MAIL_BASE_URL')
+GOOGLE_OAUTH_CLIENT_SECRET_FILE = config['cloud'].get("GOOGLE_OAUTH_CLIENT_SECRET_FILE")
+
+IIP_COURSE_IDS = config['courseevaluations']['IIP_COURSE_IDS']
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -72,7 +74,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.humanize',
     'django_rq',
     'polymorphic',
     'adminsortable',
@@ -86,6 +87,7 @@ INSTALLED_APPS = (
     'calendar_generator',
     'seating_charts',
     'change_notifier',
+    'google_auth',
     'enrichmentmanager',
 )
 
@@ -133,3 +135,5 @@ RQ_QUEUES = {
         'DEFAULT_TIMEOUT': 360,
     },
 }
+
+LOGIN_URL = "/google_auth/login/"
