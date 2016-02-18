@@ -23,10 +23,14 @@ def parseDate(s):
     year, month, day = map(int, s.split("-"))
     return date(year, month, day)
 
-@login_required(login_url='/google_auth/login/')
+@permission_required("enrichmentmanager.can_view_own_advisees", login_url='/google_auth/login/')
 def index(request):
     currentUser = request.user
-    advisor = Teacher.objects.get(academic_teacher__email=currentUser.email)
+    
+    try:
+        advisor = Teacher.objects.get(academic_teacher__email=currentUser.email)
+    except Teacher.DoesNotExist:
+        return HttpResponse("Error: Teacher object does not exist for '{:}'. Please contact Technology.".format(currentUser.email))
     
     try:
         slotToday = EnrichmentSlot.objects.get(date=date.today())

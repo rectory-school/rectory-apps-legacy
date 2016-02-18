@@ -11,6 +11,10 @@ from django.http import JsonResponse
 
 from django.views.generic import View
 
+from django.contrib.auth.models import Group
+
+from enrichmentmanager.models import Teacher
+
 import requests
 
 class LogonView(View):
@@ -24,6 +28,29 @@ class LogonView(View):
             return self.handle_django_logon(request)
         elif logon_type == "google":
             return self.handle_google_logon(request)
+    
+    def set_groups(self, user):
+        try:
+            group = Group.objects.get(name="Advisors")
+        except Group.DoesNotExist:
+            group = None
+        
+        try:
+            advisor = Teacher.objects.get(academic_teacher__email=user.email)
+
+        except Teacher.DoesNotExist:
+            user.groups.remove(group)
+            user.save()
+            
+            return
+        
+        if advisor.academic_teacher.active:
+            user.groups.add(group)
+            user.save()
+
+        else:
+            user.groups.remove(group)
+            user.save()
     
     def handle_google_logon(self, request):
         id_token = request.POST.get("id_token")
@@ -57,6 +84,8 @@ class LogonView(View):
         user.backend = 'django.contrib.auth.backends.ModelBackend'
         
         auth_login(request, user)
+        
+        self.set_groups(user)
             
         return JsonResponse({'status_code': 200, 'email': email})
             
@@ -86,6 +115,8 @@ class LogonView(View):
             
             # Log the user in
             auth_login(request, form.get_user())
+            
+            self.set_groups(user)
             
             # Bring them to where they really want to go
             return redirect(redirect_to)
