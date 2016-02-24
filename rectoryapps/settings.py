@@ -89,6 +89,7 @@ INSTALLED_APPS = (
     'change_notifier',
     'google_auth',
     'enrichmentmanager',
+    'detention_notifier',
 )
 
 MIDDLEWARE_CLASSES = (
