@@ -44,13 +44,14 @@ class LogonView(View):
             
             return
         
-        if advisor.academic_teacher.active:
-            user.groups.add(group)
-            user.save()
+        if group:
+            if advisor.academic_teacher.active:
+                user.groups.add(group)
+                user.save()
 
-        else:
-            user.groups.remove(group)
-            user.save()
+            else:
+                user.groups.remove(group)
+                user.save()
     
     def handle_google_logon(self, request):
         id_token = request.POST.get("id_token")
@@ -116,7 +117,7 @@ class LogonView(View):
             # Log the user in
             auth_login(request, form.get_user())
             
-            self.set_groups(user)
+            self.set_groups(form.get_user())
             
             # Bring them to where they really want to go
             return redirect(redirect_to)
