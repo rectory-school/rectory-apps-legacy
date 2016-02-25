@@ -26,6 +26,13 @@ class AcademicYear(models.Model):
     
     def __str__(self):
         return self.year
+
+class Term(models.Model):
+    academic_year = models.ForeignKey(AcademicYear)
+    term = models.CharField(max_length=255)
+    
+    def __str__(self):
+        return "{academic_year:}-{term:}".format(academic_year=self.academic_year, term=self.term)
         
 class Student(models.Model):
     #Keystone table: ksPERMRECS
