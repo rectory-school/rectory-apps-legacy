@@ -2,6 +2,7 @@ from django.db import models
 from simple_history.models import HistoricalRecords
 
 import academics.models
+import enrichmentmanager.managers
 
 class EmailSuppression(models.Model):
     suppression_date = models.DateField(unique=True)
@@ -43,6 +44,8 @@ class Teacher(models.Model):
     
     class Meta:
         ordering = ['academic_teacher__last_name', 'academic_teacher__first_name']
+    
+    objects = enrichmentmanager.managers.TeacherManager()
         
     def __str__(self):
         return self.name
@@ -122,6 +125,8 @@ class EnrichmentOption(models.Model):
         if self.location:
             return "{} ({})".format(str(self), self.location)
     
+    objects = enrichmentmanager.managers.EnrichmentOptionManager()
+    
     def __str__(self):
         if self.description:
             return "{teacher}: {description}".format(teacher=self.teacher, description=self.description)
@@ -156,6 +161,8 @@ class EnrichmentSignup(models.Model):
         
     def clean(self):
         self.slot = self.enrichment_option.slot
+    
+    objects = enrichmentmanager.managers.EnrichmentSignupManager()
     
     def __str__(self):
         return "Student Signup for {name:} on {date:} with {option:}".format(name=self.student.name, date=self.slot.date.strftime("%Y-%m-%d"), option=self.enrichment_option)
