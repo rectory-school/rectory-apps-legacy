@@ -69,7 +69,12 @@ def parse_from_root(root):
         data_row = {'RECORDID': row.attrib["RECORDID"], 'fields': {}, 'parsed_fields': {}}
         
         for i, col_node in enumerate(row.findall('fmpxmlresult:COL', NAMESPACES)):
-            value = col_node.find('fmpxmlresult:DATA', NAMESPACES).text
+            value_node = col_node.find('fmpxmlresult:DATA', NAMESPACES)
+            if value_node:
+                value = value_node.text
+            else:
+                value = None
+                
             field = field_map[i]
             
             col_name = field["name"]
