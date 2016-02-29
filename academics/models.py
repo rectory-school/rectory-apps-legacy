@@ -29,7 +29,10 @@ class AcademicYear(models.Model):
 
 class Term(models.Model):
     academic_year = models.ForeignKey(AcademicYear)
-    term = models.CharField(max_length=255)
+    term = models.CharField(max_length=2)
+    
+    class Meta:
+        ordering = ['term']
     
     def __str__(self):
         return "{academic_year:}-{term:}".format(academic_year=self.academic_year, term=self.term)
