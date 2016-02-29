@@ -27,6 +27,6 @@ class Detention(models.Model):
     offense = models.ForeignKey(Offense)
     comments = models.TextField(blank=True)
     
-    term = models.ForeignKey(Term)
-    student = models.ForeignKey(Student)
-    teacher = models.ForeignKey(Teacher)
+    term = models.ForeignKey(Term, null=True)
+    student = models.ForeignKey(Student, null=True)
+    teacher = models.ForeignKey(Teacher, null=True)
