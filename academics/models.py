@@ -277,6 +277,8 @@ class StudentParentRelation(models.Model):
   relationship = models.CharField(max_length=20, blank=True)
   family_id_key = models.CharField(max_length=20, blank=True)
   
+  parent_code = models.CharField(max_length=1, blank=True)
+  
   history = HistoricalRecords()
   
   def __str__(self):

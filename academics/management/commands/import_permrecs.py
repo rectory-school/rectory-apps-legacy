@@ -127,7 +127,8 @@ class Command(BaseCommand):
           
           attr_map = {
             'relationship': relationship,
-            'family_id_key': family_id_key
+            'family_id_key': family_id_key,
+            'parent_code': parent_code,
           }
           
           for attr, desired_value in attr_map.items():
