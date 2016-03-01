@@ -6,7 +6,7 @@ from datetime import date
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from detention_notifier.models import Detention, DetentionMailer
+from detention_notifier.models import Detention, DetentionMailer, Offense, Code
 
 from academics.models import Teacher, Student, AcademicYear, Term
 from academics.utils import fmpxmlparser
@@ -37,13 +37,25 @@ class Command(BaseCommand):
                 
                 incident_id = fields['IDINCIDENT']
                 detention_date = fields['Det Date']
-                code = fields['Code']
-                offense = fields['Offense']
-                comments = fields['Comments']
+                raw_code = fields['Code'] or ""
+                raw_offense = fields['Offense']
+                comments = fields['Comments'] or ""
                 student_id = fields['IDSTUDENT']
                 teacher_id = fields['Session.SelectedTeacher::IDTEACHER']
                 raw_academic_year = fields['AcademicYear']
                 raw_term = fields['Term']
+                
+                if skip_processing_before and detention_date < skip_processing_before:
+                    continue
+                
+                try:
+                    code = Code.objects.get(code=raw_code)
+                except Code.DoesNotExist:
+                    code = Code(code=raw_code)
+                    code.save()
+                
+                if not code.process:
+                    continue
                 
                 try:
                     academic_year = AcademicYear.objects.get(year=raw_academic_year)
@@ -57,8 +69,10 @@ class Command(BaseCommand):
                     term = Term(academic_year=academic_year, term=raw_term)
                     term.save()
                 
-                if skip_processing_before and detention_date < skip_processing_before:
-                    continue
+                try:
+                    offense = Offense.objects.get(offense=raw_offense)
+                except Offense.DoesNotExist:
+                    offense = None
                 
                 if teacher_id:
                     teacher = Teacher.objects.get(teacher_id=teacher_id)
@@ -84,7 +98,12 @@ class Command(BaseCommand):
                     
                 except Detention.DoesNotExist:
                     logger.info("Creating detention {id:}".format(id=incident_id))
-                    incident = Detention(incident_id=incident_id)
+                    incident = Detention(
+                                        incident_id=incident_id,
+                                        code=code,
+                                        student=student,
+                                        teacher=teacher
+                                        )
                     force_save = True
                     
                 attr_map = {
