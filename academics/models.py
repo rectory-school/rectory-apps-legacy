@@ -32,7 +32,7 @@ class Term(models.Model):
     term = models.CharField(max_length=2)
     
     class Meta:
-        ordering = ['term']
+        ordering = ['academic_year__year', 'term']
     
     def __str__(self):
         return "{academic_year:}-{term:}".format(academic_year=self.academic_year, term=self.term)
