@@ -5,8 +5,9 @@ from datetime import date
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
+from django.core.mail import send_mail
 
-from detention_notifier.models import Detention, DetentionMailer, Offense, Code
+from detention_notifier.models import Detention, DetentionMailer, Offense, Code, DetentionErrorNotification
 
 from academics.models import Teacher, Student, AcademicYear, Term
 from academics.utils import fmpxmlparser
@@ -41,7 +42,7 @@ class Command(BaseCommand):
                 raw_offense = fields['Offense']
                 comments = fields['Comments'] or ""
                 student_id = fields['IDSTUDENT']
-                teacher_id = fields['Session.SelectedTeacher::IDTEACHER']
+                teacher_id = fields['KSTeachers::IDTEACHER']
                 raw_academic_year = fields['AcademicYear']
                 raw_term = fields['Term']
                 
@@ -69,9 +70,20 @@ class Command(BaseCommand):
                     term = Term(academic_year=academic_year, term=raw_term)
                     term.save()
                 
-                try:
-                    offense = Offense.objects.get(offense=raw_offense)
-                except Offense.DoesNotExist:
+                if raw_offense:
+                    try:
+                        offense = Offense.objects.get(offense__iexact=raw_offense)
+                    except Offense.DoesNotExist:
+                        error_recipients = [o.address for o in DetentionErrorNotification.objects.filter(mailer=detention_mailer)]
+                    
+                        if not error_recipients:
+                            raise ValueError("No error recipients are defined")
+                    
+                        send_mail("Error importing detention", "Error importing detention {id:}: offense '{offense:}' does not exist".format(
+                            id=incident_id, offense=raw_offense), 'technology@rectoryschool.org', error_recipients)
+                    
+                        continue
+                else:
                     offense = None
                 
                 if teacher_id:
