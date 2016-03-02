@@ -112,7 +112,7 @@ def seatingChartData(request, id):
     
     return JsonResponse(out)
 
-@permission_required('seating.edit_table_assignments')
+@permission_required('seating_charts.edit_table_assignments')
 def moveStudent(request, id):
     studentID = request.POST["student_id"]
     newTableID = request.POST.get("table_id", None)
