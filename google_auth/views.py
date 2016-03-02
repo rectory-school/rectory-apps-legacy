@@ -1,3 +1,5 @@
+from random import choice
+
 from django.shortcuts import render, redirect
 from django.conf import settings
 
@@ -43,14 +45,18 @@ class LogonView(View):
             user.save()
             
             return
+            
+        except Teacher.MultipleObjectsReturned:
+            return
         
-        if advisor.academic_teacher.active:
-            user.groups.add(group)
-            user.save()
+        if group:
+            if advisor.academic_teacher.active:
+                user.groups.add(group)
+                user.save()
 
-        else:
-            user.groups.remove(group)
-            user.save()
+            else:
+                user.groups.remove(group)
+                user.save()
     
     def handle_google_logon(self, request):
         id_token = request.POST.get("id_token")
@@ -77,7 +83,17 @@ class LogonView(View):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            user = User(email=email)
+            email_username, domain = email.split("@")
+            
+            username = email_username
+            chars = "23456789abcdefghjkmnpqrstuvwxyz"
+            
+            while User.objects.filter(username=username).exists():
+                random_str = "".join([choice(chars) for i in range(10)])
+                
+                username = username[0:19] + "-" + random_str
+            
+            user = User(email=email, username=username)
             user.save()
         
         #We'll see if this works...
@@ -116,7 +132,7 @@ class LogonView(View):
             # Log the user in
             auth_login(request, form.get_user())
             
-            self.set_groups(user)
+            self.set_groups(form.get_user())
             
             # Bring them to where they really want to go
             return redirect(redirect_to)

@@ -24,14 +24,14 @@ from seating_charts import models
 FONT="Helvetica"
 BOLDFONT="Helvetica-Bold"
 
-@permission_required('seating.view_table_assignments')
+@permission_required('seating_charts.view_table_assignments')
 def index(request):
     mealTimes = models.MealTime.objects.all()
     layouts = models.Layout.objects.all()
     
     return render(request, 'seating/index.html', {'mealTimes': mealTimes, 'layouts': layouts})
 
-@permission_required('seating.view_table_assignments')
+@permission_required('seating_charts.view_table_assignments')
 def seatingChartByTable(request, id):
     mealTime = models.MealTime.objects.get(pk=id)
     
@@ -80,7 +80,7 @@ def seatingChartByTable(request, id):
     
     return render(request, 'seating/seating_chart_by_table.html', {'leftovers': leftovers, 'tables': data})
 
-@permission_required('seating.view_table_assignments')
+@permission_required('seating_charts.view_table_assignments')
 def seatingChartByStudent(request, id):
     mealTime = models.MealTime.objects.get(pk=id)
 
@@ -135,7 +135,7 @@ def seatingChartByStudent(request, id):
 
     return response
 
-@permission_required('seating.view_table_assignments')
+@permission_required('seating_charts.view_table_assignments')
 def seatingChartInsert(request, id):
     layout = models.Layout.objects.get(pk=id)
     

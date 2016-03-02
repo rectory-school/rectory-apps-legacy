@@ -32,11 +32,18 @@
 
 <body>
   <div id="content">
-    <div id="header">
-      <p>Log on required</p>
-    </div>
-    
+    {% if request.user.is_authenticated %}
+      <div id="header">
+        <p>Access denied</p>
+      </div>
+      <p id="access-denied">Access to the requested resource is denied to {{ request.user.username }}. Please contact Technology if you have any questions.</p>
+    {% else %}      
+      <div id="header">
+        <p>Log on required</p>
+      </div>
+    {% endif %}
     <div id="signon-area">
+      
       <div id="google-signon">
         <div id="customBtn" class="customGPlusSignIn">
           {% if google_hosted_domain %}
