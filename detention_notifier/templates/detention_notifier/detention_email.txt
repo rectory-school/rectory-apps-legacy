@@ -7,7 +7,7 @@
 We hope that with your support, {{ student.first_name | safe }}'s behavior will improve, thereby avoiding further consequences. Please feel free to contact me should you have additional questions.
 
 {{ student.first_name | safe}}'s detentions for the current term are listed below:
-{% for detention, offense in term_detentions %}
-{{ detention.detention_date | date:"Y-m-d"}}: {% if offense.email_listing %}{{ offense.email_listing | safe }}{% else %}{{ offense.offense | safe }}{% endif %}{% endfor %}
+{% for term_detention, term_offense in term_detentions %}
+{{ term_detention.detention_date | date:"Y-m-d"}}: {% if term_offense.email_listing %}{{ term_offense.email_listing | safe }}{% else %}{{ term_offense.offense | safe }}{% endif %}{% endfor %}
 
 {{ detention_mailer.botton_section | safe}}

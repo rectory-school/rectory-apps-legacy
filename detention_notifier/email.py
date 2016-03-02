@@ -38,7 +38,7 @@ def get_body(detention):
         'student': detention.student,
         'teacher': detention.teacher,
         'detention': detention,
-        'term_detentions': term_detentions,
+        'term_detentions': out_term_detentions,
         'detention_mailer': detention_mailer,
         'offense': offense,
     }
