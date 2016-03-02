@@ -65,7 +65,7 @@ GOOGLE_HOSTED_DOMAIN = config['cloud'].get("GOOGLE_HOSTED_DOMAIN")
 
 GOOGLE_OAUTH_CLIENT_SECRET_FILE = config['cloud'].get("GOOGLE_OAUTH_CLIENT_SECRET_FILE")
 
-IIP_COURSE_IDS = config['courseevaluations']['IIP_COURSE_IDS']
+IIP_COURSE_IDS = map(str.strip, config['courseevaluations']['IIP_COURSE_IDS'].split(","))
 
 INSTALLED_APPS = (
     'django.contrib.admin',
