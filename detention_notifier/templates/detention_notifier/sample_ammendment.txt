@@ -11,5 +11,5 @@ Cc:
 {% for to_addr in cc_addresses %}{{ to_addr }}
 {% endfor %}
 Bcc:
-{% for to_addr in bcc_addresses %}{{ to_addr }}
+{% for to_addr in bcc_addressses %}{{ to_addr }}
 {% endfor %}

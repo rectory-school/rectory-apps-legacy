@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.core.mail import send_mail
 
 from solo.admin import SingletonModelAdmin
 from detention_notifier.models import DetentionMailer, Offense, Detention, Code, DetentionCC, DetentionTo, DetentionErrorNotification
@@ -36,7 +37,12 @@ class DetentionAdmin(admin.ModelAdmin):
             raise ValueError("No e-mail address for {} when trying to send a sample detention e-mail.".format(request.user))
         
         for detention in queryset:
-            message = get_message(detention, override_recipients=[request.user.email])
+            try:
+                message = get_message(detention, override_recipients=[request.user.email])
+            except ValueError as e:
+                send_mail("Error sending detention", str(e), 'technology@rectoryschool.org', [request.user.email])
+                continue
+                
             message.send()
     
     send_to_me.short_description = "Send me a sample of this detention report"

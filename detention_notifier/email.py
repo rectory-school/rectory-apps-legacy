@@ -3,7 +3,7 @@ import email.utils
 
 from django.template.loader import get_template
 from django.template import Context
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, send_mail
 
 from detention_notifier.models import Detention, DetentionMailer, DetentionCC, DetentionTo
 from academics.models import AcademicYear, Enrollment, StudentParentRelation
@@ -22,7 +22,7 @@ def get_body(detention):
     elif detention_mailer.blank_offense:
         offense = detention_mailer.blank_offense
     else:
-        raise ValueError("Cannot get offense for internal detention {}".format(detention.id))
+        raise ValueError("Cannot get offense for internal detention {}. Blank offense is not defined.".format(detention.id))
     
     out_term_detentions = []
     
@@ -46,6 +46,7 @@ def get_body(detention):
     template = get_template('detention_notifier/detention_email.txt')
         
     context = Context(context)
+    
     return template.render(context)
 
 def get_subject(detention):
@@ -73,6 +74,7 @@ def get_message(detention, override_recipients=[]):
     
     advisor = enrollment.advisor
     tutor = enrollment.tutor
+    assigner = detention.teacher
     
     message = EmailMessage()
     
@@ -130,18 +132,51 @@ def get_message(detention, override_recipients=[]):
         if not address in mail_list:
             mail_list.append(address)
     
+    if detention_mailer.assigner_mail and assigner:
+        mail_list = getattr(message, detention_mailer.assigner_mail)
+        address = assigner.email
+    
+        if not address in mail_list:
+            mail_list.append(address)
+        
+    
     if detention_mailer.reply_to_from:
         #This was set above
         message.reply_to.append(message.from_email)
     
     if detention_mailer.reply_to_advisor and advisor and advisor.email:
         advisor_addr = email.utils.formataddr((advisor.name, advisor.email))
-        message.reply_to.append(advisor_addr)
+        
+        if not advisor_addr in message.reply_to:
+            message.reply_to.append(advisor_addr)
     
     if detention_mailer.reply_to_tutor and tutor and tutor.email:
         tutor_addr = email.utils.formataddr((tutor.name, tutor.email))
-        message.reply_to.append(tutor_addr)
+        
+        if not tutor_addr in message.reply_to:
+            message.reply_to.append(tutor_addr)
     
+    if detention_mailer.reply_to_assigner and assigner and assigner.email:
+        assigner_addr = email.utils.formataddr((assigner.name, assigner.email))
+        
+        if not assigner_addr in message.reply_to:
+            message.reply_to.append(assigner_addr)
+    
+    #Fix up the recipients - make sure someone isn't in multiple recipient lists. 
+    #We've already checked when adding that one person isn't in a recipient list twice.
+    for to_person in message.to:
+        #Remove from both cc and bcc
+        for mail_list in [message.cc, message.bcc]:
+            while to_person in mail_list:
+                mail_list.remove(to_person)
+    
+    
+    for cc_person in message.cc:
+        #Remove CC from BCC
+        while cc_person in message.bcc:
+            message.bcc.remove(cc_person)
+    
+    #BCC can cascade down and does not need any special processing.
     
     if override_recipients:
         ammendment_context = Context({

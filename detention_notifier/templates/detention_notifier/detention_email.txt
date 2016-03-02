@@ -1,6 +1,6 @@
-Dear parents of {{ student.name }},
+{% load humanize %}Dear parents of {{ student.name }},
 
-{{ student.first_name }} received a detention today{% if teacher %} from {{ teacher.name }}{% endif %} {{ offense.sentence_insert }}.{% if term_detentions.count == 1 %} This is {{ student.first_name }}'s first detention of the term.{% else %} {{ student.first_name }} has accumulated {{ term_detentions.count }} detentions during the current term due to a variety of behavioral infractions.{% endif %}
+{{ student.first_name }} received a detention {{ detention.detention_date | naturalday:"\o\n F jS" }}{% if teacher %} from {{ teacher.name }}{% endif %} {{ offense.sentence_insert }}.{% if term_detentions.count == 1 %} This is {{ student.first_name }}'s first detention of the term.{% else %} {{ student.first_name }} has accumulated {{ term_detentions.count }} detentions during the current term due to a variety of behavioral infractions.{% endif %}
 
 {{ detention_mailer.middle_section | safe }}
 
