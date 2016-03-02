@@ -1,14 +1,13 @@
 Dear parents of {{ student.name }},
 
-{{ student.first_name }} received a detention today from {{ teacher.name }} for {{ offense.setnence_insert }}.{% if term_detentions.count == 1 %} This is {{ student.first_name }}'s first detention of the term.{% else %} {{ student.first_name }} has accumulated {{ term_detentions.count }} detentions during the current term due to a variety of behavioral infractions.{% endif %}
+{{ student.first_name }} received a detention today{% if teacher %} from {{ teacher.name }}{% endif %} {{ offense.sentence_insert }}.{% if term_detentions.count == 1 %} This is {{ student.first_name }}'s first detention of the term.{% else %} {{ student.first_name }} has accumulated {{ term_detentions.count }} detentions during the current term due to a variety of behavioral infractions.{% endif %}
 
-{{ detention_mailer.middle_section }}
+{{ detention_mailer.middle_section | safe }}
 
 We hope that with your support, {{ student.first_name }}'s behavior will improve, thereby avoiding further consequences. Please feel free to contact me should you have additional questions.
 
 {{ student.first_name }}'s detentions for the current term are listed below:
 {% for detention, offense in term_detentions %}
-{{ detention.detention_date | date:"%Y-%m-%d"}}: {% if offense.email_listing %}{{ offense.email_listing }}{% else %}offense.offense{% endif %}
-{% endfor %}
+{{ detention.detention_date | date:"Y-m-d"}}: {% if offense.email_listing %}{{ offense.email_listing }}{% else %}{{ offense.offense }}{% endif %}{% endfor %}
 
-{{ detention_mailer.signature }}
+{{ detention_mailer.botton_section }}

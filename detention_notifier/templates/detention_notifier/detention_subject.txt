@@ -1,1 +1,1 @@
-Detention report for {{ student.first_name }}
+Detention report for {{ student.name }}

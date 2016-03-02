@@ -1,11 +1,12 @@
+import email
 import email.utils
 
 from django.template.loader import get_template
 from django.template import Context
 from django.core.mail import EmailMessage
 
-from detention_notifier.models import Detention, DetentionMailer, DetentionCC
-from academics.models import AcademicYear, Enrollment
+from detention_notifier.models import Detention, DetentionMailer, DetentionCC, DetentionTo
+from academics.models import AcademicYear, Enrollment, StudentParentRelation
 
 def get_body(detention):
     term_detentions = Detention.objects.filter(
@@ -38,7 +39,8 @@ def get_body(detention):
         'teacher': detention.teacher,
         'detention': detention,
         'term_detentions': term_detentions,
-        'detention_mailer': detention_mailer
+        'detention_mailer': detention_mailer,
+        'offense': offense,
     }
     
     template = get_template('detention_notifier/detention_email.txt')
@@ -57,7 +59,7 @@ def get_subject(detention):
     
     return template.render(context)
 
-def get_message(detention):
+def get_message(detention, override_recipients=[]):
     subject = get_subject(detention)
     body = get_body(detention)
     detention_mailer = DetentionMailer.objects.get()
@@ -104,29 +106,29 @@ def get_message(detention):
             pass
     
     for additional_address in DetentionCC.objects.filter(mailer=detention_mailer):
-        email = additional_address.address
+        address = additional_address.address
         mail_type = additional_address.mail_type
         
         #message.to, message.cc, message.bcc
         mail_list = getattr(message, mail_type)
         
-        if email not in mail_list:
-            mail_list.append(email)
+        if address not in mail_list:
+            mail_list.append(address)
 
     if detention_mailer.advisor_mail and advisor:
         #message.to, message.cc, etc
-        mail_list = getattr(detention_mailer.advisor_mail, message)
-        email = advisor.email
+        mail_list = getattr(message, detention_mailer.advisor_mail)
+        address = advisor.email
         
-        if not email in mail_list:
-            mail_list.append(email)
+        if not address in mail_list:
+            mail_list.append(address)
     
     if detention_mailer.tutor_mail and tutor:
-        mail_list = getattr(detention_mailer.tutor_mail, message)
-        email = tutor.email
+        mail_list = getattr(message, detention_mailer.tutor_mail)
+        address = tutor.email
         
-        if not email in mail_list:
-            mail_list.append(email)
+        if not address in mail_list:
+            mail_list.append(address)
     
     if detention_mailer.reply_to_from:
         #This was set above
@@ -140,5 +142,19 @@ def get_message(detention):
         tutor_addr = email.utils.formataddr((tutor.name, tutor.email))
         message.reply_to.append(tutor_addr)
     
+    
+    if override_recipients:
+        ammendment_context = Context({
+            'to_addresses': message.to,
+            'cc_addresses': message.cc,
+            'bcc_addressses': message.bcc
+        })
+        ammendment_body = get_template('detention_notifier/sample_ammendment.txt').render(ammendment_context)
+        
+        message.body = message.body + ammendment_body
+        
+        message.to = override_recipients
+        message.cc = []
+        message.bcc = []
     
     return message

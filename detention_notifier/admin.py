@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from solo.admin import SingletonModelAdmin
 from detention_notifier.models import DetentionMailer, Offense, Detention, Code, DetentionCC, DetentionTo, DetentionErrorNotification
+from detention_notifier.email import get_message
 
 class DetentionToInline(admin.TabularInline):
     model = DetentionTo
@@ -22,11 +23,23 @@ class CodeAdmin(admin.ModelAdmin):
     list_display = ['code', 'process']
     
 class DetentionAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'sent', 'offense', 'student', 'teacher']
+    list_display = ['__str__', 'sent', 'offense', 'detention_date', 'student', 'teacher']
     
     list_filter = ['code', 'term', 'sent']
     
     search_fields = ['id', 'student__first_name', 'student__last_name']
+    
+    actions = ['send_to_me']
+    
+    def send_to_me(self, request, queryset):
+        if not request.user.email:
+            raise ValueError("No e-mail address for {} when trying to send a sample detention e-mail.".format(request.user))
+        
+        for detention in queryset:
+            message = get_message(detention, override_recipients=[request.user.email])
+            message.send()
+    
+    send_to_me.short_description = "Send me a sample of this detention report"
     
 class OffenseAdmin(admin.ModelAdmin):
     fields = ['offense', 'sentence_insert', 'mail', 'email_listing', 'sentence_example']
