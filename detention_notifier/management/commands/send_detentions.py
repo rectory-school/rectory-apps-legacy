@@ -37,8 +37,7 @@ class Command(BaseCommand):
             # It has not yet hit the time required to send today's detentions
             if timezone.now() < surpress_check:
                 # Only include detentions *before* today
-                unsent_detentions.filter(detention_date__lt=date.today())
-        
+                unsent_detentions = unsent_detentions.filter(detention_date__lt=date.today())
         
         error_recipients = [o.address for o in DetentionErrorNotification.objects.filter(mailer=detention_mailer)]
         
