@@ -139,3 +139,9 @@ class Command(BaseCommand):
                     
                 if force_save:
                     incident.save()
+                
+            
+            extra_detentions = Detention.objects.exclude(incident_id__in=seen_ids)
+            if extra_detentions:
+                logger.warn("Deleting {} detentions".format(extra_detentions.count()))
+                extra_detentions.delete()
