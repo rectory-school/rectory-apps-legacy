@@ -12,7 +12,7 @@ def get_body(detention):
                                         student=detention.student,
                                         term=detention.term,
                                         offense__mail=True
-                                        ).order_by('detention date')
+                                        ).order_by('detention_date')
         
     detention_mailer = DetentionMailer.objects.get()
     
