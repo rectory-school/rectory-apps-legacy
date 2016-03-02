@@ -39,6 +39,7 @@ def get_body(detention):
         'teacher': detention.teacher,
         'detention': detention,
         'term_detentions': out_term_detentions,
+        'term_detention_count': len(out_term_detentions),
         'detention_mailer': detention_mailer,
         'offense': offense,
     }
