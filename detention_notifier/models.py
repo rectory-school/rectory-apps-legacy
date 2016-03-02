@@ -45,6 +45,8 @@ class DetentionMailer(SingletonModel):
     tutor_mail = models.CharField(max_length=MAIL_TYPE_CHOICES_LENGTH, choices=MAIL_TYPE_CHOICES, blank=True, verbose_name='Tutor e-mail')
     assigner_mail = models.CharField(max_length=MAIL_TYPE_CHOICES_LENGTH, choices=MAIL_TYPE_CHOICES, blank=True, verbose_name='Assigner e-mail')
     
+    do_not_send_same_day_before = models.TimeField(blank=True, null=True)
+    
     middle_section = models.TextField()
     botton_section = models.TextField()
     
