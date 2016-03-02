@@ -30,6 +30,7 @@ class DetentionAdmin(admin.ModelAdmin):
     
     search_fields = ['id', 'student__first_name', 'student__last_name']
     
+    ordering = ['-detention_date']
     actions = ['send_to_me']
     
     def send_to_me(self, request, queryset):
