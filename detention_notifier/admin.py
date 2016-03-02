@@ -29,7 +29,7 @@ class DetentionAdmin(admin.ModelAdmin):
     search_fields = ['id', 'student__first_name', 'student__last_name']
     
 class OffenseAdmin(admin.ModelAdmin):
-    fields = ['offense', 'sentence_insert', 'mail', 'sentence_example']
+    fields = ['offense', 'sentence_insert', 'mail', 'email_listing', 'sentence_example']
     readonly_fields = ['sentence_example']
     
     def sentence_example(self, obj):

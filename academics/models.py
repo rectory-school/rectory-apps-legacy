@@ -2,6 +2,7 @@ import logging
 from random import choice
 
 from django.db import models
+from django.conf import settings
 
 from simple_history.models import HistoricalRecords
 
@@ -182,6 +183,20 @@ class Enrollment(models.Model):
     history = HistoricalRecords()
     
     objects = academics.managers.EnrollmentManager()
+    
+    @property
+    def tutor(self):
+        #Force into a list
+        iip_course_numbers = settings.IIP_COURSE_IDS
+        
+        iip_registration = StudentRegistration.objects.filter(section__academic_year=self.academic_year,
+                                                              student=self.student,
+                                                              section__course__number__in=iip_course_numbers).first()
+        
+        if iip_registration:
+            return iip_registration.section.teacher
+        
+        return None
     
     class Meta:
         unique_together = (('student', 'academic_year'), )

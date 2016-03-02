@@ -15,6 +15,8 @@ class Code(models.Model):
 class Offense(models.Model):
     offense = models.CharField(max_length=255, unique=True)
     sentence_insert = models.CharField(max_length=4096, blank=True)
+    email_listing = models.CharField(max_length=255, blank=True)
+    
     mail = models.BooleanField(default=True)
 
     def clean(self):
@@ -34,15 +36,17 @@ class DetentionMailer(SingletonModel):
     reply_to_from = models.BooleanField(default=True, verbose_name="Reply-to address above")
     reply_to_advisor = models.BooleanField(default=True, verbose_name="Reply-to advisor")
     reply_to_tutor = models.BooleanField(default=False, verbose_name="Reply-to tutor")
+    reply_to_assigner = models.BooleanField(default=False, verbose_name="Reply-to detention assigner")
     
     MAIL_TYPE_CHOICES = (('', 'None'), ('to', 'To'), ('cc', 'Cc'), ('bcc', 'Bcc'))
     MAIL_TYPE_CHOICES_LENGTH = max([len(item[0]) for item in MAIL_TYPE_CHOICES])
     
     advisor_mail = models.CharField(max_length=MAIL_TYPE_CHOICES_LENGTH, choices=MAIL_TYPE_CHOICES, blank=True, verbose_name='Advisor e-mail')
     tutor_mail = models.CharField(max_length=MAIL_TYPE_CHOICES_LENGTH, choices=MAIL_TYPE_CHOICES, blank=True, verbose_name='Tutor e-mail')
+    assigner_mail = models.CharField(max_length=MAIL_TYPE_CHOICES_LENGTH, choices=MAIL_TYPE_CHOICES, blank=True, verbose_name='Assigner e-mail')
     
-    detention_protol = models.TextField()
-    signature = models.TextField()
+    middle_section = models.TextField()
+    botton_section = models.TextField()
     
     skip_processing_before = models.DateField(blank=True, null=True)
     
