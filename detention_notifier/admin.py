@@ -25,12 +25,14 @@ class CodeAdmin(admin.ModelAdmin):
     
 class DetentionAdmin(admin.ModelAdmin):
     list_display = ['__str__', 'sent', 'offense', 'detention_date', 'student', 'teacher']
-    
     list_filter = ['code', 'term', 'sent']
-    
     search_fields = ['id', 'student__first_name', 'student__last_name']
     
+    fields = ['incident_id', 'detention_date', 'code', 'offense', 'comments', 'term', 'student', 'teacher', 'sent']
+    readonly_fields = fields[:]
+    
     ordering = ['-detention_date']
+    
     actions = ['send_to_me']
     
     def send_to_me(self, request, queryset):
@@ -45,6 +47,12 @@ class DetentionAdmin(admin.ModelAdmin):
                 continue
                 
             message.send()
+    
+    def has_add_permission(self, *args, **kwargs):
+        return False
+    
+    def has_delete_permission(self, *args, **kwargs):
+        return False
     
     send_to_me.short_description = "Send me a sample of this detention report"
     
