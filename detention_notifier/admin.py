@@ -25,7 +25,7 @@ class CodeAdmin(admin.ModelAdmin):
     
 class DetentionAdmin(admin.ModelAdmin):
     list_display = ['__str__', 'sent', 'offense', 'detention_date', 'student', 'teacher']
-    list_filter = ['code', 'term', 'sent']
+    list_filter = ['term', 'sent', 'offense']
     search_fields = ['id', 'student__first_name', 'student__last_name']
     
     fields = ['incident_id', 'detention_date', 'code', 'offense', 'comments', 'term', 'student', 'teacher', 'sent']
