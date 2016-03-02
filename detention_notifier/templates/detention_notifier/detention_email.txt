@@ -1,13 +1,13 @@
-{% load humanize %}Dear parents of {{ student.name }},
+{% load humanize %}Dear parents of {{ student.name | safe }},
 
-{{ student.first_name }} received a detention {{ detention.detention_date | naturalday:"\o\n F jS" }}{% if teacher %} from {{ teacher.name }}{% endif %} {{ offense.sentence_insert }}.{% if term_detentions.count == 1 %} This is {{ student.first_name }}'s first detention of the term.{% else %} {{ student.first_name }} has accumulated {{ term_detentions.count }} detentions during the current term due to a variety of behavioral infractions.{% endif %}
+{{ student.first_name | safe }} received a detention {{ detention.detention_date | naturalday:"\o\n F jS" }}{% if teacher %} from {{ teacher.name | safe }}{% endif %} {{ offense.sentence_insert | safe}}.{% if term_detentions.count == 1 %} This is {{ student.first_name | safe}}'s first detention of the term.{% else %} {{ student.first_name | safe}} has accumulated {{ term_detentions.count }} detentions during the current term due to a variety of behavioral infractions.{% endif %}
 
 {{ detention_mailer.middle_section | safe }}
 
-We hope that with your support, {{ student.first_name }}'s behavior will improve, thereby avoiding further consequences. Please feel free to contact me should you have additional questions.
+We hope that with your support, {{ student.first_name | safe }}'s behavior will improve, thereby avoiding further consequences. Please feel free to contact me should you have additional questions.
 
-{{ student.first_name }}'s detentions for the current term are listed below:
+{{ student.first_name | safe}}'s detentions for the current term are listed below:
 {% for detention, offense in term_detentions %}
-{{ detention.detention_date | date:"Y-m-d"}}: {% if offense.email_listing %}{{ offense.email_listing }}{% else %}{{ offense.offense }}{% endif %}{% endfor %}
+{{ detention.detention_date | date:"Y-m-d"}}: {% if offense.email_listing %}{{ offense.email_listing | safe }}{% else %}{{ offense.offense | safe }}{% endif %}{% endfor %}
 
-{{ detention_mailer.botton_section }}
+{{ detention_mailer.botton_section | safe}}

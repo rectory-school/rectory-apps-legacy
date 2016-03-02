@@ -5,11 +5,11 @@
 This is a sample e-mail. Should this e-mail actually be sent, it would have been directed in the following manner:
 
 To:
-{% for to_addr in to_addresses %}{{ to_addr }}
+{% for to_addr in to_addresses %}{{ to_addr | safe }}
 {% endfor %}
 Cc:
-{% for to_addr in cc_addresses %}{{ to_addr }}
+{% for to_addr in cc_addresses %}{{ to_addr | safe }}
 {% endfor %}
 Bcc:
-{% for to_addr in bcc_addressses %}{{ to_addr }}
+{% for to_addr in bcc_addressses %}{{ to_addr | safe }}
 {% endfor %}
