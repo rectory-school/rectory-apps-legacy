@@ -277,7 +277,8 @@ class Parent(models.Model):
   
   class Meta:
     ordering = ['last_name', 'first_name']
-  
+    permissions = (("can_download_family_data", "Can download family data"), )
+    
   @property
   def name(self):
     return "{:} {:}".format(self.first_name, self.last_name)
