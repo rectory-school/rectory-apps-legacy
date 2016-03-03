@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Rectory Apps System</title>
+</head>
+
+<body>
+  {% if perms.academics.can_download_family_data %}
+    <a href="{% url 'academics:family_vcard_data' %}">Family contact file</a>
+  {% endif %}
+</body>
+
+</html>
