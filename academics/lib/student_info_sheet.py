@@ -75,7 +75,6 @@ def story_for_info_sheet(enrollment):
     
     if email and password:
         story.append(Paragraph("Logging onto a Chromebook", header_style))
-        story.append(Paragraph("To log into a Rectory computer (Rooms 313/314, library, etc):", subheader_style))
         story.append(Paragraph("Turn the Chromebook on, if it is not already on", normal_style, bulletText='-'))
         story.append(Paragraph("Enter your email: {username:}".format(username=email), normal_style, bulletText='-'))
         story.append(Paragraph("Press enter", normal_style, bulletText='-'))
