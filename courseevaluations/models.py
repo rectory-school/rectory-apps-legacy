@@ -166,12 +166,18 @@ class CourseEvaluation(Evaluable):
         if self.section.academic_year != self.enrollment.academic_year:
             raise ValidationError("Enrollment academic year does not equal section academic year")
 
-class MELPEvaluation(CourseEvaluation):
+#Basically the same as a course evaluation, but doesn't inherit for query purposes
+class MELPEvaluation(Evaluable):
     evaluation_type_label = "MELP evaluation"
     evaluation_type_label_plural = "MELP evaluations"
     
     evaluation_type_title = "MELP Evaluation"
     evaluation_type_title_plural = "MELP Evaluations"
+    
+    section = models.ForeignKey(Section)
+    
+    def __str__(self):
+        return "{student:}: {section:}".format(section=self.section, student=self.student)
     
     @property
     def student_display(self):
@@ -179,6 +185,12 @@ class MELPEvaluation(CourseEvaluation):
             return self.section.course_name
         
         return self.course.course_name
+    
+    def clean(self):
+        super().clean()
+        
+        if self.section.academic_year != self.enrollment.academic_year:
+            raise ValidationError("Enrollment academic year does not equal section academic year")
         
 class IIPEvaluation(Evaluable):
     evaluation_type_label = "IIP evaluation"
