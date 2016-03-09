@@ -36,6 +36,7 @@ class Command(BaseCommand):
                 csn = fields['CourseSectionNumber']
                 academic_year = fields["AcademicYear"]
                 teacher_id = fields["IDTeacher"]
+                course_name = fields["CourseName"]
                 
                 if not course_number or not csn or not academic_year:
                     continue
@@ -74,6 +75,7 @@ class Command(BaseCommand):
                     
                 attrMap = {
                     'teacher': teacher,
+                    'course_name': course_name,
                 }
                 
                 for attr in attrMap:

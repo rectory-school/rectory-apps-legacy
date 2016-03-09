@@ -230,6 +230,9 @@ class Section(models.Model):
     academic_year = models.ForeignKey(AcademicYear)
     teacher = models.ForeignKey(Teacher, blank=True, null=True)
     
+    #The course name that can be overridden from the original course
+    course_name = models.CharField(max_length=255, blank=True)
+    
     students = models.ManyToManyField(Student, through='StudentRegistration')
     
     history = HistoricalRecords()
