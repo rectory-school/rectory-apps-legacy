@@ -17,12 +17,12 @@
   {% if incomplete %}
     <h1>Incomplete evaluations</h1>
     <ul>
-      {% for student in incomplete %}
+      {% for student, student_evaluables in incomplete %}
         <li><strong>{% if show_links %}<a href="{% url "courseevaluations_student_landing" %}?auth_key={{ student.auth_key }}">{{ student }}</a>{% else %}{{ student }}{% endif %}</strong>: {{ student.complete_count }} of {{ student.total_count }} evaluations completed</li>
 
         {% if show_evaluables %}
           <ul class="detail" id="detail_{{student.id}}">
-            {% for evaluable in student.evaluable_set.all %}
+            {% for evaluable in student_evaluables %}
               <li {% if evaluable.complete %} class="completed_item"{% endif %}>{{ evaluable.student_display }}: {% if evaluable.complete %}Complete{% else %}Incomplete{%endif%}
               {% if show_links %}
                 - <a href="{% admin_url_for evaluable %}">Admin link</a>
@@ -38,12 +38,12 @@
   {% if complete %}
     <h1>Complete evaluations</h1>
     <ul>
-      {% for student in complete %}
+      {% for student, student_evaluables in complete %}
         <li><strong>{% if show_links %}<a href="{% url "courseevaluations_student_landing" %}?auth_key={{ student.auth_key }}">{{ student }}</a>{% else %}{{ student }}{% endif %}</strong>: {{ student.complete_count }} of {{ student.total_count }} evaluations completed</li>
 
         {% if show_evaluables %}
           <ul class="detail" id="detail_{{student.id}}">
-            {% for evaluable in student.evaluable_set.all %}
+            {% for evaluable in student_evaluables %}
               <li>{{ evaluable.student_display }}</li>
             {% endfor %}
           </ul>

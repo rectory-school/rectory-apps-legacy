@@ -86,16 +86,34 @@ def by_student(request, id, show_evaluables):
         evaluable__evaluation_set=evaluation_set,
         then=1
         ))))
+    
+    #Do the grouping here to save round trips to the database
+    if show_evaluables:
+        all_evaluables = Evaluable.objects.filter(student__in=students, evaluation_set=evaluation_set).prefetch_related('student')
+    
+        grouped_evaluables = {}
         
+        for evaluable in all_evaluables:
+            if not evaluable.student in grouped_evaluables:
+                grouped_evaluables[evaluable.student] = []
+            
+            grouped_evaluables[evaluable.student].append(evaluable)
+            
     complete = []
     incomplete = []
     
-    for s in students:
-        if s.incomplete_count == 0:
-            complete.append(s)
+    for student in students:
+        #Where we're ultimately going to be dumping the student
+        if student.incomplete_count == 0:
+            output_list = complete
         else:
-            incomplete.append(s)
-    
+            output_list = incomplete
+        
+        if show_evaluables:
+            output_list.append((student, grouped_evaluables[student]))
+        else:
+            output_list.append((student, []))
+                
     template_vars = {
         'evaluation_set': evaluation_set,
         'complete': complete,
