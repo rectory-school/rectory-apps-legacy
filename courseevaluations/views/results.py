@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import permission_required
 
 from academics.models import Course, Section, Teacher, Dorm, Grade
-from courseevaluations.models import Evaluable, CourseEvaluation, DormParentEvaluation, IIPEvaluation, EvaluationSet
+from courseevaluations.models import Evaluable, CourseEvaluation, DormParentEvaluation, IIPEvaluation, EvaluationSet, MELPEvaluation
 
 from courseevaluations.lib.results import build_report
 
@@ -344,15 +344,104 @@ def zip_dorm_parent_dorm_dorm_parent(request, evaluation_set_id):
     return response
 
 @permission_required('courseevaluations.can_view_results')
+def melp_section(request, evaluation_set_id, section_id):
+    section = Section.objects.get(pk=section_id)
+    evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
+
+    if request.GET.get("unmask_comments") == "1" and request.user.has_perm("courseevaluations.can_unmask_comments"):
+        unmask_comments=True
+    else:
+        unmask_comments=False
+    
+    evaluables = MELPEvaluation.objects.filter(section=section, evaluation_set=evaluation_set)
+
+    response = HttpResponse(content_type='application/pdf')
+
+    title = "{melp_name:} ({evaluation_set:})".format(
+        melp_name=section.course_name,
+        evaluation_set=evaluation_set.name
+        )
+
+    build_report(response, evaluables, title=title, unmask_comments=unmask_comments)
+
+    return response
+
+@permission_required('courseevaluations.can_view_results')
+def melp_aggregate(request, evaluation_set_id):
+    evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
+
+    if request.GET.get("unmask_comments") == "1" and request.user.has_perm("courseevaluations.can_unmask_comments"):
+        unmask_comments=True
+    else:
+        unmask_comments=False
+    
+    evaluables = MELPEvaluation.objects.filter(evaluation_set=evaluation_set)
+
+    response = HttpResponse(content_type='application/pdf')
+
+    title = "Aggregate MELP Results ({evaluation_set:})".format(
+        evaluation_set=evaluation_set.name
+        )
+
+    build_report(response, evaluables, title=title, unmask_comments=unmask_comments)
+
+    return response
+
+
+
+@permission_required('courseevaluations.can_view_results')
+def melp_section_zip(request, evaluation_set_id):
+    evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
+    
+    evaluables = MELPEvaluation.objects.filter(evaluation_set=evaluation_set)
+    
+    by_melp = {}
+    
+    for melp_evaluation in evaluables:
+        section = melp_evaluation.section
+        
+        if not section in by_melp:
+            by_melp[section] = []
+        
+        by_melp[section].append(melp_evaluation)
+    
+    out = BytesIO()
+    with ZipFile(out, mode='w', compression=ZIP_STORED) as zip_file:
+        for melp in by_melp:
+            evaluables = by_melp[melp]
+            title = "{melp:} ({evaluation_set:})".format(
+                melp = melp.course_name,
+                evaluation_set=evaluation_set.name
+                )
+            
+            
+            report_file = BytesIO()
+            build_report(report_file, evaluables, title)
+            file_name = "{melp:}.pdf".format(
+                melp = melp.course_name,
+            )
+            
+            zip_file.writestr(file_name, report_file.getvalue())
+    
+    response = HttpResponse(content_type='application/zip')
+    response['Content-Disposition'] = 'filename="MELP Evaluations for {evaluation_set:}.zip"'.format(evaluation_set=evaluation_set.name)
+    
+    response.write(out.getvalue())
+    return response
+
+
+@permission_required('courseevaluations.can_view_results')
 def index(request, evaluation_set_id):
     evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
     
     course_evaluables = CourseEvaluation.objects.filter(evaluation_set=evaluation_set)
     dorm_parent_evaluables = DormParentEvaluation.objects.filter(evaluation_set=evaluation_set)
     iip_evaluables = IIPEvaluation.objects.filter(evaluation_set=evaluation_set)
+    melp_evaluables = MELPEvaluation.objects.filter(evaluation_set=evaluation_set)
     
     sections = Section.objects.filter(courseevaluation__in=course_evaluables).distinct()
     iip_teachers = Teacher.objects.filter(iipevaluation__in=iip_evaluables).order_by('last_name', 'first_name').distinct()
+    melp_sections = Section.objects.filter(melpevaluation__in=melp_evaluables).order_by('course_name').distinct()
     
     used_grade_ids = course_evaluables.values_list('enrollment__grade', flat=True).order_by().distinct()
     
@@ -364,4 +453,4 @@ def index(request, evaluation_set_id):
         if not d in dorm_parents:
             dorm_parents.append(d)
     
-    return render(request, "courseevaluations/results/index.html", {'evaluation_set': evaluation_set, 'sections': sections, 'iip_teachers': iip_teachers, 'dorm_parents': dorm_parents, 'grades': grades})
+    return render(request, "courseevaluations/results/index.html", {'evaluation_set': evaluation_set, 'sections': sections, 'iip_teachers': iip_teachers, 'dorm_parents': dorm_parents, 'grades': grades, 'melp_sections': melp_sections})

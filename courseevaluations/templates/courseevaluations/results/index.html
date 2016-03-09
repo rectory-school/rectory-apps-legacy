@@ -99,6 +99,25 @@ a {
       
     {% endfor %}
   </ul>
+  
+  <h1>MELP Evaluations</h1>
+  <p><a href="{% url 'courseevaluations_melp_results_aggregate' evaluation_set_id=evaluation_set.id %}">All MELP Evaluations</a></p>
+  
+  {% if evaluation_set.is_open %}
+    <p>Zip file download is disabled for open evaluation sets</p>
+  {% else %}
+    <p><a href="{%url 'courseevaluations_melp_results_zip' evaluation_set_id=evaluation_set.id %}">Download all MELP evaluations as a zip file</a></p>
+  {% endif %}
+  
+  
+  <ul class="melp_list">
+    {% for melp in melp_sections %}
+      <li>
+        <a href="{% url 'courseevaluations_melp_results' evaluation_set_id=evaluation_set.id section_id=melp.id %}">{{ melp.course_name }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+  
 </body>
 
 </html>
