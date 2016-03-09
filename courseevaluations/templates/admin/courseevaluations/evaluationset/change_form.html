@@ -38,6 +38,14 @@
     <div class="dialog" id="dialog_create_course_evaluations" title="Create Course Evaluations">
       <form method="POST" action="{% url 'admin:courseevaluations_evaluationset_create_course_evals' object_id=object_id %}" enctype="multipart/form-data">
         {% csrf_token %}
+        <h3>Course Type</h3>
+        <p>
+          <select name="course_type">
+            <option value="course">Course Evaluations</option>
+            <option value="melp">MELP Evaluations</option>
+          </select>
+        </p>
+        
         <h3>Question Set</h3>
         <p><select name="question_set_id">
           {% for question_set in question_sets %}

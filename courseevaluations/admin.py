@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import permission_required
 
 from adminsortable.admin import SortableAdmin, NonSortableParentAdmin, SortableStackedInline
 
-from courseevaluations.models import QuestionSet, FreeformQuestion, MultipleChoiceQuestion, MultipleChoiceQuestionOption, EvaluationSet, DormParentEvaluation, CourseEvaluation, IIPEvaluation, MultipleChoiceQuestionAnswer, FreeformQuestionAnswer, StudentEmailTemplate
+from courseevaluations.models import QuestionSet, FreeformQuestion, MultipleChoiceQuestion, MultipleChoiceQuestionOption, EvaluationSet, DormParentEvaluation, CourseEvaluation, IIPEvaluation, MultipleChoiceQuestionAnswer, FreeformQuestionAnswer, StudentEmailTemplate, MELPEvaluation
 from academics.models import Student, AcademicYear, Enrollment, Section, Course, Teacher
 
 from academics.utils import fmpxmlparser
@@ -200,6 +200,17 @@ class EvaluationSetAdmin(admin.ModelAdmin):
             messages.error(request, "Invalid request, please try again. No evaluations created.")
             return redirect(redirect_url)
         
+        course_type = request.POST.get("course_type")
+        
+        #Course class will be the either a MELPEvaluation or a CourseEvaluation
+        if course_type == "melp":
+            CourseClass = MELPEvaluation
+        elif course_type == "course":
+            CourseClass = CourseEvaluation
+        else:
+            messages.error(request, "Course type is not defined. No evaluations created.")
+            return redirect(redirect_url)
+        
         question_set_id = request.POST.get("question_set_id")
         
         if not question_set_id:
@@ -232,7 +243,7 @@ class EvaluationSetAdmin(admin.ModelAdmin):
                 for student in section.students.all():
                     enrollment = Enrollment.objects.get(student=student, academic_year__year=academic_year)
                     
-                    evaluable = CourseEvaluation()
+                    evaluable = CourseClass()
                     evaluable.student = student
                     evaluable.enrollment = enrollment
                     evaluable.section = section
@@ -313,6 +324,9 @@ class EvaluationSetAdmin(admin.ModelAdmin):
         
         return my_urls + urls
 
+class MELPEvaluationAdmin(CourseEvaluationAdmin):
+    pass
+    
 class IIPEvaluationAdmin(ReadOnlyAdmin):
     list_filter = ['evaluation_set__name', ('student', admin.RelatedOnlyFieldListFilter)]
     
@@ -325,6 +339,7 @@ admin.site.register(FreeformQuestion, SortableAdmin)
 admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin)
 admin.site.register(EvaluationSet, EvaluationSetAdmin)
 admin.site.register(CourseEvaluation, CourseEvaluationAdmin)
+admin.site.register(MELPEvaluation, MELPEvaluationAdmin)
 admin.site.register(IIPEvaluation, IIPEvaluationAdmin)
 admin.site.register(DormParentEvaluation, DormParentEvaluationAdmin)
 admin.site.register(StudentEmailTemplate)

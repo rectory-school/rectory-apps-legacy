@@ -165,6 +165,20 @@ class CourseEvaluation(Evaluable):
         
         if self.section.academic_year != self.enrollment.academic_year:
             raise ValidationError("Enrollment academic year does not equal section academic year")
+
+class MELPEvaluation(CourseEvaluation):
+    evaluation_type_label = "MELP evaluation"
+    evaluation_type_label_plural = "MELP evaluations"
+    
+    evaluation_type_title = "MELP Evaluation"
+    evaluation_type_title_plural = "MELP Evaluations"
+    
+    @property
+    def student_display(self):
+        if self.section.course_name:
+            return self.section.course_name
+        
+        return self.course.course_name
         
 class IIPEvaluation(Evaluable):
     evaluation_type_label = "IIP evaluation"
