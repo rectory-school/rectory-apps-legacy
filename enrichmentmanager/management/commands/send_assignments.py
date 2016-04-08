@@ -24,7 +24,7 @@ class Command(EmailCommand):
             unassigned = set()
             
             #Students
-            for student in Student.objects.exclude(email=""):
+            for student in Student.objects.exclude(academic_student__email=""):
                 if not student.email:
                     logger.error("Student {} ({}) has no e-mail address to send the assignment report to".format(student.student_id, student.id))
                     continue
