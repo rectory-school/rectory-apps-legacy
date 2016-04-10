@@ -95,7 +95,7 @@ class Command(BaseCommand):
                         teacher=enrichment_teacher,
                         slot__date__gt=date.today())
                 
-                    matched_options.update(location=enrichment_teacher.default_enrichment_room)
+                    matched_options.update(location=enrichment_teacher.default_room)
                 
                     enrichment_teacher.default_room = academic_teacher.default_enrichment_room
                     enrichment_teacher.save()
