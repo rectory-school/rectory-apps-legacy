@@ -49,76 +49,81 @@ $(document).ready(function() {
   
   {% if perms.courseevaluations.can_send_emails %}
     <h1>Send Emails</h1>
-    <ul>
-      <li>Student e-mails
-        <ul>
-          <form method="POST" id="form_send_student_email" action="{% url "courseevaluations_send_student_email" %}">
-            {% csrf_token %}
-            <li>
-              <label for="student_email_template">Template</label>:
-              <select name="student_email_template">
-                {% for student_email_template in student_email_templates %}
-                  <option value="{{student_email_template.id}}">{{ student_email_template.description }}</option>
-                {% endfor %}
-              </select>
-            </li>
+		
+		{% if not evaluation_set.is_open %}
+			<p>E-mails cannot be sent for closed evaluation sets</p>
+		{% else %}
+	    <ul>
+	      <li>Student e-mails
+	        <ul>
+	          <form method="POST" id="form_send_student_email" action="{% url "courseevaluations_send_student_email" %}">
+	            {% csrf_token %}
+	            <li>
+	              <label for="student_email_template">Template</label>:
+	              <select name="student_email_template">
+	                {% for student_email_template in student_email_templates %}
+	                  <option value="{{student_email_template.id}}">{{ student_email_template.description }}</option>
+	                {% endfor %}
+	              </select>
+	            </li>
           
-            <li>
-              <label for="send_type">Operation</label>: 
-              <select name="send_type">
-                <option value="sample">Send me a sample</option>
-                <option value="redirect">Redirect all e-mails to me</option>
-                <option value="send">Send e-mails to students</option>
-              </select>
-            </li>
-            <li>
-              <input type="submit" value="Send" id="btn_send_student_email" />
-            </li>
-          </form>
-        </ul>
-      </li>
+	            <li>
+	              <label for="send_type">Operation</label>: 
+	              <select name="send_type">
+	                <option value="sample">Send me a sample</option>
+	                <option value="redirect">Redirect all e-mails to me</option>
+	                <option value="send">Send e-mails to students</option>
+	              </select>
+	            </li>
+	            <li>
+	              <input type="submit" value="Send" id="btn_send_student_email" />
+	            </li>
+	          </form>
+	        </ul>
+	      </li>
       
-      <li>Advisor/tutor e-mails
-        <ul>
-          <form method="POST" id="form_send_related_teacher_student_email" action="{%url "courseevaluations_send_advisor_tutor_status" %}">
-            <input type="hidden" name="evaluation_set_id" value="{{evaluation_set.id}}">
-            {% csrf_token %}
-            <li>
-              <label for="send_type">Operation</label>: 
-              <select name="send_type">
-                <option value="sample">Send me a sample</option>
-                <option value="redirect">Redirect all e-mails to me</option>
-                <option value="send">Send e-mails to advisors and tutors</option>
-              </select>
-            </li>
-            <li>
-              <input type="submit" value="Send" id="btn_send_related_teacher_student_email" />
-            </li>
-          </form>
-        </ul>
-      </li>
+	      <li>Advisor/tutor e-mails
+	        <ul>
+	          <form method="POST" id="form_send_related_teacher_student_email" action="{%url "courseevaluations_send_advisor_tutor_status" %}">
+	            <input type="hidden" name="evaluation_set_id" value="{{evaluation_set.id}}">
+	            {% csrf_token %}
+	            <li>
+	              <label for="send_type">Operation</label>: 
+	              <select name="send_type">
+	                <option value="sample">Send me a sample</option>
+	                <option value="redirect">Redirect all e-mails to me</option>
+	                <option value="send">Send e-mails to advisors and tutors</option>
+	              </select>
+	            </li>
+	            <li>
+	              <input type="submit" value="Send" id="btn_send_related_teacher_student_email" />
+	            </li>
+	          </form>
+	        </ul>
+	      </li>
       
-      <li>Teachers per section e-mail
-        <ul>
-          <form method="POST" id="form_send_teacher_per_section_email" action="{%url "courseevaluatons_send_teacher_per_section_email" %}">
-            <input type="hidden" name="evaluation_set_id" value="{{evaluation_set.id}}">
-            {% csrf_token %}
-            <li>
-              <label for="send_type">Operation</label>: 
-              <select name="send_type">
-                <option value="sample">Send me a sample</option>
-                <option value="redirect">Redirect all e-mails to me</option>
-                <option value="send">Send e-mails to teachers</option>
-              </select>
-            </li>
-            <li>
-              <input type="submit" value="Send" id="btn_send_related_teacher_student_email" />
-            </li>
-          </form>
-        </ul>
-      </li>
+	      <li>Teachers per section e-mail
+	        <ul>
+	          <form method="POST" id="form_send_teacher_per_section_email" action="{%url "courseevaluatons_send_teacher_per_section_email" %}">
+	            <input type="hidden" name="evaluation_set_id" value="{{evaluation_set.id}}">
+	            {% csrf_token %}
+	            <li>
+	              <label for="send_type">Operation</label>: 
+	              <select name="send_type">
+	                <option value="sample">Send me a sample</option>
+	                <option value="redirect">Redirect all e-mails to me</option>
+	                <option value="send">Send e-mails to teachers</option>
+	              </select>
+	            </li>
+	            <li>
+	              <input type="submit" value="Send" id="btn_send_related_teacher_student_email" />
+	            </li>
+	          </form>
+	        </ul>
+	      </li>
       
-    </ul>
+	    </ul>
+		{% endif %}
   {% endif %}
 </body>
 </html>

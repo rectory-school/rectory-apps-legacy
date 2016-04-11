@@ -145,6 +145,9 @@ def send_student_email(request):
     
     evaluation_sets = EvaluationSet.objects.open()
     
+    if not evaluation_sets:
+        return HttpResponse("Error: There are no open evaluation sets to send an e-mail for.")
+    
     to_students = []
     confirmation_addresses = []
     
@@ -187,6 +190,9 @@ def send_teacher_per_section_email(request):
     operation = request.POST['send_type']
     
     evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
+    
+    if not evaluation_set.is_open:
+        return HttpResponse("Error: This evaluation set is closed")
     
     data = get_incomplete_evaluables_by_teacher(evaluation_set)
     confirmation_addresses = []
@@ -273,6 +279,9 @@ def send_advisor_tutor_status(request):
     evaluation_set = EvaluationSet.objects.get(pk=evaluation_set_id)
     iip_courses = Course.objects.filter(number__in=iip_course_numbers)
     academic_year = AcademicYear.objects.current()
+    
+    if not evaluation_set.is_open:
+        return HttpResponse("Error: This evaluation set is closed")
     
     evaluables = Evaluable.objects.filter(evaluation_set=evaluation_set).prefetch_related('student')
     students = {}

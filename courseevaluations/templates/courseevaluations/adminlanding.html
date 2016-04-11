@@ -9,6 +9,10 @@
 
 {% for evaluation_set in evaluation_sets %}
   <h2>{{ evaluation_set.name }}</h2>
+  {% if not evaluation_set.is_open %}
+  	<p style="color:red;">Evaluation set is closed</p>
+  {% endif %}
+  
   <ul>
     {% if perms.courseevaluations.can_view_status_reports %}
       <li><a href="{% url 'courseevaluations_reports_status_index' id=evaluation_set.id %}">Completion Report Landing</a></li>
