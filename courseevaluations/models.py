@@ -7,7 +7,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 
-from polymorphic import PolymorphicModel
+from polymorphic.models import PolymorphicModel
 from adminsortable.models import SortableMixin
 from adminsortable.fields import SortableForeignKey
 
