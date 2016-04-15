@@ -9,13 +9,29 @@ from detention_notifier.models import Detention, DetentionMailer, DetentionCC, D
 from academics.models import AcademicYear, Enrollment, StudentParentRelation
 
 def get_body(detention):
-    term_detentions = Detention.objects.filter(
+    detention_mailer = DetentionMailer.objects.get()
+    blank_offense = detention_mailer.blank_offense
+    
+    if blank_offense and blank_offense.mail:
+        include_blank_offenses = True
+    else:
+        include_blank_offenses = False
+    
+    all_term_detentions = Detention.objects.filter(
                                         student=detention.student,
                                         term=detention.term,
-                                        offense__mail=True
                                         ).order_by('detention_date')
+    
+    mail_term_detentions = all_term_detentions.filter(offense__mail=True)
+    
+    
+    if include_blank_offenses:
+        blank_term_detentions = all_term_detentions.filter(offense=None)
         
-    detention_mailer = DetentionMailer.objects.get()
+        term_detentions = mail_term_detentions | blank_term_detentions
+    
+    else:
+        term_detentions = mail_term_detentions
     
     if detention.offense:
         offense = detention.offense
