@@ -5,6 +5,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.template.loader import get_template
 from django.template import Context
 
+from django.conf import settings
+
 from enrichmentmanager.management.commands._emailcommands import EmailCommand
 from enrichmentmanager.lib import getUnassignedStudents, getUnassignedAdvisors
 
