@@ -35,14 +35,14 @@ class Command(BaseCommand):
                     enrichment_teacher.save()
                 
                 # Description change, update all future options matching the old description
-                if academic_teacher.default_enrichment_room != enrichment_teacher.default_room:
+                if academic_teacher.default_enrichment_description != enrichment_teacher.default_description:
                     previous_default = enrichment_teacher.default_description
                     new_default = academic_teacher.default_enrichment_description
                 
-                    matching_old_slots = EnrichmentOption.objects.filter(
+                    matching_future_slots = EnrichmentOption.objects.filter(
                         description=previous_default, teacher=enrichment_teacher, slot__date__gt=date.today())
                 
-                    matching_old_slots.update(description = new_default)
+                    matching_future_slots.update(description = new_default)
                     enrichment_teacher.default_description = new_default
                     enrichment_teacher.save()
                 
