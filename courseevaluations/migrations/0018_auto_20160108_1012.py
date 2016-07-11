@@ -9,12 +9,13 @@ def forwards(apps, schema_editor):
     
     Evaluable = apps.get_model("courseevaluations", "Evaluable")
     
-    academic_year = AcademicYear.objects.get(current=True)
+    if Evaluable.objects.all().count() > 0:
+        academic_year = AcademicYear.objects.get(current=True)
     
-    for evaluable in Evaluable.objects.all():
-        enrollment = Enrollment.objects.get(student=evaluable.student, academic_year=academic_year)
-        evaluable.enrollment = enrollment
-        evaluable.save()
+        for evaluable in Evaluable.objects.all():
+            enrollment = Enrollment.objects.get(student=evaluable.student, academic_year=academic_year)
+            evaluable.enrollment = enrollment
+            evaluable.save()
 
 def backwards(apps, schema_editor):
     Evaluable = apps.get_model("courseevaluations", "Evaluable")
