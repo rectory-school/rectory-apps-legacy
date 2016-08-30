@@ -27,6 +27,12 @@ class SeatingStudentAdmin(admin.ModelAdmin):
   list_display = ['__str__', 'ethnicity', 'food_allergy']
   list_editable = ['ethnicity', 'food_allergy']
   
+  def has_add_permission(request, *args, **kwargs):
+    return False
+  
+  def has_delete_permission(request, obj=None, *args, **kwargs):
+    return False
+  
   
 admin.site.register(Table, TableAdmin)
 admin.site.register(MealTime, MealTimeAdmin)
