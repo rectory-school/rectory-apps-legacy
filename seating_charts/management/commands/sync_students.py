@@ -36,3 +36,6 @@ class Command(BaseCommand):
         seating_student.enrollment = enrollment
         seating_student.save()
     
+    # Remove extra students
+    extra_students = SeatingStudent.objects.exclude(enrollment__student__in=[e.student for e in current_enrollments]).all()
+    extra_students.delete()
