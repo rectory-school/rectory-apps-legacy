@@ -63,21 +63,34 @@ class Command(BaseCommand):
             continue
           
           relevant_parents.append(updated_parent)
-            
-          old_version = updated_parent.history.as_of(last_run)
+          
+          try:
+            old_version = updated_parent.history.as_of(last_run)
+          except Parent.DoesNotExist as e:
+            old_version = None
           
           compare_attrs = ['first_name', 'last_name', 'email', 'phone_home', 'phone_work', 'phone_cell', 'address']
           
           email_body.write("="*80 + "\n")
           email_body.write(" Family ID: {:} ".format(updated_parent.family_id).center(80, "=") + "\n")
-          email_body.write(" Parent: {:} ".format(updated_parent.parent_id).center(80, "=") + "\n")
+          
+          if old_version:
+            email_body.write(" Existing Parent: {:} ".format(updated_parent.parent_id).center(80, "=") + "\n")
+          else:
+            email_body.write(" New Parent: {:} ".format(updated_parent.parent_id).center(80, "=") + "\n")
+          
+          
           email_body.write("="*80 + "\n\n")
           
           changed_attrs = []
           unchanged_attrs = []
           
           for attr in compare_attrs:
-            old_value = getattr(old_version, attr)
+            if old_version:
+              old_value = getattr(old_version, attr)
+            else:
+              old_value = ""
+              
             new_value = getattr(updated_parent, attr)
             
             if old_value == new_value:
