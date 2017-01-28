@@ -4,6 +4,7 @@ import logging
 from datetime import date, datetime
 
 import time
+import traceback
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -54,4 +55,9 @@ class Command(BaseCommand):
                 
             except ValueError as e:
                 send_mail("Error sending detention", str(e), 'technology@rectoryschool.org', error_recipients)
+                continue
+
+            except Exception as e:
+                full_exception = traceback.format_exc()
+                send_mail("Detention mailer internal error", full_exception, 'technology@rectoryschool.org', error_recipients)
                 continue
