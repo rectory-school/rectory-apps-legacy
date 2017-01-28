@@ -113,17 +113,14 @@ def get_message(detention, override_recipients=[]):
         family_id_key = detention_to_object.family_id_key
         parent_code = detention_to_object.parent_code
         
-        try:
-            relation = StudentParentRelation.objects.get(student=detention.student,
-                                                         family_id_key=family_id_key,
-                                                         parent_code=parent_code)
-                                                        
+        relations = StudentParentRelation.objects.filter(student=detention.student,
+                                                     family_id_key=family_id_key,
+                                                     parent_code=parent_code)
+        
+        for relation in relations:                                                
             if relation.parent.email and relation.parent.email not in message.to:
                 message.to.append(relation.parent.email)
                 
-        except StudentParentRelation.DoesNotExist:
-            pass
-    
     for additional_address in DetentionCC.objects.filter(mailer=detention_mailer):
         address = additional_address.address
         mail_type = additional_address.mail_type
