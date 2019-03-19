@@ -59,7 +59,7 @@ def get_incomplete_evaluables_by_teacher(evaluation_set):
 
 def flatten_evaluables_by_teacher(data):
     flattened_data = []
-    for teacher in sorted(data.keys(), key=lambda t: (t.last_name, t.first_name)):
+    for teacher in sorted(data.keys(), key=lambda t: t and (t.last_name, t.first_name) or ("", "")):
         section_row = []
         flattened_data.append((teacher, section_row))
         
