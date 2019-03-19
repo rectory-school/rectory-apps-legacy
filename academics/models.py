@@ -213,7 +213,7 @@ class Course(models.Model):
     course_name_short = models.CharField(max_length=255)
     course_name_transcript = models.CharField(max_length=255)
     division = models.CharField(max_length=2)
-    grade_level = models.CharField(max_length=2, blank=True)
+    grade_level = models.CharField(max_length=20, blank=True)
     department = models.CharField(max_length=255)
     course_type = models.CharField(max_length=255)
     
