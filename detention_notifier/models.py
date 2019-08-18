@@ -31,7 +31,7 @@ class Offense(models.Model):
 class DetentionMailer(SingletonModel):
     from_name = models.CharField(max_length=255)
     from_email = models.EmailField(max_length=255)
-    blank_offense = models.ForeignKey(Offense, null=True, blank=True)
+    blank_offense = models.ForeignKey(Offense, null=True, blank=True, on_delete=models.CASCADE)
     
     reply_to_from = models.BooleanField(default=True, verbose_name="Reply-to address above")
     reply_to_advisor = models.BooleanField(default=True, verbose_name="Reply-to advisor")
@@ -53,7 +53,7 @@ class DetentionMailer(SingletonModel):
     skip_processing_before = models.DateField(blank=True, null=True)
     
 class DetentionCC(models.Model):
-    mailer = models.ForeignKey(DetentionMailer)
+    mailer = models.ForeignKey(DetentionMailer, on_delete=models.CASCADE)
     address = models.EmailField(max_length=254)
     
     MAIL_TYPE_CHOICES = (('to', 'To'), ('cc', 'Cc'), ('bcc', 'Bcc'))
@@ -77,7 +77,7 @@ class DetentionTo(models.Model):
     FAMILY_CHOICES_LENGTH = max([len(item[0]) for item in FAMILY_CHOICES])
     PARENT_CHOICES_LENGTH = max([len(item[0]) for item in FAMILY_CHOICES])
     
-    mailer = models.ForeignKey(DetentionMailer)
+    mailer = models.ForeignKey(DetentionMailer, on_delete=models.CASCADE)
     
     family_id_key = models.CharField(max_length=FAMILY_CHOICES_LENGTH, choices=FAMILY_CHOICES, verbose_name="Family")
     parent_code = models.CharField(max_length=PARENT_CHOICES_LENGTH, choices=PARENT_CHOICES, verbose_name="Parent Code")
@@ -89,7 +89,7 @@ class DetentionTo(models.Model):
         return self.family_id_key + " P" + self.parent_code
 
 class DetentionErrorNotification(models.Model):
-    mailer = models.ForeignKey(DetentionMailer)
+    mailer = models.ForeignKey(DetentionMailer, on_delete=models.CASCADE)
     address = models.EmailField(max_length=254)
     
     class Meta:
@@ -103,13 +103,13 @@ class DetentionErrorNotification(models.Model):
 class Detention(models.Model):
     incident_id = models.PositiveIntegerField(unique=True)
     detention_date = models.DateField(null=True)
-    code = models.ForeignKey(Code)
-    offense = models.ForeignKey(Offense, null=True)
+    code = models.ForeignKey(Code, on_delete=models.CASCADE)
+    offense = models.ForeignKey(Offense, null=True, on_delete=models.CASCADE)
     comments = models.TextField(blank=True)
     
-    term = models.ForeignKey(Term, null=True)
-    student = models.ForeignKey(Student, null=True)
-    teacher = models.ForeignKey(Teacher, null=True)
+    term = models.ForeignKey(Term, null=True, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, null=True, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(Teacher, null=True, on_delete=models.CASCADE)
     
     sent = models.BooleanField(default=False)
     

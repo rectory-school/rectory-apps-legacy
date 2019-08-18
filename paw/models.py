@@ -20,7 +20,7 @@ def iconUploadTo(instance, filename):
 class TextLink(models.Model):
   title = models.CharField(max_length=255)
   explicit_url = models.CharField(max_length=4096, blank=True)
-  page_link = models.ForeignKey('Page', blank=True, null=True)
+  page_link = models.ForeignKey('Page', blank=True, null=True, on_delete=models.CASCADE)
   
   @property
   def url(self):
@@ -88,8 +88,8 @@ class IconFolder(PageIcon):
     self.classAttr = 'dialogLauncher'
       
 class IconFolderIcon(Sortable):
-  iconFolder = models.ForeignKey(IconFolder)
-  icon = SortableForeignKey(IconLink)
+  iconFolder = models.ForeignKey(IconFolder, on_delete=models.CASCADE)
+  icon = SortableForeignKey(IconLink, on_delete=models.CASCADE)
 
 class Page(models.Model):
   title = models.CharField(max_length=255)
@@ -102,8 +102,8 @@ class Page(models.Model):
     return self.title
 
 class PageTextLink(Sortable):
-  page = models.ForeignKey(Page)
-  text_link = SortableForeignKey(TextLink)
+  page = models.ForeignKey(Page, on_delete=models.CASCADE)
+  text_link = SortableForeignKey(TextLink, on_delete=models.CASCADE)
   
   POSITIONCHOICES = (('LEFT', 'Left'), ('RIGHT', 'Right'))
   
@@ -113,15 +113,15 @@ class PageTextLink(Sortable):
     return str(self.text_link)
 
 class PageIconDisplay(Sortable):
-  page = models.ForeignKey(Page)
-  icon = SortableForeignKey(PageIcon)
+  page = models.ForeignKey(Page, on_delete=models.CASCADE)
+  icon = SortableForeignKey(PageIcon, on_delete=models.CASCADE)
   
   def __str__(self):
     return str(self.icon)
 
 class EntryPoint(models.Model):
     domain = models.CharField(max_length=254, unique=True, blank=True)
-    page = models.ForeignKey(Page)
+    page = models.ForeignKey(Page, on_delete=models.CASCADE)
     
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude=exclude)

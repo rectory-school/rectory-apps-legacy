@@ -21,8 +21,8 @@ class Ethnicity(models.Model):
 class SeatingStudent(models.Model):
   ALLERGYCHOICES = (('', 'No Allergies'), ('ALLERGY', 'Allergy'), ('EPIPEN', 'Allergy (EpiPen)'))
   
-  enrollment = models.ForeignKey(Enrollment)
-  ethnicity = models.ForeignKey(Ethnicity, null=True, blank=True)
+  enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
+  ethnicity = models.ForeignKey(Ethnicity, null=True, blank=True, on_delete=models.CASCADE)
   
   food_allergy = models.CharField(max_length=max([len(a[0]) for a in ALLERGYCHOICES]), 
     choices=ALLERGYCHOICES, verbose_name="Food allergy status", default="", blank=True)
@@ -116,7 +116,7 @@ class Table(models.Model):
 class SeatFiller(models.Model):
     description = models.CharField(max_length=200, blank=True)
     seats = models.IntegerField()
-    table = models.ForeignKey(Table)
+    table = models.ForeignKey(Table, on_delete=models.CASCADE)
     meal_time = models.ManyToManyField(MealTime)
     display = models.BooleanField(default=False)
     
@@ -139,9 +139,9 @@ class SeatFiller(models.Model):
         return "SeatFiller"
 
 class PinnedStudent(models.Model):
-    student = models.ForeignKey(SeatingStudent)
-    table = models.ForeignKey(Table)
-    meal_time = models.ForeignKey(MealTime)
+    student = models.ForeignKey(SeatingStudent, on_delete=models.CASCADE)
+    table = models.ForeignKey(Table, on_delete=models.CASCADE)
+    meal_time = models.ForeignKey(MealTime, on_delete=models.CASCADE)
     
     history = HistoricalRecords()
 
@@ -152,10 +152,10 @@ class PinnedStudent(models.Model):
         return "%s to %s for %s" % (self.student.student.name, self.table.description, self.meal_time.name)     
         
 class TableAssignment(models.Model):
-    meal_time = models.ForeignKey(MealTime)
-    student = models.ForeignKey(SeatingStudent)
+    meal_time = models.ForeignKey(MealTime, on_delete=models.CASCADE)
+    student = models.ForeignKey(SeatingStudent, on_delete=models.CASCADE)
     
-    table = models.ForeignKey(Table)
+    table = models.ForeignKey(Table, on_delete=models.CASCADE)
     waitor = models.BooleanField(default=False)
     
     history = HistoricalRecords()
@@ -171,8 +171,8 @@ class TableAssignment(models.Model):
 class Layout(models.Model):
     name = models.CharField(max_length=25)
     
-    left_print = models.ForeignKey(MealTime, related_name="+")
-    right_print = models.ForeignKey(MealTime, blank=True, null=True, related_name="+")
+    left_print = models.ForeignKey(MealTime, related_name="+", on_delete=models.CASCADE)
+    right_print = models.ForeignKey(MealTime, blank=True, null=True, related_name="+", on_delete=models.CASCADE)
     
     def __str__(self):
         return self.name

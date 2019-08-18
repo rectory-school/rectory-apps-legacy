@@ -25,7 +25,7 @@ class QuestionSet(models.Model):
 
 class FreeformQuestion(SortableMixin):
     question = models.CharField(max_length=255)
-    question_set = SortableForeignKey(QuestionSet)
+    question_set = SortableForeignKey(QuestionSet, on_delete=models.CASCADE)
     required = models.BooleanField(default=False)
     
     question_order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
@@ -39,7 +39,7 @@ class FreeformQuestion(SortableMixin):
     
 class MultipleChoiceQuestion(SortableMixin):
     question = models.CharField(max_length=255)
-    question_set = SortableForeignKey(QuestionSet)
+    question_set = SortableForeignKey(QuestionSet, on_delete=models.CASCADE)
     required = models.BooleanField(default=True)
     
     question_order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
@@ -52,7 +52,7 @@ class MultipleChoiceQuestion(SortableMixin):
         return self.question
     
 class MultipleChoiceQuestionOption(SortableMixin):
-    question = SortableForeignKey(MultipleChoiceQuestion)
+    question = SortableForeignKey(MultipleChoiceQuestion, on_delete=models.CASCADE)
     option = models.CharField(max_length=255)
 
     option_order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
@@ -97,10 +97,10 @@ class Evaluable(PolymorphicModel):
     evaluation_type_title = "Misc Evaluation"
     evaluation_type_title_plural = "Misc Evaluations"
     
-    evaluation_set = models.ForeignKey(EvaluationSet)
-    question_set = models.ForeignKey(QuestionSet)
-    student = models.ForeignKey(Student)
-    enrollment = models.ForeignKey(Enrollment)
+    evaluation_set = models.ForeignKey(EvaluationSet, on_delete=models.CASCADE)
+    question_set = models.ForeignKey(QuestionSet, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
     
     complete = models.BooleanField(default=False)
     
@@ -119,7 +119,7 @@ class DormEvaluation(Evaluable):
     evaluation_type_title = "Dorm Evaluation"
     evaluation_type_title_plural = "Dorm Evaluations"
     
-    dorm = models.ForeignKey(Dorm)
+    dorm = models.ForeignKey(Dorm, on_delete=models.CASCADE)
     
     @property
     def student_display(self):
@@ -132,7 +132,7 @@ class DormParentEvaluation(DormEvaluation):
     evaluation_type_title = "Dorm Parent Evaluation"
     evaluation_type_title_plural = "Dorm Parent Evaluations"
     
-    parent = models.ForeignKey(Teacher)
+    parent = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     
     def __str__(self):
         return "{student:}: {dorm:} w/ {parent:}".format(student=self.student, dorm=self.dorm, parent=self.parent)
@@ -148,7 +148,7 @@ class CourseEvaluation(Evaluable):
     evaluation_type_title = "Course Evaluation"
     evaluation_type_title_plural = "Course Evaluations"
     
-    section = models.ForeignKey(Section)
+    section = models.ForeignKey(Section, on_delete=models.CASCADE)
     
     def __str__(self):
         return "{student:}: {section:}".format(section=self.section, student=self.student)
@@ -174,7 +174,7 @@ class MELPEvaluation(Evaluable):
     evaluation_type_title = "MELP Evaluation"
     evaluation_type_title_plural = "MELP Evaluations"
     
-    section = models.ForeignKey(Section)
+    section = models.ForeignKey(Section, on_delete=models.CASCADE)
     
     def __str__(self):
         return "{student:}: {section:}".format(section=self.section, student=self.student)
@@ -199,7 +199,7 @@ class IIPEvaluation(Evaluable):
     evaluation_type_title = "IIP Evaluation"
     evaluation_type_title_plural = "IIP Evaluations"
     
-    teacher = models.ForeignKey(Teacher)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     
     class Meta:
         verbose_name = 'IIP evaluation'
@@ -212,12 +212,12 @@ class IIPEvaluation(Evaluable):
         return "IIP with {teacher:}".format(teacher=self.teacher.name_for_students)
     
 class MultipleChoiceQuestionAnswer(models.Model):
-    evaluable = models.ForeignKey(Evaluable)
-    answer = models.ForeignKey(MultipleChoiceQuestionOption)
+    evaluable = models.ForeignKey(Evaluable, on_delete=models.CASCADE)
+    answer = models.ForeignKey(MultipleChoiceQuestionOption, on_delete=models.CASCADE)
     
 class FreeformQuestionAnswer(models.Model):
-    evaluable = models.ForeignKey(Evaluable)
-    question = models.ForeignKey(FreeformQuestion)
+    evaluable = models.ForeignKey(Evaluable, on_delete=models.CASCADE)
+    question = models.ForeignKey(FreeformQuestion, on_delete=models.CASCADE)
     answer = models.TextField()
 
 class StudentEmailTemplate(models.Model):

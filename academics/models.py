@@ -29,7 +29,7 @@ class AcademicYear(models.Model):
         return self.year
 
 class Term(models.Model):
-    academic_year = models.ForeignKey(AcademicYear)
+    academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
     term = models.CharField(max_length=2)
     
     class Meta:
@@ -167,14 +167,14 @@ class Grade(models.Model):
 class Enrollment(models.Model):
     #Keystone table: ksEnrollment
     
-    student = models.ForeignKey(Student)
-    academic_year = models.ForeignKey(AcademicYear)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
     boarder = models.BooleanField()
-    dorm = models.ForeignKey(Dorm, blank=True, null=True)
-    grade = models.ForeignKey(Grade, null=True)
+    dorm = models.ForeignKey(Dorm, blank=True, null=True, on_delete=models.CASCADE)
+    grade = models.ForeignKey(Grade, null=True, on_delete=models.CASCADE)
     division = models.CharField(max_length=2)
     section = models.CharField(max_length=1, blank=True)
-    advisor = models.ForeignKey(Teacher, blank=True, null=True)
+    advisor = models.ForeignKey(Teacher, blank=True, null=True, on_delete=models.CASCADE)
     status_enrollment = models.CharField(max_length=20, blank=True)
     status_attending = models.CharField(max_length=20, blank=True)
     
@@ -225,10 +225,10 @@ class Course(models.Model):
 class Section(models.Model):
     #Keystone table: ksSECTIONS
     
-    course = models.ForeignKey(Course)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     csn = models.CharField(max_length=255)
-    academic_year = models.ForeignKey(AcademicYear)
-    teacher = models.ForeignKey(Teacher, blank=True, null=True)
+    academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(Teacher, blank=True, null=True, on_delete=models.CASCADE)
     
     #The course name that can be overridden from the original course
     course_name = models.CharField(max_length=255, blank=True)
@@ -290,8 +290,8 @@ class Parent(models.Model):
     return self.name
     
 class StudentParentRelation(models.Model):
-  student = models.ForeignKey(Student, db_index=True)
-  parent = models.ForeignKey(Parent, db_index=True)
+  student = models.ForeignKey(Student, db_index=True, on_delete=models.CASCADE)
+  parent = models.ForeignKey(Parent, db_index=True, on_delete=models.CASCADE)
   
   relationship = models.CharField(max_length=20, blank=True)
   family_id_key = models.CharField(max_length=20, blank=True)

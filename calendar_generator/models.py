@@ -55,7 +55,7 @@ class Calendar(models.Model):
         return self.title
     
 class Day(SortableMixin):
-    calendar = SortableForeignKey(Calendar)
+    calendar = SortableForeignKey(Calendar, on_delete=models.CASCADE)
     letter = models.CharField(max_length=1)
     
     day_order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
@@ -67,7 +67,7 @@ class Day(SortableMixin):
         return self.letter
 
 class SkipDate(models.Model):
-    calendar = models.ForeignKey(Calendar)
+    calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
     date = models.DateField()
     end_date = models.DateField(blank=True, null=True)
     
@@ -83,8 +83,8 @@ class SkipDate(models.Model):
         return self.date.strftime("%Y-%m-%d")
 
 class ResetDate(models.Model):
-    calendar = models.ForeignKey(Calendar)
+    calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
     date = models.DateField()
-    day = models.ForeignKey(Day)
+    day = models.ForeignKey(Day, on_delete=models.CASCADE)
     
     

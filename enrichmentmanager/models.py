@@ -12,7 +12,7 @@ class EmailSuppression(models.Model):
 
 # Create your models here.
 class Teacher(models.Model):
-    academic_teacher = models.ForeignKey(academics.models.Teacher)
+    academic_teacher = models.ForeignKey(academics.models.Teacher, on_delete=models.CASCADE)
     
     # These are staying synthesized on this model so that I can compare
     # their old values during the teacher sync and update the enrichment
@@ -54,12 +54,12 @@ class Student(models.Model):
     # This is a proxy model for the academics student model,
     # ported from the original standalone model
 
-    academic_student = models.ForeignKey(academics.models.Student)
+    academic_student = models.ForeignKey(academics.models.Student, on_delete=models.CASCADE)
     
     lockout = models.CharField(max_length=100, blank=True)
     
     #Teacher fields are staying a foreign key to my teacher for consistency and querying
-    advisor = models.ForeignKey(Teacher)
+    advisor = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     associated_teachers = models.ManyToManyField(Teacher, related_name='associated_teachers', blank=True)
     
     history = HistoricalRecords()
@@ -108,8 +108,8 @@ class EnrichmentSlot(models.Model):
         return self.date.strftime("%B %d, %Y")
 
 class EnrichmentOption(models.Model):
-    slot = models.ForeignKey(EnrichmentSlot)
-    teacher = models.ForeignKey(Teacher)
+    slot = models.ForeignKey(EnrichmentSlot, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     location = models.CharField(max_length=50, blank=True)
     description = models.CharField(max_length=254, blank=True)
     students = models.ManyToManyField(Student, through='EnrichmentSignup')
@@ -135,9 +135,9 @@ class EnrichmentOption(models.Model):
 
 #TODO: Handle slot better
 class EnrichmentSignup(models.Model):
-    slot = models.ForeignKey(EnrichmentSlot)
+    slot = models.ForeignKey(EnrichmentSlot, on_delete=models.CASCADE)
     enrichment_option = models.ForeignKey(EnrichmentOption, on_delete=models.PROTECT)
-    student = models.ForeignKey(Student)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
     details = models.CharField(max_length=255, blank=True)
     admin_lock = models.BooleanField(default=False)
     
