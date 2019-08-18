@@ -28,7 +28,7 @@ class TextLink(models.Model):
       return self.explicit_url
     
     if self.page_link:
-      return reverse('paw_static', kwargs={'slug': self.page_link.slug})
+      return reverse('paw:html', kwargs={'slug': self.page_link.slug})
   
   def clean(self):
     if not self.explicit_url and not self.page_link:
@@ -96,7 +96,7 @@ class Page(models.Model):
   slug = models.SlugField(unique=True)
   
   def get_absolute_url(self):
-    return reverse('paw_static', kwargs={'slug': self.slug})
+    return reverse('paw:html', kwargs={'slug': self.slug})
   
   def __str__(self):
     return self.title
