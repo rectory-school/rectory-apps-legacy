@@ -1,0 +1,30 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+dateparser = "*"
+decorator = "*"
+dj-database-url = "*"
+django-admin-sortable = "*"
+django-js-reverse = "*"
+django-rq = "*"
+django-ses-backend = "*"
+django-simple-history = "*"
+django-solo = "*"
+django-versatileimagefield = "*"
+humanize = "*"
+"psycopg2" = "*"
+reportlab = "*"
+requests = "*"
+Django = "~=2.2"
+django_polymorphic = "*"
+uWSGI = "*"
+validate_email = "*"
+
+[dev-packages]
+ipython = "*"
+
+[requires]
+python_version = "3.7"
