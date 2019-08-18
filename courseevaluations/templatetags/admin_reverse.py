@@ -1,4 +1,4 @@
-from django.core import urlresolvers
+from django.urls import reverse
 from django import template
 
 register = template.Library()
@@ -10,5 +10,5 @@ def admin_url_for(obj):
     
     admin_view = "admin:{app_label:}_{model_label:}_change".format(app_label=app_label, model_label=model_label)
     
-    return urlresolvers.reverse(admin_view, args=(obj.id, ))
+    return reverse(admin_view, args=(obj.id, ))
     

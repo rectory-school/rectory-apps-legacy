@@ -8,7 +8,7 @@ from datetime import date
 from django import template
 register = template.Library()
 
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def select_for(context, slot, student):
     
     if student.lockout:
@@ -82,7 +82,7 @@ def select_for(context, slot, student):
         
         return ""
     
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def display_for(context, slot, student):
     if student.lockout:
         return "<em title='Lockout assigned'>{}</em>".format(student.lockout)
