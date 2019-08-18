@@ -7,7 +7,7 @@ import time
 from datetime import date
 
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import render
 from django.db import transaction
 from django.contrib.auth.decorators import permission_required, login_required

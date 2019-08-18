@@ -5,7 +5,7 @@ from random import choice
 from io import StringIO
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models import Count, Case, When
 from django.http import HttpResponse
 from django.conf import settings

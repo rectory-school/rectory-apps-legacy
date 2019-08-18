@@ -1,7 +1,7 @@
 from datetime import date
 
 from django.shortcuts import render, redirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from django.db import transaction
 

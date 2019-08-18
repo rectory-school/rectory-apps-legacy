@@ -4,7 +4,7 @@ import email.utils
 from datetime import date
 
 from django.db import models
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.exceptions import ValidationError
 
 from polymorphic.models import PolymorphicModel

@@ -1,5 +1,5 @@
 from django.contrib import admin, messages
-from django.core import urlresolvers
+from django.urls import reverse
 from django.contrib.admin.utils import flatten_fieldsets
 from django.http import HttpResponse
 from django.conf.urls import url
@@ -55,7 +55,7 @@ class FreeformQuestionInline(SortableStackedInline):
     
     def edit_link(self, o):
         if o.id:
-            return "<a href=\"{0:}\" target=_blank>Edit Question</a>".format(urlresolvers.reverse('admin:courseevaluations_freeformquestion_change', args=(o.id,)))
+            return "<a href=\"{0:}\" target=_blank>Edit Question</a>".format(reverse('admin:courseevaluations_freeformquestion_change', args=(o.id,)))
     
     edit_link.allow_tags = True
     edit_link.short_description = 'Edit Link'
@@ -76,7 +76,7 @@ class MultipleChoiceQuestionInline(SortableStackedInline):
     
     def edit_link(self, o):
         if o.id:
-            return "<a href=\"{0:}\" target=_blank>Edit Question</a>".format(urlresolvers.reverse('admin:courseevaluations_multiplechoicequestion_change', args=(o.id,)))
+            return "<a href=\"{0:}\" target=_blank>Edit Question</a>".format(reverse('admin:courseevaluations_multiplechoicequestion_change', args=(o.id,)))
 
         return ""
     
@@ -133,7 +133,7 @@ class EvaluationSetAdmin(admin.ModelAdmin):
         return super().change_view(request=request, object_id=object_id, form_url=form_url, extra_context=extra_context)
     
     def create_iip_evaluations(self, request, object_id):
-        redirect_url = urlresolvers.reverse('admin:courseevaluations_evaluationset_change', args=(object_id, ))
+        redirect_url = reverse('admin:courseevaluations_evaluationset_change', args=(object_id, ))
         
         if not request.user.has_perm('courseevaluations.add_iipevaluation'):
             messages.error(request, "You do not have the appropriate permissions to add IIP evaluations")
@@ -190,7 +190,7 @@ class EvaluationSetAdmin(admin.ModelAdmin):
         return redirect(redirect_url)
         
     def create_course_evaluations(self, request, object_id):
-        redirect_url = urlresolvers.reverse('admin:courseevaluations_evaluationset_change', args=(object_id, ))
+        redirect_url = reverse('admin:courseevaluations_evaluationset_change', args=(object_id, ))
         
         if not request.user.has_perm('courseevaluations.add_courseevaluation'):
             messages.error(request, "You do not have the appropriate permissions to add course evaluations")
@@ -257,7 +257,7 @@ class EvaluationSetAdmin(admin.ModelAdmin):
         return redirect(redirect_url)
     
     def create_dorm_parent_evaluations(self, request, object_id):
-        redirect_url = urlresolvers.reverse('admin:courseevaluations_evaluationset_change', args=(object_id, ))
+        redirect_url = reverse('admin:courseevaluations_evaluationset_change', args=(object_id, ))
         
         if not request.user.has_perm('courseevaluations.add_dormparentevaluation'):
             messages.error(request, "You do not have the appropriate permissions to add IIP evaluations")

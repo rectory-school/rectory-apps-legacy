@@ -6,7 +6,7 @@ from adminsortable.models import Sortable
 
 from versatileimagefield.fields import VersatileImageField
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 import uuid
 import os

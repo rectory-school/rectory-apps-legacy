@@ -6,7 +6,7 @@ from django.db.models import Max, Min
 from django.contrib.auth.models import User
 from django.db.transaction import atomic
 from django.core.exceptions import ValidationError, PermissionDenied
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Min
