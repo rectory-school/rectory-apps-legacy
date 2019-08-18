@@ -27,7 +27,7 @@ environs = {extras = ["django"], version = "*"}
 
 [dev-packages]
 ipython = "*"
-pylint = "*"
+pylint = {extras = ["django"], version = "*"}
 
 [requires]
 python_version = "3.7"
