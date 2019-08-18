@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "445065ab325af34e6d4aa547fa5c50906f791ee8930f2983d0100c3f4c218839"
+            "sha256": "04a08675474c6bfb15e9f2531e11606e406faa4845c514907882cb5b73efd7c1"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -67,6 +67,14 @@
             ],
             "index": "pypi",
             "version": "==0.5.0"
+        },
+        "dj-email-url": {
+            "hashes": [
+                "sha256:0362e390c17cc377f03bcbf6daf3f671797c929c1bf78a9f439d78f215ebe3fd",
+                "sha256:136ac43c7f29022130fc4769b4ca8b01cd1c39fedf1659c641c143808182a084"
+            ],
+            "markers": "extra == 'django'",
+            "version": "==0.2.0"
         },
         "django": {
             "hashes": [
@@ -138,6 +146,17 @@
             "index": "pypi",
             "version": "==1.10"
         },
+        "environs": {
+            "extras": [
+                "django"
+            ],
+            "hashes": [
+                "sha256:ab4362c638aa67177a832aedf1609a95b46179ea9f5b1af8c90cbfe70ca7e6cf",
+                "sha256:d92784bdeb6fe038688b19128b5d9a4d9eda4d33f1a38c21be8cad54c769a763"
+            ],
+            "index": "pypi",
+            "version": "==5.2.1"
+        },
         "humanize": {
             "hashes": [
                 "sha256:a43f57115831ac7c70de098e6ac46ac13be00d69abbf60bdcac251344785bb19"
@@ -151,6 +170,13 @@
                 "sha256:ea8b7f6188e6fa117537c3df7da9fc686d485087abf6ac197f9c46432f7e4a3c"
             ],
             "version": "==2.8"
+        },
+        "marshmallow": {
+            "hashes": [
+                "sha256:e5e9fd0c2e919b4ece915eb30808206349a49a45df72e99ed20e27a9053d574b",
+                "sha256:fa2d8a4b61d09b0e161a14acc5ad8ab7aaaf1477f3dd52819ddd6c6c8275733a"
+            ],
+            "version": "==3.0.0"
         },
         "pillow": {
             "hashes": [
@@ -210,6 +236,13 @@
                 "sha256:c89805f6f4d64db21ed966fda138f8a5ed7a4fdbc1a8ee329ce1b74e3c74da9e"
             ],
             "version": "==2.8.0"
+        },
+        "python-dotenv": {
+            "hashes": [
+                "sha256:debd928b49dbc2bf68040566f55cdb3252458036464806f4094487244e2a4093",
+                "sha256:f157d71d5fec9d4bd5f51c82746b6344dffa680ee85217c123f4a0c8117c4544"
+            ],
+            "version": "==0.10.3"
         },
         "pytz": {
             "hashes": [

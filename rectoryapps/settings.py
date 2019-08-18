@@ -12,60 +12,55 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-import configparser
 import email.utils
+
+from environs import Env
 
 import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-config = configparser.ConfigParser()
+env = Env()
+env.read_env()  # read .env file, if it exists
 
-#Fallback config file
-defaultConfigFilePath = os.path.abspath(os.path.join(BASE_DIR, "..", "settings.ini"))
 
-#Actual config file
-CONFIG_FILE = os.environ.get("DJANGO_CONFIG_FILE", defaultConfigFilePath)
+DATABASE_URL = env("DATABASE_URL")
+DEBUG = env.bool("DEBUG", False)
 
-#Read the config file
-config.read(CONFIG_FILE)
+MEDIA_ROOT = env("MEDIA_ROOT", os.path.join(BASE_DIR, "scratch", "media"))
+STATIC_ROOT = env("STATIC_ROOT", os.path.join(BASE_DIR, "scratch", "static"))
 
-DATABASE_URL = config['database']['URL']
+MEDIA_URL = env("MEDIA_URL", "/media/")
+STATIC_URL = env("MEDIA_URL", "/static/")
 
-DEBUG = config.getboolean('debug', 'DEBUG')
 
-MEDIA_ROOT = config['files']['MEDIA_ROOT']
-STATIC_ROOT = config['files']['STATIC_ROOT']
 
-MEDIA_URL = config['urls']['MEDIA_URL']
-STATIC_URL = config['urls']['STATIC_URL']
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", '')
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", '')
 
-AWS_ACCESS_KEY_ID = config['cloud'].get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = config['cloud'].get('AWS_SECRET_ACCESS_KEY')
+SERVE_STATIC = env.bool("SERVE_STATIC", False)
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", ["127.0.0.1", "localhost"])
 
-SERVE_STATIC = config.getboolean('debug', 'SERVE_STATIC')
-ALLOWED_HOSTS = [host.strip() for host in config['production'].get('ALLOWED_HOSTS', "").split(",")]
+STATICFILES_STORAGE = env('STATICFILES_STORAGE', 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage')
 
-STATICFILES_STORAGE = config['files']['STORAGE']
+EMAIL_BACKEND = env('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+SERVER_EMAIL = env('SERVER_EMAIL', 'root@localhost')
 
-EMAIL_BACKEND = config['email'].get('BACKEND', 'django.core.mail.backends.console.EmailBackend')
-SERVER_EMAIL = config['email'].get('SERVER_ADDRESS', 'root@localhost')
+TIME_ZONE = env('TIME_ZONE', 'America/New_York')
+LANGUAGE_CODE = env('LANGUAGE_CODE', 'en-US')
 
-TIME_ZONE = config['internationalization']['TIME_ZONE']
-LANGUAGE_CODE = config['internationalization']['LANGUAGE_CODE']
+ADMINS = env.list('ADMINS', [])
+MANAGERS = env.list('MANAGERS', [])
 
-ADMINS = [email.utils.parseaddr(a.strip()) for a in config['email']['ERRORS'].split(",")]
-MANAGERS = [email.utils.parseaddr(a.strip()) for a in config['email']['MANAGERS'].split(",")]
+DATABASES = {'default': env.dj_db_url('DATABASE_URL')}
+SECRET_KEY = env('SECRET_KEY')
 
-DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
-SECRET_KEY = config['django']['SECRET_KEY']
+GOOGLE_OAUTH_CLIENT_ID = env('GOOGLE_OAUTH_CLIENT_ID', None)
+GOOGLE_HOSTED_DOMAIN = env('GOOGLE_HOSTED_DOMAIN', None)
 
-GOOGLE_OAUTH_CLIENT_ID = config['cloud'].get('GOOGLE_OAUTH_CLIENT_ID')
-GOOGLE_HOSTED_DOMAIN = config['cloud'].get("GOOGLE_HOSTED_DOMAIN")
+MAIL_BASE_URL = env('MAIL_BASE_URL', 'http://localhost:8000')
 
-MAIL_BASE_URL = config['email'].get('BASE_URL')
-
-IIP_COURSE_IDS = map(str.strip, config['courseevaluations']['IIP_COURSE_IDS'].split(","))
+IIP_COURSE_IDS = env.list('IIP_COURSE_IDS', [148])
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -117,7 +112,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
-            'debug': config.getboolean('debug', 'TEMPLATE_DEBUG'),
+            'debug': DEBUG,
         },
     },
 ]

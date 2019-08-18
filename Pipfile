@@ -23,6 +23,7 @@ django_polymorphic = "*"
 uWSGI = "*"
 validate_email = "*"
 vobject = "*"
+environs = {extras = ["django"], version = "*"}
 
 [dev-packages]
 ipython = "*"
