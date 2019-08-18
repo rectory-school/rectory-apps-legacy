@@ -13,14 +13,14 @@ from django.core.mail import EmailMessage
 
 from academics.models import Student, Section, Course, AcademicYear, Enrollment, StudentRegistration
 from courseevaluations.models import EvaluationSet, Evaluable, CourseEvaluation, IIPEvaluation, DormParentEvaluation, StudentEmailTemplate
-from courseevaluations.lib.async import send_student_email_from_template, send_confirmation_email, send_msg
+from courseevaluations.lib.async_funcs import send_student_email_from_template, send_confirmation_email, send_msg
 from courseevaluations.lib.reporting import get_incomplete_evaluables_by_teacher
 
 from django.contrib.auth.decorators import permission_required
 
 import django_rq
 
-import courseevaluations.lib.reporting
+import courseevaluations.lib.reporting 
 
 @permission_required('courseevaluations.can_view_status_reports')
 def index(request):

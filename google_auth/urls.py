@@ -1,7 +1,9 @@
-from django.conf.urls import patterns, include, url
+from django.urls import path
 
 from google_auth import views
 
-urlpatterns = patterns('',
-    url(r'^login/$', views.LogonView.as_view(), name='login'),
-)
+app_name = 'google_auth'
+
+urlpatterns = [
+    path('login/', views.LogonView.as_view(), name='login'),
+]

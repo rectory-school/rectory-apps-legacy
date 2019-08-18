@@ -4,6 +4,8 @@ from django.contrib import admin
 import enrichmentmanager.views.assign as views_assign
 import enrichmentmanager.views.reporting as views_reporting
 
+app_name = 'enrichmentmanager'
+
 urlpatterns = [
     url(r'^$', views_assign.index, name="enrichment_index"),
     

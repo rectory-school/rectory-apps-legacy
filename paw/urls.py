@@ -1,8 +1,15 @@
-from django.conf.urls import patterns, include, url
 
-urlpatterns = patterns('',
-    url(r'^html/(?P<slug>[\w-]+)/$', 'paw.views.static', name='paw_static'),
-    url(r'^json/page/(?P<slug>[\w-]+)/$', 'paw.views.json_from_page', name='paw_json_page'),
-    url(r'^json/email/', 'paw.views.json_from_email', name='paw_json_email'),
-    url(r'^json/default/$', 'paw.views.json_default', name='paw_json_default'),
-)
+""" URLS for the paw """
+
+from django.urls import path
+
+from paw import views
+
+app_name = 'paw'
+
+urlpatterns = [
+    path('html/(?P<slug>[\w-]+)/$', views.static, name='paw_static'),
+    path('json/page/(?P<slug>[\w-]+)/$', views.json_from_page, name='paw_json_page'),
+    path('json/email/', views.json_from_email, name='paw_json_email'),
+    path('json/default/$', views.json_default, name='paw_json_default'),
+]

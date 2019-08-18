@@ -22,9 +22,11 @@ Django = "~=2.2"
 django_polymorphic = "*"
 uWSGI = "*"
 validate_email = "*"
+vobject = "*"
 
 [dev-packages]
 ipython = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.7"
