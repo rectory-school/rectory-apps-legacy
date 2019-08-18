@@ -15,8 +15,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MELPEvaluation',
             fields=[
-                ('evaluable_ptr', models.OneToOneField(parent_link=True, primary_key=True, to='courseevaluations.Evaluable', auto_created=True, serialize=False)),
-                ('section', models.ForeignKey(to='academics.Section')),
+                ('evaluable_ptr', models.OneToOneField(parent_link=True, primary_key=True, to='courseevaluations.Evaluable', auto_created=True, serialize=False, on_delete=models.CASCADE)),
+                ('section', models.ForeignKey(to='academics.Section', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,

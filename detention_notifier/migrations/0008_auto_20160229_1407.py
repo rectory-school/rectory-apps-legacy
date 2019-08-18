@@ -22,11 +22,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='detentionmailer',
             name='blank_code',
-            field=models.ForeignKey(to='detention_notifier.Code', null=True, blank=True),
+            field=models.ForeignKey(to='detention_notifier.Code', null=True, blank=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='detentioncc',
             name='mailer',
-            field=models.ForeignKey(to='detention_notifier.DetentionMailer'),
+            field=models.ForeignKey(to='detention_notifier.DetentionMailer', on_delete=models.CASCADE),
         ),
     ]

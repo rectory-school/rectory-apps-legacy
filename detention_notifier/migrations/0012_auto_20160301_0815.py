@@ -53,6 +53,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='detentionerrornotification',
             name='mailer',
-            field=models.ForeignKey(to='detention_notifier.DetentionMailer'),
+            field=models.ForeignKey(to='detention_notifier.DetentionMailer', on_delete=models.CASCADE),
         ),
     ]

@@ -46,21 +46,21 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='detention',
             name='offense',
-            field=models.ForeignKey(to='detention_notifier.Offense'),
+            field=models.ForeignKey(to='detention_notifier.Offense', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='detention',
             name='student',
-            field=models.ForeignKey(to='academics.Student'),
+            field=models.ForeignKey(to='academics.Student', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='detention',
             name='teacher',
-            field=models.ForeignKey(to='academics.Teacher'),
+            field=models.ForeignKey(to='academics.Teacher', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='detention',
             name='term',
-            field=models.ForeignKey(to='academics.Term'),
+            field=models.ForeignKey(to='academics.Term', on_delete=models.CASCADE),
         ),
     ]

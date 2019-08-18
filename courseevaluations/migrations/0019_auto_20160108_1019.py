@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='evaluable',
             name='enrollment',
-            field=models.ForeignKey(to='academics.Enrollment'),
+            field=models.ForeignKey(to='academics.Enrollment', on_delete=models.CASCADE),
         ),
     ]

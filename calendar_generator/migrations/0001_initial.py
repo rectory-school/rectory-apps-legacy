@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
                 ('letter', models.CharField(max_length=1)),
                 ('day_order', models.PositiveIntegerField(editable=False, default=0, db_index=True)),
-                ('calendar', adminsortable.fields.SortableForeignKey(to='calendar_generator.Calendar')),
+                ('calendar', adminsortable.fields.SortableForeignKey(to='calendar_generator.Calendar', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -44,8 +44,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
                 ('date', models.DateField()),
-                ('calendar', models.ForeignKey(to='calendar_generator.Calendar')),
-                ('day', models.ForeignKey(to='calendar_generator.Day')),
+                ('calendar', models.ForeignKey(to='calendar_generator.Calendar', on_delete=models.CASCADE)),
+                ('day', models.ForeignKey(to='calendar_generator.Day', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
                 ('date', models.DateField()),
-                ('calendar', models.ForeignKey(to='calendar_generator.Calendar')),
+                ('calendar', models.ForeignKey(to='calendar_generator.Calendar', on_delete=models.CASCADE)),
             ],
         ),
         migrations.AlterUniqueTogether(

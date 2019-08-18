@@ -36,12 +36,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='studentparentrelation',
             name='parent',
-            field=models.ForeignKey(to='academics.Parent'),
+            field=models.ForeignKey(to='academics.Parent', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='studentparentrelation',
             name='student',
-            field=models.ForeignKey(to='academics.Student'),
+            field=models.ForeignKey(to='academics.Student', on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='studentparentrelation',

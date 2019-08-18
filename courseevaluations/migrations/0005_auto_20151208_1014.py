@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='evaluable',
             name='student',
-            field=models.ForeignKey(to='academics.Student', default=None),
+            field=models.ForeignKey(to='academics.Student', default=None, on_delete=models.CASCADE),
             preserve_default=False,
         ),
     ]

@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
                 ('domain', models.CharField(unique=True, max_length=254)),
-                ('page', models.ForeignKey(to='paw.Page')),
+                ('page', models.ForeignKey(to='paw.Page', on_delete=models.CASCADE)),
             ],
         ),
     ]

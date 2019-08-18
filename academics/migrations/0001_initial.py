@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
                 ('grade', models.CharField(max_length=2)),
                 ('division', models.CharField(max_length=2)),
                 ('section', models.CharField(blank=True, max_length=1)),
-                ('academic_year', models.ForeignKey(to='academics.AcademicYear')),
+                ('academic_year', models.ForeignKey(to='academics.AcademicYear', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -56,8 +56,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(serialize=False, auto_created=True, primary_key=True, verbose_name='ID')),
                 ('csn', models.CharField(max_length=255)),
-                ('academic_year', models.ForeignKey(to='academics.AcademicYear')),
-                ('course', models.ForeignKey(to='academics.Course')),
+                ('academic_year', models.ForeignKey(to='academics.AcademicYear', on_delete=models.CASCADE)),
+                ('course', models.ForeignKey(to='academics.Course', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -86,22 +86,22 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='section',
             name='teacher',
-            field=models.ForeignKey(null=True, blank=True, to='academics.Teacher'),
+            field=models.ForeignKey(null=True, blank=True, to='academics.Teacher', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='enrollment',
             name='advisor',
-            field=models.ForeignKey(null=True, blank=True, to='academics.Teacher'),
+            field=models.ForeignKey(null=True, blank=True, to='academics.Teacher', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='enrollment',
             name='dorm',
-            field=models.ForeignKey(null=True, blank=True, to='academics.Dorm'),
+            field=models.ForeignKey(null=True, blank=True, to='academics.Dorm', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='enrollment',
             name='student',
-            field=models.ForeignKey(to='academics.Student'),
+            field=models.ForeignKey(to='academics.Student', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='dorm',

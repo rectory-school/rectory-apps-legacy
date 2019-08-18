@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='detention',
             name='code',
-            field=models.ForeignKey(default=None, to='detention_notifier.Code'),
+            field=models.ForeignKey(default=None, to='detention_notifier.Code', on_delete=models.CASCADE),
             preserve_default=False,
         ),
     ]

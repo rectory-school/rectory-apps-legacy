@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MELPEvaluation',
             fields=[
-                ('courseevaluation_ptr', models.OneToOneField(primary_key=True, parent_link=True, auto_created=True, to='courseevaluations.CourseEvaluation', serialize=False)),
+                ('courseevaluation_ptr', models.OneToOneField(primary_key=True, parent_link=True, auto_created=True, to='courseevaluations.CourseEvaluation', serialize=False, on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,

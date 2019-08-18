@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='IconLink',
             fields=[
-                ('pageicon_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='paw.PageIcon')),
+                ('pageicon_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='paw.PageIcon', on_delete=models.CASCADE)),
                 ('url', models.URLField()),
             ],
             options={
@@ -63,7 +63,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='IconFolder',
             fields=[
-                ('pageicon_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='paw.PageIcon')),
+                ('pageicon_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='paw.PageIcon', on_delete=models.CASCADE)),
                 ('uuid', models.CharField(max_length=32)),
             ],
             options={
@@ -75,8 +75,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('order', models.PositiveIntegerField(default=1, editable=False, db_index=True)),
-                ('icon', adminsortable.fields.SortableForeignKey(to='paw.PageIcon')),
-                ('page', models.ForeignKey(to='paw.Page')),
+                ('icon', adminsortable.fields.SortableForeignKey(to='paw.PageIcon', on_delete=models.CASCADE)),
+                ('page', models.ForeignKey(to='paw.Page', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['order'],
@@ -90,7 +90,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('order', models.PositiveIntegerField(default=1, editable=False, db_index=True)),
                 ('position', models.CharField(max_length=5, choices=[(b'LEFT', b'Left'), (b'RIGHT', b'Right')])),
-                ('page', models.ForeignKey(to='paw.Page')),
+                ('page', models.ForeignKey(to='paw.Page', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['order'],
@@ -112,19 +112,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='pagetextlink',
             name='text_link',
-            field=adminsortable.fields.SortableForeignKey(to='paw.TextLink'),
+            field=adminsortable.fields.SortableForeignKey(to='paw.TextLink', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='iconfoldericon',
             name='icon',
-            field=adminsortable.fields.SortableForeignKey(to='paw.IconLink'),
+            field=adminsortable.fields.SortableForeignKey(to='paw.IconLink', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='iconfoldericon',
             name='iconFolder',
-            field=models.ForeignKey(to='paw.IconFolder'),
+            field=models.ForeignKey(to='paw.IconFolder', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

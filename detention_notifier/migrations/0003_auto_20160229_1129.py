@@ -14,16 +14,16 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='detention',
             name='student',
-            field=models.ForeignKey(null=True, to='academics.Student'),
+            field=models.ForeignKey(null=True, to='academics.Student', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='detention',
             name='teacher',
-            field=models.ForeignKey(null=True, to='academics.Teacher'),
+            field=models.ForeignKey(null=True, to='academics.Teacher', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='detention',
             name='term',
-            field=models.ForeignKey(null=True, to='academics.Term'),
+            field=models.ForeignKey(null=True, to='academics.Term', on_delete=models.CASCADE),
         ),
     ]

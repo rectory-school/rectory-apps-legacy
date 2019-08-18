@@ -16,8 +16,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, serialize=False, primary_key=True, verbose_name='ID')),
                 ('student_reg_id', models.CharField(unique=True, max_length=20)),
-                ('section', models.ForeignKey(to='academics.Section')),
-                ('student', models.ForeignKey(to='academics.Student')),
+                ('section', models.ForeignKey(to='academics.Section', on_delete=models.CASCADE)),
+                ('student', models.ForeignKey(to='academics.Student', on_delete=models.CASCADE)),
             ],
         ),
         migrations.AddField(

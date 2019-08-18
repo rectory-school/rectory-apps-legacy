@@ -63,7 +63,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='enrollment',
             name='grade',
-            field=models.ForeignKey(null=True, to='academics.Grade'),
+            field=models.ForeignKey(null=True, to='academics.Grade', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='historicalenrollment',

@@ -157,7 +157,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(serialize=False, auto_created=True, primary_key=True, verbose_name='ID')),
                 ('default_room', models.CharField(blank=True, max_length=100)),
                 ('default_description', models.CharField(blank=True, max_length=100)),
-                ('teacher', models.ForeignKey(to='academics.Teacher')),
+                ('teacher', models.ForeignKey(to='academics.Teacher', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['teacher__last_name', 'teacher__first_name'],
@@ -166,7 +166,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='student',
             name='advisor',
-            field=models.ForeignKey(to='enrichmentmanager.Teacher'),
+            field=models.ForeignKey(to='enrichmentmanager.Teacher', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='student',
@@ -176,7 +176,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='student',
             name='student',
-            field=models.ForeignKey(to='academics.Student'),
+            field=models.ForeignKey(to='academics.Student', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='historicalteacher',
@@ -211,17 +211,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='enrichmentsignup',
             name='slot',
-            field=models.ForeignKey(to='enrichmentmanager.EnrichmentSlot'),
+            field=models.ForeignKey(to='enrichmentmanager.EnrichmentSlot', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='enrichmentsignup',
             name='student',
-            field=models.ForeignKey(to='enrichmentmanager.Student'),
+            field=models.ForeignKey(to='enrichmentmanager.Student', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='enrichmentoption',
             name='slot',
-            field=models.ForeignKey(to='enrichmentmanager.EnrichmentSlot'),
+            field=models.ForeignKey(to='enrichmentmanager.EnrichmentSlot', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='enrichmentoption',
@@ -231,7 +231,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='enrichmentoption',
             name='teacher',
-            field=models.ForeignKey(to='enrichmentmanager.Teacher'),
+            field=models.ForeignKey(to='enrichmentmanager.Teacher', on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='enrichmentsignup',

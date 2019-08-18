@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='freeformquestionanswer',
             name='question',
-            field=models.ForeignKey(default=0, to='courseevaluations.FreeformQuestion'),
+            field=models.ForeignKey(default=0, to='courseevaluations.FreeformQuestion', on_delete=models.CASCADE),
             preserve_default=False,
         ),
     ]

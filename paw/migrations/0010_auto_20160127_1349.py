@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='textlink',
             name='page_link',
-            field=models.ForeignKey(to='paw.Page', null=True, blank=True),
+            field=models.ForeignKey(to='paw.Page', null=True, blank=True, on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='textlink',

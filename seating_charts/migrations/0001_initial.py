@@ -142,7 +142,7 @@ class Migration(migrations.Migration):
             name='PinnedStudent',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
-                ('meal_time', models.ForeignKey(to='seating_charts.MealTime')),
+                ('meal_time', models.ForeignKey(to='seating_charts.MealTime', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -159,8 +159,8 @@ class Migration(migrations.Migration):
             name='SeatingStudent',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
-                ('enrollment', models.ForeignKey(to='academics.Enrollment')),
-                ('ethnicity', models.ForeignKey(null=True, to='seating_charts.Ethnicity')),
+                ('enrollment', models.ForeignKey(to='academics.Enrollment', on_delete=models.CASCADE)),
+                ('ethnicity', models.ForeignKey(null=True, to='seating_charts.Ethnicity', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -177,9 +177,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
                 ('waitor', models.BooleanField(default=False)),
-                ('meal_time', models.ForeignKey(to='seating_charts.MealTime')),
-                ('student', models.ForeignKey(to='seating_charts.SeatingStudent')),
-                ('table', models.ForeignKey(to='seating_charts.Table')),
+                ('meal_time', models.ForeignKey(to='seating_charts.MealTime', on_delete=models.CASCADE)),
+                ('student', models.ForeignKey(to='seating_charts.SeatingStudent', on_delete=models.CASCADE)),
+                ('table', models.ForeignKey(to='seating_charts.Table', on_delete=models.CASCADE)),
             ],
             options={
                 'permissions': (('view', 'Can view table assignments'), ('edit', 'Can edit table assignments')),
@@ -188,27 +188,27 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='seatfiller',
             name='table',
-            field=models.ForeignKey(to='seating_charts.Table'),
+            field=models.ForeignKey(to='seating_charts.Table', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='pinnedstudent',
             name='student',
-            field=models.ForeignKey(to='seating_charts.SeatingStudent'),
+            field=models.ForeignKey(to='seating_charts.SeatingStudent', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='pinnedstudent',
             name='table',
-            field=models.ForeignKey(to='seating_charts.Table'),
+            field=models.ForeignKey(to='seating_charts.Table', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='layout',
             name='left_print',
-            field=models.ForeignKey(related_name='+', to='seating_charts.MealTime'),
+            field=models.ForeignKey(related_name='+', to='seating_charts.MealTime', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='layout',
             name='right_print',
-            field=models.ForeignKey(null=True, related_name='+', blank=True, to='seating_charts.MealTime'),
+            field=models.ForeignKey(null=True, related_name='+', blank=True, to='seating_charts.MealTime', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='historicaltableassignment',

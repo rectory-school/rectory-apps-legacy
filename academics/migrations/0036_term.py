@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
                 ('term', models.CharField(max_length=255)),
-                ('academic_year', models.ForeignKey(to='academics.AcademicYear')),
+                ('academic_year', models.ForeignKey(to='academics.AcademicYear', on_delete=models.CASCADE)),
             ],
         ),
     ]

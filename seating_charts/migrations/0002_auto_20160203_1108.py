@@ -19,6 +19,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='seatingstudent',
             name='ethnicity',
-            field=models.ForeignKey(blank=True, null=True, to='seating_charts.Ethnicity'),
+            field=models.ForeignKey(blank=True, null=True, to='seating_charts.Ethnicity', on_delete=models.CASCADE),
         ),
     ]
