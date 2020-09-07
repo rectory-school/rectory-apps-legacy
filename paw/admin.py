@@ -70,7 +70,10 @@ class IconLinkAdmin(admin.ModelAdmin):
   
   def admin_icon(self, o):
     if o.display_icon:
-      return '<img src="{url:}" />'.format(url=o.display_icon.thumbnail['50x50'].url)
+      try:
+        return '<img src="{url:}" />'.format(url=o.display_icon.thumbnail['50x50'].url)
+      except Exception as exc:
+        return "-"
   
   def form_icon(self, o):
     if o.display_icon:
