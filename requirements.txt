@@ -24,7 +24,7 @@ ipython==4.0.0
 ipython-genutils==0.1.0
 jdatetime==1.7.1
 jdcal==1.2
-lxml==3.5.0
+lxml==4.6.3
 openpyxl==2.3.2
 path.py==8.1.2
 pexpect==4.0.1
